@@ -8,9 +8,16 @@
 #ifndef SHARED_HANDLERS
 #include "MFCApplication_in_class.h"
 #endif
+using namespace std;
+ 
+#include <sstream>
+#include <iostream>
+#include <string.h>
 
 #include "MFCApplication_in_classDoc.h"
 #include "MFCApplication_in_classView.h"
+
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,10 +42,18 @@ END_MESSAGE_MAP()
 
 // CMFCApplication_in_classView construction/destruction
 
+
+
 CMFCApplication_in_classView::CMFCApplication_in_classView()
 {
 	// TODO: add construction code here
-
+	dialog2.DoModal();
+	a = dialog2.a;
+	b = dialog2.b;
+	s = dialog2.s;
+	color = dialog2.color;
+	my_fun = func(a, b, s);
+	my_color =  getColor(color);
 }
 
 CMFCApplication_in_classView::~CMFCApplication_in_classView()
@@ -64,28 +79,32 @@ void CMFCApplication_in_classView::OnDraw(CDC* pDC)
 
 	// TODO: add draw code for native data here
 	int margin;
-	int x;
-	int y;
-	COLORREF color;
-	POINT pt;
-	CRect rect; // Client rectangle
-	GetClientRect(&rect); // 
-
 	margin = dialog.margin;
-	color = dialog.color;
 
+	CRect rect; // Client rectangle
+	GetClientRect(&rect); 
+	POINT pt;
+	int x, y,int_color;
+	COLORREF color;
+
+	std::string  s = std::to_string(a);
+	std::wstring widestr = std::wstring(s.begin(), s.end());
+	const wchar_t *c = widestr.c_str();
+	//AfxMessageBox(c, MB_OK);
 	for (x = rect.left + margin; x < rect.right - margin; x++)
 	{
 		for (y = rect.top + margin; y < rect.bottom - margin; y++)
 		{
 			pt.x = x;
 			pt.y = y;
+			
+			int_color = my_fun.getValue(x, y);
+			color = my_color.getColorForPixel(int_color);
+
 			pDC->SetPixel(pt, color);
 		}
 	}
 
-	pDC->DrawText(_T("Hello, MFC"), -1, &rect,
-		DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 }
 
 
@@ -110,9 +129,14 @@ void CMFCApplication_in_classView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pIn
 void CMFCApplication_in_classView::OnDialog()
 {
 	// TODO: Add your command handler code here
-	if (dialog.DoModal() == IDOK) {
-		Invalidate();
-	}
+	dialog2.DoModal();
+	a = dialog2.a;
+	b = dialog2.b;
+	s = dialog2.s;
+	color = dialog2.color;
+	
+	
+
 }
 
 // CMFCApplication_in_classView diagnostics
@@ -159,6 +183,7 @@ void CMFCApplication_in_classView::OnUpdateOpencloseOpen(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->SetCheck(open);
+
 }
 
 

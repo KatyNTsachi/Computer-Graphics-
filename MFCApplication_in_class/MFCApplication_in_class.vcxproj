@@ -28,7 +28,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
@@ -181,6 +181,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="func.h" />
+    <ClInclude Include="getColor.h" />
+    <ClInclude Include="InputParametersDialogBar.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFCApplication_in_class.h" />
     <ClInclude Include="MFCApplication_in_classDoc.h" />
@@ -191,6 +194,9 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="func.cpp" />
+    <ClCompile Include="getColor.cpp" />
+    <ClCompile Include="InputParametersDialogBar.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MFCApplication_in_class.cpp" />
     <ClCompile Include="MFCApplication_in_classDoc.cpp" />

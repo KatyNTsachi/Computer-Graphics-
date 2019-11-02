@@ -4,7 +4,10 @@
 
 #pragma once
 #include "MyDialog.h"
+#include "InputParametersDialogBar.h"
 
+#include "func.h"
+#include "getColor.h"
 
 class CMFCApplication_in_classView : public CView
 {
@@ -17,7 +20,15 @@ public:
 	CMFCApplication_in_classDoc* GetDocument() const;
 
 	MyDialog dialog;
+	InputParametersDialogBar dialog2;
+
 	bool open;
+	int a, b,s,color;
+	func my_fun;
+	getColor my_color;
+
+
+
 
 // Operations
 public:
