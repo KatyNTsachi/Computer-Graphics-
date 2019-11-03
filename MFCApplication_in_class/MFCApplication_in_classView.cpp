@@ -53,7 +53,7 @@ CMFCApplication_in_classView::CMFCApplication_in_classView()
 	s = dialog2.s;
 	color = dialog2.color;
 	my_fun = func(a, b, s);
-	my_color =  getColor(color);
+	my_color =  getColor();
 }
 
 CMFCApplication_in_classView::~CMFCApplication_in_classView()
@@ -84,13 +84,16 @@ void CMFCApplication_in_classView::OnDraw(CDC* pDC)
 	CRect rect; // Client rectangle
 	GetClientRect(&rect); 
 	POINT pt;
-	int x, y,int_color;
+	int x, y;
+	double funcValue;
 	COLORREF color;
 
 	std::string  s = std::to_string(a);
 	std::wstring widestr = std::wstring(s.begin(), s.end());
 	const wchar_t *c = widestr.c_str();
 	//AfxMessageBox(c, MB_OK);
+	my_fun.w = (rect.right - rect.left - 2 * margin);
+	my_fun.h = (rect.bottom - rect.top - 2 * margin);
 	for (x = rect.left + margin; x < rect.right - margin; x++)
 	{
 		for (y = rect.top + margin; y < rect.bottom - margin; y++)
@@ -98,8 +101,8 @@ void CMFCApplication_in_classView::OnDraw(CDC* pDC)
 			pt.x = x;
 			pt.y = y;
 			
-			int_color = my_fun.getValue(x, y);
-			color = my_color.getColorForPixel(int_color);
+			funcValue = my_fun.getValue(x, y);
+			color = my_color.getColorForPixel(funcValue);
 
 			pDC->SetPixel(pt, color);
 		}
