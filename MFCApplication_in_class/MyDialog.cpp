@@ -31,6 +31,7 @@ void MyDialog::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(MyDialog, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON1, &MyDialog::OnBnClickedButton1)
+	ON_BN_CLICKED(IDOK, &MyDialog::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -44,4 +45,11 @@ void MyDialog::OnBnClickedButton1()
 	if (colorDlg.DoModal() == IDOK) {
 		color = colorDlg.GetColor();
 	}
+}
+
+
+void MyDialog::OnBnClickedOk()
+{
+	// TODO: Add your control notification handler code here
+	CDialogEx::OnOK();
 }

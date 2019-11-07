@@ -25,6 +25,9 @@ BEGIN_MESSAGE_MAP(CMFCApplication_in_classApp, CWinApp)
 	ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
 	// Standard print setup command
 	ON_COMMAND(ID_FILE_PRINT_SETUP, &CWinApp::OnFilePrintSetup)
+
+	ON_COMMAND(ID_APP_ABOUT, &CMFCApplication_in_classApp::OnAppAbout)
+
 END_MESSAGE_MAP()
 
 
@@ -170,11 +173,11 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 // App command to run the dialog
-void CMFCApplication_in_classApp::OnAppAbout()
-{
+void CMFCApplication_in_classApp::OnAppAbout(){
 	CAboutDlg aboutDlg;
 	aboutDlg.DoModal();
 }
+
 
 // CMFCApplication_in_classApp message handlers
 

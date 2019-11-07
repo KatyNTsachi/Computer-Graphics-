@@ -27,7 +27,6 @@ void InputParametersDialogBar::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, id_a, a);
 	DDX_Text(pDX, id_b, b);
 	DDX_Text(pDX, id_s, s);
-	DDX_Text(pDX, id_color, color);
 }
 
 

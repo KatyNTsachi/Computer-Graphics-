@@ -38,6 +38,17 @@ BEGIN_MESSAGE_MAP(CMFCApplication_in_classView, CView)
 	ON_COMMAND(ID_OPENCLOSE_OPEN, &CMFCApplication_in_classView::OnOpencloseOpen)
 	ON_UPDATE_COMMAND_UI(ID_OPENCLOSE_OPEN, &CMFCApplication_in_classView::OnUpdateOpencloseOpen)
 	ON_UPDATE_COMMAND_UI(ID_OPENCLOSE_CLOSE, &CMFCApplication_in_classView::OnUpdateOpencloseClose)
+	
+	ON_COMMAND(ID_MODE_VALUES, &CMFCApplication_in_classView::OnOpenValues)
+	ON_COMMAND(ID_MODE_ZEROS, &CMFCApplication_in_classView::OnOpenZeros)
+	ON_UPDATE_COMMAND_UI(ID_MODE_VALUES, &CMFCApplication_in_classView::OnUpdateValues)
+	ON_UPDATE_COMMAND_UI(ID_MODE_ZEROS, &CMFCApplication_in_classView::OnUpdateZeros)
+	
+	ON_COMMAND(ID_COLOR_1, &CMFCApplication_in_classView::setColor1)
+	ON_COMMAND(ID_COLOR_2, &CMFCApplication_in_classView::setColor2)
+
+
+	
 END_MESSAGE_MAP()
 
 // CMFCApplication_in_classView construction/destruction
@@ -51,9 +62,14 @@ CMFCApplication_in_classView::CMFCApplication_in_classView()
 	a = dialog2.a;
 	b = dialog2.b;
 	s = dialog2.s;
-	color = dialog2.color;
+
+	color1 = RGB(0, 0, 0);
+	color2 = RGB(255, 255, 255);
+
+	color = 1;
 	my_fun = func(a, b, s);
 	my_color =  getColor();
+
 }
 
 CMFCApplication_in_classView::~CMFCApplication_in_classView()
@@ -86,14 +102,23 @@ void CMFCApplication_in_classView::OnDraw(CDC* pDC)
 	POINT pt;
 	int x, y;
 	double funcValue;
-	COLORREF color;
 
+
+	/*
 	std::string  s = std::to_string(a);
 	std::wstring widestr = std::wstring(s.begin(), s.end());
 	const wchar_t *c = widestr.c_str();
-	//AfxMessageBox(c, MB_OK);
+	AfxMessageBox(c, MB_OK);
+	*/
+
 	my_fun.w = (rect.right - rect.left - 2 * margin);
 	my_fun.h = (rect.bottom - rect.top - 2 * margin);
+
+	//set color
+	my_color.color_type = color > 0 ? 1:2;
+	my_color.color1 = color1;
+	my_color.color2 = color2;
+
 	for (x = rect.left + margin; x < rect.right - margin; x++)
 	{
 		for (y = rect.top + margin; y < rect.bottom - margin; y++)
@@ -136,11 +161,12 @@ void CMFCApplication_in_classView::OnDialog()
 	a = dialog2.a;
 	b = dialog2.b;
 	s = dialog2.s;
-	color = dialog2.color;
-	
-	
 
 }
+
+
+
+
 
 // CMFCApplication_in_classView diagnostics
 
@@ -186,7 +212,6 @@ void CMFCApplication_in_classView::OnUpdateOpencloseOpen(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->SetCheck(open);
-
 }
 
 
@@ -195,3 +220,56 @@ void CMFCApplication_in_classView::OnUpdateOpencloseClose(CCmdUI *pCmdUI)
 	// TODO: Add your command update UI handler code here
 	pCmdUI->SetCheck(!open);
 }
+
+
+
+
+void CMFCApplication_in_classView::OnOpenValues()
+{
+	// TODO: Add your command handler code here
+	open_mode = true;
+	Invalidate();
+}
+
+void CMFCApplication_in_classView::OnOpenZeros()
+{
+	// TODO: Add your command handler code here
+	open_mode = false;
+	Invalidate();
+}
+
+
+void CMFCApplication_in_classView::OnUpdateValues(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(open_mode);
+	color = 1;
+}
+
+
+void CMFCApplication_in_classView::OnUpdateZeros(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(!open_mode);
+	color = -1;
+}
+
+
+
+
+void CMFCApplication_in_classView::setColor1() {
+
+	if (dialog_color_1.DoModal() == IDOK) {
+		color1 = dialog_color_1.GetColor();
+	}
+
+}
+
+void CMFCApplication_in_classView::setColor2() {
+
+	if (dialog_color_2.DoModal() == IDOK) {
+		color2 = dialog_color_2.GetColor();
+	}
+}
+
+
+
+

@@ -18,13 +18,23 @@
 #define IDC_DIALOG                      32771
 #define ID_OPENCLOSE_OPEN               32772
 #define ID_OPENCLOSE_CLOSE              32773
+#define ID_MODE_VALUES                  32774
+#define ID_MODE_ZEROS                   32775
+#define ID_ACCELERATOR32778             32778
+#define ID_COLOR_2                      32780
+#define ID_COLOR_1                      32781
+#define ID_BUTTON32783                  32783
+#define ID_BUTTON32784                  32784
+#define ID_BUTTON32785                  32785
+#define ID_MODE_VALUES32788             32788
+#define ID_MODE_ZEROS32789              32789
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        315
-#define _APS_NEXT_COMMAND_VALUE         32774
+#define _APS_NEXT_COMMAND_VALUE         32790
 #define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

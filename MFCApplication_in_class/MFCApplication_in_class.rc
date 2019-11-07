@@ -100,6 +100,8 @@ BEGIN
     BUTTON      ID_FILE_PRINT
     BUTTON      ID_APP_ABOUT
     BUTTON      IDC_DIALOG
+    BUTTON      ID_COLOR_1
+    BUTTON      ID_COLOR_2
 END
 
 
@@ -146,6 +148,11 @@ BEGIN
     BEGIN
         MENUITEM "Open",                        ID_OPENCLOSE_OPEN
         MENUITEM "Close",                       ID_OPENCLOSE_CLOSE
+    END
+    POPUP "Mode"
+    BEGIN
+        MENUITEM "Values",                      ID_MODE_VALUES
+        MENUITEM "Zeros",                       ID_MODE_ZEROS
     END
 END
 
@@ -212,11 +219,9 @@ BEGIN
     EDITTEXT        id_a,40,58,40,14,ES_AUTOHSCROLL
     EDITTEXT        id_b,123,57,40,14,ES_AUTOHSCROLL
     EDITTEXT        id_s,213,55,40,14,ES_AUTOHSCROLL
-    LTEXT           "color 1",IDC_STATIC,31,102,22,8
     LTEXT           "a",IDC_STATIC,47,48,8,8
     LTEXT           "b",IDC_STATIC,139,47,8,8
     LTEXT           "s",IDC_STATIC,233,46,8,8
-    EDITTEXT        id_color,57,97,40,14,ES_AUTOHSCROLL
 END
 
 

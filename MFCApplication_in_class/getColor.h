@@ -2,9 +2,18 @@
 class getColor
 {
 public:
+
+	//default functions 
 	getColor() {};
 	~getColor();
-	COLORREF getColorForPixel(double color);
-	int color;
+	
+	//functions
+	COLORREF getColorForPixel(double func_val);
+
+	//vars
+	int color_type;
+	COLORREF color1;
+	COLORREF color2;
+
 };
 

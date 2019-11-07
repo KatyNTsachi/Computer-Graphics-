@@ -21,11 +21,14 @@ public:
 
 	MyDialog dialog;
 	InputParametersDialogBar dialog2;
+	CColorDialog dialog_color_1, dialog_color_2;
 
 	bool open;
-	int a, b,s,color;
+	bool open_mode;
 	func my_fun;
 	getColor my_color;
+	int a, b, s, color;
+	COLORREF color1, color2;
 
 
 
@@ -61,6 +64,14 @@ public:
 	afx_msg void OnOpencloseOpen();
 	afx_msg void OnUpdateOpencloseOpen(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateOpencloseClose(CCmdUI *pCmdUI);
+	afx_msg void OnOpenValues();
+	afx_msg void OnOpenZeros();
+	afx_msg void OnUpdateValues(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateZeros(CCmdUI *pCmdUI);
+	afx_msg void setColor1();
+	afx_msg void setColor2();
+
+
 };
 
 #ifndef _DEBUG  // debug version in MFCApplication_in_classView.cpp
