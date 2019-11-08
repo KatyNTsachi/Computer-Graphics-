@@ -5,6 +5,7 @@ public:
 
 	//default functions 
 	getColor() {};
+	getColor(COLORREF color1_, COLORREF color2_, int colorMode_);
 	~getColor();
 	
 	//functions

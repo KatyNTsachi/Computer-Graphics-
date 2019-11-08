@@ -33,7 +33,7 @@ BEGIN_MESSAGE_MAP(CMFCApplication_in_classView, CView)
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
-	ON_COMMAND(IDC_DIALOG, OnDialog)
+	ON_COMMAND(IDC_DIALOG, &CMFCApplication_in_classView::OnDialog)
 	ON_COMMAND(ID_OPENCLOSE_CLOSE, &CMFCApplication_in_classView::OnOpencloseClose)
 	ON_COMMAND(ID_OPENCLOSE_OPEN, &CMFCApplication_in_classView::OnOpencloseOpen)
 	ON_UPDATE_COMMAND_UI(ID_OPENCLOSE_OPEN, &CMFCApplication_in_classView::OnUpdateOpencloseOpen)
@@ -59,17 +59,16 @@ CMFCApplication_in_classView::CMFCApplication_in_classView()
 {
 	// TODO: add construction code here
 	dialog2.DoModal();
-	a = dialog2.a;
-	b = dialog2.b;
-	s = dialog2.s;
+	int a = dialog2.a;
+	int b = dialog2.b;
+	int s = dialog2.s;
 
-	color1 = RGB(0, 0, 0);
-	color2 = RGB(255, 255, 255);
+	COLORREF color1 = RGB(0, 0, 0);
+	COLORREF color2 = RGB(255, 255, 255);
+	int color = 1;
 
-	color = 1;
 	my_fun = func(a, b, s);
-	my_color =  getColor();
-
+	my_color =  getColor(color1, color2, color);
 }
 
 CMFCApplication_in_classView::~CMFCApplication_in_classView()
@@ -101,6 +100,7 @@ void CMFCApplication_in_classView::OnDraw(CDC* pDC)
 	GetClientRect(&rect); 
 	POINT pt;
 	int x, y;
+	COLORREF color;
 	double funcValue;
 
 
@@ -113,11 +113,6 @@ void CMFCApplication_in_classView::OnDraw(CDC* pDC)
 
 	my_fun.w = (rect.right - rect.left - 2 * margin);
 	my_fun.h = (rect.bottom - rect.top - 2 * margin);
-
-	//set color
-	my_color.color_type = color > 0 ? 1:2;
-	my_color.color1 = color1;
-	my_color.color2 = color2;
 
 	for (x = rect.left + margin; x < rect.right - margin; x++)
 	{
@@ -158,10 +153,10 @@ void CMFCApplication_in_classView::OnDialog()
 {
 	// TODO: Add your command handler code here
 	dialog2.DoModal();
-	a = dialog2.a;
-	b = dialog2.b;
-	s = dialog2.s;
-
+	my_fun.a = dialog2.a;
+	my_fun.b = dialog2.b;
+	my_fun.s = dialog2.s;
+	Invalidate();
 }
 
 
@@ -242,31 +237,31 @@ void CMFCApplication_in_classView::OnOpenZeros()
 void CMFCApplication_in_classView::OnUpdateValues(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(open_mode);
-	color = 1;
+	my_color.color_type = 1;
 }
 
 
 void CMFCApplication_in_classView::OnUpdateZeros(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(!open_mode);
-	color = -1;
+	my_color.color_type = -1;
 }
 
 
 
 
 void CMFCApplication_in_classView::setColor1() {
-
 	if (dialog_color_1.DoModal() == IDOK) {
-		color1 = dialog_color_1.GetColor();
+		my_color.color1 = dialog_color_1.GetColor();
+		Invalidate();
 	}
-
 }
 
 void CMFCApplication_in_classView::setColor2() {
 
 	if (dialog_color_2.DoModal() == IDOK) {
-		color2 = dialog_color_2.GetColor();
+		my_color.color2 = dialog_color_2.GetColor();
+		Invalidate();
 	}
 }
 

@@ -27,15 +27,8 @@ public:
 	bool open_mode;
 	func my_fun;
 	getColor my_color;
-	int a, b, s, color;
-	COLORREF color1, color2;
-
-
-
-
 // Operations
 public:
-
 // Overrides
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
@@ -70,8 +63,6 @@ public:
 	afx_msg void OnUpdateZeros(CCmdUI *pCmdUI);
 	afx_msg void setColor1();
 	afx_msg void setColor2();
-
-
 };
 
 #ifndef _DEBUG  // debug version in MFCApplication_in_classView.cpp
