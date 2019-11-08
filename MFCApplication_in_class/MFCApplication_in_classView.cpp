@@ -57,18 +57,7 @@ END_MESSAGE_MAP()
 
 CMFCApplication_in_classView::CMFCApplication_in_classView()
 {
-	// TODO: add construction code here
-	dialog2.DoModal();
-	int a = dialog2.a;
-	int b = dialog2.b;
-	int s = dialog2.s;
-
-	COLORREF color1 = RGB(0, 0, 0);
-	COLORREF color2 = RGB(255, 255, 255);
-	int color = 1;
-
-	my_fun = func(a, b, s);
-	my_color =  getColor(color1, color2, color);
+	postWindowCreate = true;
 }
 
 CMFCApplication_in_classView::~CMFCApplication_in_classView()
@@ -79,6 +68,8 @@ BOOL CMFCApplication_in_classView::PreCreateWindow(CREATESTRUCT& cs)
 {
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
+
+
 
 	return CView::PreCreateWindow(cs);
 }
@@ -91,6 +82,13 @@ void CMFCApplication_in_classView::OnDraw(CDC* pDC)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
+
+	if (postWindowCreate) 
+	{
+		postWindowCreate = false;
+		initializeDefaultValuesOfFunk();
+	}
+
 
 	// TODO: add draw code for native data here
 	int margin;
@@ -130,6 +128,31 @@ void CMFCApplication_in_classView::OnDraw(CDC* pDC)
 
 }
 
+void CMFCApplication_in_classView::initializeDefaultValuesOfFunk()
+{
+	CRect rect; // Client rectangle
+	GetClientRect(&rect);
+    int margin;
+	margin = dialog.margin;
+	my_fun.w = (rect.right - rect.left - 2 * margin);
+	my_fun.h = (rect.bottom - rect.top - 2 * margin);
+
+	dialog2.a = 1;
+	dialog2.b = 1;
+	dialog2.s = 0.1*(my_fun.w);
+
+	dialog2.DoModal();
+	int a = dialog2.a;
+	int b = dialog2.b;
+	int s = dialog2.s;
+
+	COLORREF color1 = RGB(0, 0, 0);
+	COLORREF color2 = RGB(255, 255, 255);
+	int color = 1;
+
+	my_fun = func(a, b, s);
+	my_color = getColor(color1, color2, color);
+}
 
 // CMFCApplication_in_classView printing
 

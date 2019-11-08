@@ -22,6 +22,7 @@ public:
 	MyDialog dialog;
 	InputParametersDialogBar dialog2;
 	CColorDialog dialog_color_1, dialog_color_2;
+	bool postWindowCreate;
 
 	bool open;
 	bool open_mode;
@@ -31,6 +32,7 @@ public:
 public:
 // Overrides
 public:
+	void initializeDefaultValuesOfFunk();
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 protected:
