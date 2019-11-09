@@ -91,8 +91,6 @@ void CMFCApplication_in_classView::OnDraw(CDC* pDC)
 
 
 	// TODO: add draw code for native data here
-	int margin;
-	margin = dialog.margin;
 
 	CRect rect; // Client rectangle
 	GetClientRect(&rect); 
@@ -109,12 +107,12 @@ void CMFCApplication_in_classView::OnDraw(CDC* pDC)
 	AfxMessageBox(c, MB_OK);
 	*/
 
-	my_fun.w = (rect.right - rect.left - 2 * margin);
-	my_fun.h = (rect.bottom - rect.top - 2 * margin);
+	my_fun.w = (rect.right - rect.left );
+	my_fun.h = (rect.bottom - rect.top );
 
-	for (x = rect.left + margin; x < rect.right - margin; x++)
+	for (x = rect.left ; x < rect.right ; x++)
 	{
-		for (y = rect.top + margin; y < rect.bottom - margin; y++)
+		for (y = rect.top ; y < rect.bottom ; y++)
 		{
 			pt.x = x;
 			pt.y = y;
@@ -132,10 +130,9 @@ void CMFCApplication_in_classView::initializeDefaultValuesOfFunk()
 {
 	CRect rect; // Client rectangle
 	GetClientRect(&rect);
-    int margin;
-	margin = dialog.margin;
-	my_fun.w = (rect.right - rect.left - 2 * margin);
-	my_fun.h = (rect.bottom - rect.top - 2 * margin);
+
+	my_fun.w = (rect.right - rect.left );
+	my_fun.h = (rect.bottom - rect.top );
 
 	dialog2.a = 1;
 	dialog2.b = 1;

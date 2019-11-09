@@ -6,10 +6,7 @@
 #define IDP_OLE_INIT_FAILED             100
 #define IDR_MAINFRAME                   128
 #define IDR_MFCApplication_TYPE         130
-#define IDD_DIALOG1                     310
 #define IDD_DIALOG2                     313
-#define IDC_BUTTON1                     1000
-#define IDC_EDIT1                       1001
 #define id_b                            1002
 #define id_s                            1004
 #define id_a                            1007

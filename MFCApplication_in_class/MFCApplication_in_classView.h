@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "MyDialog.h"
 #include "InputParametersDialogBar.h"
 
 #include "func.h"
@@ -19,7 +18,6 @@ protected: // create from serialization only
 public:
 	CMFCApplication_in_classDoc* GetDocument() const;
 
-	MyDialog dialog;
 	InputParametersDialogBar dialog2;
 	CColorDialog dialog_color_1, dialog_color_2;
 	bool postWindowCreate;

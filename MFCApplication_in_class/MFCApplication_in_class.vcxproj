@@ -188,7 +188,6 @@
     <ClInclude Include="MFCApplication_in_class.h" />
     <ClInclude Include="MFCApplication_in_classDoc.h" />
     <ClInclude Include="MFCApplication_in_classView.h" />
-    <ClInclude Include="MyDialog.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -201,7 +200,6 @@
     <ClCompile Include="MFCApplication_in_class.cpp" />
     <ClCompile Include="MFCApplication_in_classDoc.cpp" />
     <ClCompile Include="MFCApplication_in_classView.cpp" />
-    <ClCompile Include="MyDialog.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

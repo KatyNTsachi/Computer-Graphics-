@@ -39,9 +39,6 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MyDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="InputParametersDialogBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -66,9 +63,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MFCApplication_in_classView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MyDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InputParametersDialogBar.cpp">
