@@ -173,10 +173,12 @@ void CMFCApplication_in_classView::OnDialog()
 {
 	// TODO: Add your command handler code here
 	dialog2.DoModal();
+	if (my_fun.a != dialog2.a || my_fun.b != dialog2.b || my_fun.s != dialog2.s) {
+		Invalidate();
+	}
 	my_fun.a = dialog2.a;
 	my_fun.b = dialog2.b;
 	my_fun.s = dialog2.s;
-	Invalidate();
 }
 
 
