@@ -1,5 +1,0 @@
-﻿  MFCApplication_in_class.cpp
-  MFCApplication_in_classView.cpp
-c:\code\computer-graphics-\mfcapplication_in_class\mfcapplication_in_classview.cpp(139): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-  Generating Code...
-  MFCApplication_in_class.vcxproj -> C:\Code\Computer-Graphics-\Debug\MFCApplication_in_class.exe
