@@ -48,6 +48,7 @@ private:
 	LightParams m_ambientLight;		//ambient light (only RGB is used)
 
 	Scene scene;
+	bool need_to_draw = true;
 
 // Overrides
 	// ClassWizard generated virtual function overrides

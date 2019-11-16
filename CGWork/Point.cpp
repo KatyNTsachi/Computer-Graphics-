@@ -19,3 +19,28 @@ Point::Point(double _x, double _y, double _z)
 Point::~Point()
 {
 }
+
+double Point::getX() 
+{
+	return x;
+}
+
+double Point::getY()
+{
+	return y;
+}
+
+void Point::setX(double _x)
+{
+	x = _x;
+}
+
+void Point::setY(double _y)
+{
+	y = _y;
+}
+
+void Point::setZ(double _z)
+{
+	z = _z;
+}

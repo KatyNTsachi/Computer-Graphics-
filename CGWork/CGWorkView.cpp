@@ -153,18 +153,6 @@ int CCGWorkView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	InitializeCGWork();
-	
-	//create list of lines
-	Line tmp_line(0, 0, 0, 100, 100, 100);
-	std::vector<Line> line_list;
-	line_list.push_back(tmp_line);
-
-	//create model
-	Model tmp_model(line_list);
-
-	//add model to scene
-	scene.AddModel(tmp_model);
-
 	return 0;
 }
 
@@ -215,6 +203,8 @@ void CCGWorkView::OnSize(UINT nType, int cx, int cy)
 	DeleteObject(m_pDbBitMap);
 	m_pDbBitMap = CreateCompatibleBitmap(m_pDC->m_hDC, r.right, r.bottom);	
 	m_pDbDC->SelectObject(m_pDbBitMap);
+	need_to_draw = true;
+
 }
 
 
@@ -252,48 +242,14 @@ BOOL CCGWorkView::OnEraseBkgnd(CDC* pDC)
 
 void CCGWorkView::OnDraw(CDC* pDC)
 {
-	/*
-	static float theta = 0.0f;
-	CCGWorkDoc* pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-	    return;
-	CRect r;
-
-	GetClientRect(&r);
-	CDC *pDCToUse = m_pDbDC;
-	
-	pDCToUse->FillSolidRect(&r, RGB(255, 255, 0));
-	
-	int numLines = 100;
-	float radius = r.right / 3;
-	
-	if (r.right > r.bottom) {
-		radius = r.bottom / 3;
-	}
-	
-	
-	for (int i = 0; i < numLines; ++i)
+	if (need_to_draw == true)
 	{
-		float finalTheta = 2 * M_PI / numLines*i + theta*M_PI/180.0f;
-		
-		pDCToUse->MoveTo(r.right / 2, r.bottom / 2);
-		pDCToUse->LineTo(r.right / 2 + radius*cos(finalTheta), r.bottom / 2 + radius*sin(finalTheta));
+		CRect r;
+		GetClientRect(&r);
+		pDC->FillSolidRect(&r, RGB(255, 255, 255));
+		scene.Draw(pDC);
+		need_to_draw = false;
 	}
-	
-
-	if (pDCToUse != m_pDC) 
-	{
-		m_pDC->BitBlt(r.left, r.top, r.Width(), r.Height(), pDCToUse, r.left, r.top, SRCCOPY);
-	}
-
-	m_pDC->BitBlt(r.left+10, r.top+10, 10, 10, pDCToUse, r.left, r.top, SRCCOPY);
-	theta += 5;
-
-	*/
-	scene.Draw(pDC);
-	
-
 }
 
 
@@ -339,7 +295,14 @@ void CCGWorkView::OnFileLoad()
 		// Open the file and read it.
 		// Your code here...
 
+		Model tmp_model = model;
+		scene.AddModel(tmp_model);
+		model = Model();
+		need_to_draw = true;
+		
 		Invalidate();	// force a WM_PAINT for drawing.
+
+
 	} 
 
 }

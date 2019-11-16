@@ -19,6 +19,6 @@ public:
 private:
 	std::vector<Model> model_list;
 	std::vector<Camera> camera_list;
-	void DrawLine(CDC* pDC, Line line);
+	void DrawLine(CDC* pDC, Line line, COLORREF _color);
 };
 
