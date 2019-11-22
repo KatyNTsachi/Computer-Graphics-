@@ -394,6 +394,7 @@ void CCGWorkView::OnUpdateAxisX(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(m_nAxis == ID_AXIS_X);
 }
 
+
 void CCGWorkView::OnAxisY() 
 {
 	m_nAxis = ID_AXIS_Y;
@@ -403,6 +404,7 @@ void CCGWorkView::OnUpdateAxisY(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_nAxis == ID_AXIS_Y);
 }
+
 
 void CCGWorkView::OnAxisZ() 
 {
@@ -419,6 +421,10 @@ void CCGWorkView::OnUpdateAxisZ(CCmdUI* pCmdUI)
 
 
 // OPTIONS HANDLERS ///////////////////////////////////////////
+
+
+
+
 // LIGHT SHADING HANDLERS ///////////////////////////////////////////
 
 void CCGWorkView::OnLightShadingFlat() 

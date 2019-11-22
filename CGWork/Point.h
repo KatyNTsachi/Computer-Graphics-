@@ -7,9 +7,12 @@ public:
 	~Point();
 	double getX();
 	double getY();
+	double getZ();
+
 	void setX(double _x);
 	void setY(double _y);
 	void setZ(double _z);
+	void printPoint();
 
 
 private:

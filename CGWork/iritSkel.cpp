@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "iritSkel.h"
+#include "Poligon.h"
 Model model;
 
 /*****************************************************************************
@@ -101,6 +102,8 @@ void CGSkelDumpOneTraversedObject(IPObjectStruct *PObj,
 	for (PObj = PObjs; PObj != NULL; PObj = PObj -> Pnext)
 		if (!CGSkelStoreData(PObj)) 
 			exit(1);
+
+
 }
 
 /*****************************************************************************
@@ -160,6 +163,7 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 			Attrs = AttrTraceAttributes(Attrs, NULL);
 		}
 	}
+
 	for (PPolygon = PObj -> U.Pl; PPolygon != NULL;	PPolygon = PPolygon -> Pnext) 
 	{
 			if (PPolygon -> PVertex == NULL) {
@@ -174,21 +178,30 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 
 			Point p1, p2;
 			PVertex = PPolygon->PVertex;
-			p1.setX(PVertex->Coord[0]);
-			p1.setY(PVertex->Coord[1]);
-			p1.setZ(PVertex->Coord[2]);
-			for (PVertex = PPolygon->PVertex->Pnext; PVertex != NULL; PVertex = PVertex->Pnext)
+
+			p1.setX( PVertex->Coord[0] );
+			p1.setY( PVertex->Coord[1] );
+			p1.setZ( PVertex->Coord[2] );
+
+			Poligon poligon;
+
+			for (PVertex = PPolygon->PVertex->Pnext ; PVertex != NULL ; PVertex = PVertex->Pnext)
 			{
-				//add line to model
-				p2.setX(PVertex->Coord[0]);
-				p2.setY(PVertex->Coord[1]);
-				p2.setZ(PVertex->Coord[2]);
-				model.addLine(Line(p1, p2));
+				//add line to Poligon
+				p2.setX( PVertex->Coord[0] );
+				p2.setY( PVertex->Coord[1] );
+				p2.setZ( PVertex->Coord[2] );
+
+				poligon.addLine(Line(p1, p2));
+
 				//update for next iter
 				p1 = p2;
 				if (PVertex == PPolygon->PVertex)
 					break;
 			}
+
+			model.addPoligon(poligon);
+
 
 
 			/* use if(IP_HAS_PLANE_POLY(PPolygon)) to know whether a normal is defined for the polygon
@@ -208,6 +221,8 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 			while (PVertex != PPolygon -> PVertex && PVertex != NULL);
 			/* Close the polygon. */
 	}
+
+
 	/* Close the object. */
 	return true;
 }

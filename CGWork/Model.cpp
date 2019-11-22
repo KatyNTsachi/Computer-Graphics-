@@ -6,23 +6,18 @@ Model::Model()
 {
 }
 
-Model::Model(std::vector<Line> line_list_new) 
-{
-	line_list = line_list_new;
-}
-
 Model::~Model()
 {
 }
 
-std::vector<Line> Model::getModelLines(Matrix camera_transformation)
+std::vector<Poligon> Model::getModelPoligons ()
 {
-	return line_list;
+	return poligon_list;
 }
 
-void Model::addLine(Line _line)
+void Model::addPoligon(Poligon _poligon)
 {
-	line_list.push_back(_line);
+	poligon_list.push_back(_poligon);
 }
 
 void Model::setColor(COLORREF _color)
@@ -40,3 +35,15 @@ COLORREF Model::getModelColor()
 {
 	return color;
 }
+
+Matrix Model::getTransformation()
+{
+	return transformation;
+}
+
+void Model::addScaleMatrix(Matrix scale_matrix)
+{
+	transformation = transformation * scale_matrix;
+	transformation.printMatrix();
+}
+

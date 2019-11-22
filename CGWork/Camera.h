@@ -6,6 +6,7 @@ class Camera
 public:
 	Camera();
 	~Camera();
+	Matrix getTransformation();
 
 private:
 	Matrix tranformation;

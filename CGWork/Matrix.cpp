@@ -1,4 +1,10 @@
 #include "Matrix.h"
+#include "stdafx.h"
+#include <sstream>
+#include <iostream>
+#include <string.h>
+using namespace std;
+
 
 
 
@@ -76,3 +82,32 @@ Matrix  Matrix::operator - (Matrix const &matrix2)
 	return result;
 }
 
+
+Point Matrix::tranformation(Point p)
+{
+	Point new_point;
+	// columns of other.
+	new_point.setX( columns[0][0] * p.getX() + columns[0][1] * p.getY() + columns[0][2] * p.getZ() + columns[0][3]);
+	new_point.setY( columns[1][0] * p.getX() + columns[1][1] * p.getY() + columns[1][2] * p.getZ() + columns[1][3]);
+	new_point.setZ( columns[2][0] * p.getX() + columns[2][1] * p.getY() + columns[2][2] * p.getZ() + columns[2][3]);	
+
+	return new_point;
+}
+
+void Matrix::printMatrix()
+{
+	string s;
+	for (int columnIndex = 0; columnIndex < 4; columnIndex++)
+	{
+		// rows of self.
+		for (int rowIndex = 0; rowIndex < 4; rowIndex++)
+		{
+			s += to_string(columns[columnIndex][rowIndex])  + "   ";
+		}
+		s += "\n";
+	}
+
+	std::wstring widestr = std::wstring(s.begin(), s.end());
+	const wchar_t *c = widestr.c_str();
+	AfxMessageBox(c, MB_OK);
+}

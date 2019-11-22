@@ -13,8 +13,13 @@ class Scene
 public:
 	Scene();
 	~Scene();
-	void AddModel(Model _model);
-	void Draw(CDC* pDC);
+	void addModel(Model _model);
+	void AddCamera(Camera _camera);
+	void Draw(CDC* pDC, int camera_number, CRect r);
+	Matrix strechToScreenSize( CRect r);
+	Line tranformLine(Line line, Matrix transformations);
+	Point tranformPoint(Point p, Matrix transformations);
+	
 
 private:
 	std::vector<Model> model_list;

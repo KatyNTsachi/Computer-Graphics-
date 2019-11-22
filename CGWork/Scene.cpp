@@ -1,7 +1,5 @@
 #include "Scene.h"
 
-
-
 Scene::Scene()
 {
 }
@@ -10,28 +8,115 @@ Scene::~Scene()
 {
 }
 
-void Scene::AddModel(Model _model)
+void Scene::addModel(Model _model)
 {
+	double MAX_VAL = 1000;
+	double min_x = MAX_VAL, max_x = -MAX_VAL, min_y = MAX_VAL, max_y = -MAX_VAL;
+
+	vector<Poligon> poligon_list = _model.getModelPoligons();
+	for (auto poligon = poligon_list.begin(); poligon != poligon_list.end(); poligon++)
+	{
+		vector<Line> line_list = poligon->getLines();
+		for (auto line = line_list.begin(); line != line_list.end(); line++)
+		{
+			if (max_x < line->getP1().getX())
+				max_x = line->getP1().getX();
+			if (min_x > line->getP1().getX())
+				min_x = line->getP1().getX();
+
+			if (max_y < line->getP1().getY())
+				max_y = line->getP1().getY();
+			if (min_y > line->getP1().getY())
+				min_y = line->getP1().getY();
+
+			//p2
+			if (max_x < line->getP2().getX())
+				max_x = line->getP2().getX();
+			if (min_x > line->getP2().getX())
+				min_x = line->getP2().getX();
+
+			if (max_y < line->getP2().getY())
+				max_y = line->getP2().getY();
+			if (min_y > line->getP2().getY())
+				min_y = line->getP2().getY();
+		}
+	}
+
+	double scale_factor;
+	if (max_x - min_x > max_y - min_y)
+		scale_factor = max_x - min_x;
+	else
+		scale_factor = max_y - min_y;
+
+	scale_factor = scale_factor;
+	_model.addScaleMatrix(Matrix(	Vector(2 / scale_factor, 0, 0, -(max_x / scale_factor + min_x / scale_factor) ),
+									Vector(0, 2 / scale_factor, 0, -(max_y / scale_factor + min_y / scale_factor) ),
+									Vector(0, 0, 2 / scale_factor, 0),
+									Vector(0, 0, 0, 1)));
+
 	model_list.push_back(_model);
 }
 
-void Scene::Draw(CDC* pDC) {
+void Scene::AddCamera(Camera _camera)
+{
+	camera_list.push_back(_camera);
+}
 
+void Scene::Draw(CDC* pDC, int camera_number, CRect r) {
+
+	//error messege
+	if (camera_number > camera_list.size() - 1)
+	{
+		std::string  s = "we dont have this camera";
+		std::wstring widestr = std::wstring(s.begin(), s.end());
+		const wchar_t *c = widestr.c_str();
+		AfxMessageBox(c, MB_OK);
+		return;
+	}
+	
 	std::vector<Line> model_lines;
 	Matrix tmp;
-	COLORREF color;
 
-	for (auto tmp_model = model_list.begin(); tmp_model != model_list.end(); tmp_model++ )
+
+	Point p1;
+	Point p2;
+	Line tmpl(p1, p2);
+
+
+	COLORREF color = (255, 0, 0);
+	
+
+	for (auto tmp_model = model_list.begin(); tmp_model != model_list.end(); tmp_model++) 
 	{
-		model_lines = tmp_model->getModelLines(tmp);
-		color = tmp_model->getModelColor();
+		Matrix tmp_camera_trans = camera_list[camera_number].getTransformation();
+		Matrix tmp_model_trans = tmp_model->getTransformation();
+		Matrix all_trans = tmp_camera_trans * tmp_model_trans * strechToScreenSize(r);
+		
 
-		for (auto tmp_line = model_lines.begin(); tmp_line != model_lines.end(); tmp_line++)
+		vector<Poligon> poligon_list = tmp_model->getModelPoligons();
+		for (auto poligon = poligon_list.begin(); poligon != poligon_list.end(); poligon++)
 		{
-			this->DrawLine(pDC, *tmp_line, color);
-		}
+			vector<Line> line_list = poligon->getLines();
+			for (auto line = line_list.begin(); line != line_list.end(); line++)
+			{
+				Line transformed_line = tranformLine(*line, all_trans);
 
+				this->DrawLine(pDC, transformed_line, color);
+			}
+		}
 	}
+}
+
+Matrix Scene::strechToScreenSize( CRect r)
+{
+	int width = abs(r.right - r.left);
+	int height = abs(r.bottom - r.top);
+	
+	return Matrix(Vector(width / 2, 0, 0, width / 2),
+				  Vector(0, height / 2, 0, height / 2),
+				  Vector(0, 0, 1, 0),
+				  Vector(0, 0, 0, 1));
+	
 
 }
 
@@ -152,3 +237,24 @@ void Scene::DrawLine(CDC* pDC, Line line, COLORREF _color) {
 	}		
 
 }
+
+Line Scene::tranformLine(Line line, Matrix transformations)
+{
+	Point new_p1, new_p2;
+	new_p1 = tranformPoint(line.getP1(), transformations);
+	new_p2 = tranformPoint(line.getP2(), transformations);
+	Line tranformed_line(new_p1, new_p2);
+	   
+	return tranformed_line;
+}
+
+Point Scene::tranformPoint(Point p, Matrix transformations)
+{
+	Point tranformed_point;
+	//transformations.printMatrix();
+	tranformed_point = transformations.tranformation(p);
+
+	return tranformed_point;
+}
+
+
