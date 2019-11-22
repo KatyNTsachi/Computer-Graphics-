@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -100,7 +100,7 @@
       <Culture>0x040d</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>GLU32.LIB;zlibd.lib;libpngd.lib;iritD.lib;%(AdditionalDependencies);legacy_stdio_definitions.lib</AdditionalDependencies>
+      <AdditionalDependencies>GLU32.LIB;zlibd.lib;libpngd.lib;iritD.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>..\pngLib; ..\iritLib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -148,9 +148,9 @@
       <Culture>0x040d</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>GLU32.LIB;zlib.lib;libpng.lib;irit.lib;%(AdditionalDependencies);legacy_stdio_definitions.lib</AdditionalDependencies>
+      <AdditionalDependencies>GLU32.LIB;zlib.lib;libpng.lib;irit.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\pngLib; ..\iritLib;%(AdditionalLibraryDirectories);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\pngLib; ..\iritLib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>.\Release/CGWork.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>

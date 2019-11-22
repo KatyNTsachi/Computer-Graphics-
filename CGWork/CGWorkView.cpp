@@ -153,6 +153,7 @@ int CCGWorkView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	InitializeCGWork();
+
 	return 0;
 }
 
@@ -203,8 +204,6 @@ void CCGWorkView::OnSize(UINT nType, int cx, int cy)
 	DeleteObject(m_pDbBitMap);
 	m_pDbBitMap = CreateCompatibleBitmap(m_pDC->m_hDC, r.right, r.bottom);	
 	m_pDbDC->SelectObject(m_pDbBitMap);
-	need_to_draw = true;
-
 }
 
 
@@ -242,14 +241,12 @@ BOOL CCGWorkView::OnEraseBkgnd(CDC* pDC)
 
 void CCGWorkView::OnDraw(CDC* pDC)
 {
-	if (need_to_draw == true)
-	{
-		CRect r;
-		GetClientRect(&r);
-		pDC->FillSolidRect(&r, RGB(255, 255, 255));
-		scene.Draw(pDC);
-		need_to_draw = false;
-	}
+	CRect r;
+	GetClientRect(&r);
+	pDC->FillSolidRect(&r, RGB(255, 255, 255));
+	scene.Draw(pDC);
+	need_to_draw = false;
+
 }
 
 
@@ -294,21 +291,14 @@ void CCGWorkView::OnFileLoad()
 		CGSkelProcessIritDataFiles(m_strItdFileName, 1);
 		// Open the file and read it.
 		// Your code here...
-
 		Model tmp_model = model;
 		scene.AddModel(tmp_model);
 		model = Model();
-		need_to_draw = true;
-		
+
 		Invalidate();	// force a WM_PAINT for drawing.
-
-
 	} 
 
 }
-
-
-
 
 
 // VIEW HANDLERS ///////////////////////////////////////////
@@ -479,6 +469,6 @@ void CCGWorkView::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: Add your message handler code here and/or call default
 	CView::OnTimer(nIDEvent);
-	if (nIDEvent == 1)
-		Invalidate();
+	//if (nIDEvent == 1)
+	//	Invalidate();
 }

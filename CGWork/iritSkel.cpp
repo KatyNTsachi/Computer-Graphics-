@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "iritSkel.h"
 Model model;
+
 /*****************************************************************************
 * Skeleton for an interface to a parser to read IRIT data files.			 *
 ******************************************************************************
@@ -122,12 +123,12 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 	IPVertexStruct *PVertex;
 	const IPAttributeStruct *Attrs =
         AttrTraceAttributes(PObj -> Attr, PObj -> Attr);
-	
+
 	if (PObj -> ObjType != IP_OBJ_POLY) {
 		AfxMessageBox(_T("Non polygonal object detected and ignored"));
 		return true;
 	}
-	
+
 	/* You can use IP_IS_POLYGON_OBJ(PObj) and IP_IS_POINTLIST_OBJ(PObj) 
 	   to identify the type of the object*/
 
@@ -137,7 +138,6 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 		tmp_RGB[0] = RGB[0] * 255;
 		tmp_RGB[1] = RGB[1] * 255;
 		tmp_RGB[2] = RGB[2] * 255;
-
 		model.setColor(tmp_RGB);
 	}
 	if (CGSkelGetObjectTransp(PObj, &Transp))
@@ -166,35 +166,30 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 				AfxMessageBox(_T("Dump: Attemp to dump empty polygon"));
 				return false;
 			}
-			
+
 			/* Count number of vertices. */
 			for (PVertex = PPolygon -> PVertex -> Pnext, i = 1;
 				PVertex != PPolygon -> PVertex && PVertex != NULL;
 				PVertex = PVertex -> Pnext, i++);
-			
+
 			Point p1, p2;
 			PVertex = PPolygon->PVertex;
-
-			p1.setX( PVertex->Coord[0] );
-			p1.setY( PVertex->Coord[1] );
-			p1.setZ( PVertex->Coord[2] );
-
-			for (PVertex = PPolygon->PVertex->Pnext ; PVertex != NULL ; PVertex = PVertex->Pnext)
+			p1.setX(PVertex->Coord[0]);
+			p1.setY(PVertex->Coord[1]);
+			p1.setZ(PVertex->Coord[2]);
+			for (PVertex = PPolygon->PVertex->Pnext; PVertex != NULL; PVertex = PVertex->Pnext)
 			{
 				//add line to model
-				p2.setX( PVertex->Coord[0] );
-				p2.setY( PVertex->Coord[1] );
-				p2.setZ( PVertex->Coord[2] );
-
+				p2.setX(PVertex->Coord[0]);
+				p2.setY(PVertex->Coord[1]);
+				p2.setZ(PVertex->Coord[2]);
 				model.addLine(Line(p1, p2));
-
 				//update for next iter
 				p1 = p2;
-				if (PVertex == PPolygon->PVertex )
+				if (PVertex == PPolygon->PVertex)
 					break;
 			}
 
-			
 
 			/* use if(IP_HAS_PLANE_POLY(PPolygon)) to know whether a normal is defined for the polygon
 			   access the normal by the first 3 components of PPolygon->Plane */
@@ -203,7 +198,7 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 				/* code handeling all vertex/normal/texture coords */
 				if(IP_HAS_NORMAL_VRTX(PVertex)) 
 				{
-				    int x;
+				    int x = 0;
 				    ++x;
 				}
 

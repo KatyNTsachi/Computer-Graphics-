@@ -16,6 +16,7 @@
 
 #include "Light.h"
 #include "Scene.h"
+
 class CCGWorkView : public CView
 {
 protected: // create from serialization only
@@ -43,12 +44,12 @@ private:
 	double m_lMaterialDiffuse;		// The Diffuse in the scene
 	double m_lMaterialSpecular;		// The Specular in the scene
 	int m_nMaterialCosineFactor;		// The cosine factor for the specular
+	Scene scene;
+	bool need_to_draw = true;
 
 	LightParams m_lights[MAX_LIGHT];	//configurable lights array
 	LightParams m_ambientLight;		//ambient light (only RGB is used)
 
-	Scene scene;
-	bool need_to_draw = true;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
