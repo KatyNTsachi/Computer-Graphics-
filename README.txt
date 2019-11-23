@@ -7,14 +7,17 @@ TASKS
 		create transformations with pararmeters(not input from the user)
 			a. of objects 
 			b. pf views
-			c. rotate
+			c. rotate        - V
 			d. scale
 				i.  by axis 		
 				ii. uniform
-			c. move
+			c. move          - V 
 		phase 2-------------------------------------------------------------2 hours
 			get input from the user	
 			
+		add another translation matrix to every model
+		add function to scene that move camera/objects
+		
 	=================================================monday===========================================			
 	2. see the normals------------------------------------------------------4 hours indepedent
 		a. calc the normal of every polygons
