@@ -52,6 +52,7 @@ Matrix Transformations::rotation(double _angle, int _axis)
 		std::wstring widestr = std::wstring(s.begin(), s.end());
 		const wchar_t *c = widestr.c_str();
 		AfxMessageBox(c, MB_OK);
+		return Matrix();
 	}
 	return res_matrix;
 }

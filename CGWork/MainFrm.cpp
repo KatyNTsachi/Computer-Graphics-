@@ -6,6 +6,12 @@
 
 #include "MainFrm.h"
 
+#include <sstream>
+#include <iostream>
+#include <string.h>
+
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -112,6 +118,7 @@ void CMainFrame::Dump(CDumpContext& dc) const
 CStatusBar& CMainFrame::getStatusBar() {
 	return m_wndStatusBar;
 }
+
 
 
 

@@ -29,6 +29,7 @@ public:
 
 // Operations
 public:
+	BOOL PreTranslateMessage(MSG * pMsg);
 
 private:
 	int m_nAxis;				// Axis of Action, X Y or Z
@@ -50,8 +51,11 @@ private:
 
 	LightParams m_lights[MAX_LIGHT];	//configurable lights array
 	LightParams m_ambientLight;		//ambient light (only RGB is used)
-	void updateTransformationMatrices(double mouceDraggingDistance);
-	Matrix getTransformationMatrix(double mouceDraggingDistance);
+	void updateTransformationMatrices(double mouseDraggingDistance);
+	Matrix getTransformationMatrix(double mouseDraggingDistance);
+
+	//mouse coordinates
+	int x_mouse_coordinate, y_mouse_coordinate;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -116,6 +120,8 @@ protected:
 	afx_msg void OnLightShadingGouraud();
 	afx_msg void OnUpdateLightShadingGouraud(CCmdUI* pCmdUI);
 	afx_msg void OnLightConstants();
+	
+
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 public:

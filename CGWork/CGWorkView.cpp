@@ -21,9 +21,13 @@ using std::endl;
 static char THIS_FILE[] = __FILE__;
 #endif
 
+
 #include "PngWrapper.h"
 #include "iritSkel.h"
 
+#include <sstream>
+#include <iostream>
+#include <string.h>
 
 // For Status Bar access
 #include "MainFrm.h"
@@ -65,6 +69,7 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_COMMAND(ID_LIGHT_SHADING_GOURAUD, OnLightShadingGouraud)
 	ON_UPDATE_COMMAND_UI(ID_LIGHT_SHADING_GOURAUD, OnUpdateLightShadingGouraud)
 	ON_COMMAND(ID_LIGHT_CONSTANTS, OnLightConstants)
+
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
 END_MESSAGE_MAP()
@@ -474,7 +479,7 @@ void CCGWorkView::updateTransformationMatrices(double mouceDraggingDistance)
 	Matrix transformationMatrix = getTransformationMatrix(mouceDraggingDistance);
 	int space = 1; 
 	int OBJECT_SCPACE = 1;
-	int VIEW_SCPACE = 1;
+	int VIEW_SCPACE = 2;
 	if (space == OBJECT_SCPACE)
 	{
 		scene.updateTransformationMatricesOfAllObjects(transformationMatrix, m_nAction == ID_ACTION_ROTATE);
@@ -485,21 +490,61 @@ void CCGWorkView::updateTransformationMatrices(double mouceDraggingDistance)
 	}
 }
 
-Matrix CCGWorkView::getTransformationMatrix(double mouceDraggingDistance)
+Matrix CCGWorkView::getTransformationMatrix(double mouseDraggingDistance)
 {
+
+
+	std::string  s = "mouse distance:   " + to_string(mouseDraggingDistance) 
+				   + "action rotation?   " + to_string(m_nAction == ID_ACTION_ROTATE)
+				   + "axis x?  " + to_string(m_nAxis == ID_AXIS_X);
+	std::wstring widestr = std::wstring(s.begin(), s.end());
+	const wchar_t *c = widestr.c_str();
+	AfxMessageBox(c, MB_OK);
+
 	Matrix transformationMatrix;
 	if (m_nAction == ID_ACTION_ROTATE) {
-		transformationMatrix = Transformations::rotation(mouceDraggingDistance, m_nAxis);
+		transformationMatrix = Transformations::rotation(mouseDraggingDistance, m_nAxis);
 	}
 	else if (m_nAction == ID_ACTION_TRANSLATE) {
-		transformationMatrix = Transformations::translation(mouceDraggingDistance * (m_nAxis == ID_AXIS_X),
-															mouceDraggingDistance * (m_nAxis == ID_AXIS_Y),
-															mouceDraggingDistance * (m_nAxis == ID_AXIS_Z));
+		transformationMatrix = Transformations::translation(mouseDraggingDistance * (m_nAxis == ID_AXIS_X),
+															mouseDraggingDistance * (m_nAxis == ID_AXIS_Y),
+															mouseDraggingDistance * (m_nAxis == ID_AXIS_Z));
 	}
 	else if (m_nAction == ID_ACTION_SCALE) {
-		transformationMatrix = Transformations::scale(mouceDraggingDistance * (m_nAxis == ID_AXIS_X),
-													  mouceDraggingDistance * (m_nAxis == ID_AXIS_Y),
-													  mouceDraggingDistance * (m_nAxis == ID_AXIS_Z));
+		transformationMatrix = Transformations::scale(mouseDraggingDistance * (m_nAxis == ID_AXIS_X),
+													  mouseDraggingDistance * (m_nAxis == ID_AXIS_Y),
+													  mouseDraggingDistance * (m_nAxis == ID_AXIS_Z));
 	}
 	return transformationMatrix;
+}
+
+BOOL CCGWorkView::PreTranslateMessage(MSG * pMsg)
+{
+	int X = (int)pMsg->wParam;
+	if (pMsg->message == WM_LBUTTONDOWN)
+	{
+		DWORD tempCoords = GetMessagePos();
+
+		x_mouse_coordinate = GET_X_LPARAM(tempCoords);
+		y_mouse_coordinate = GET_Y_LPARAM(tempCoords);
+
+	}
+	else if (pMsg->message == WM_LBUTTONUP)
+	{
+		int x_mouse_coordinate_up, y_mouse_coordinate_up;
+		DWORD tempCoords = GetMessagePos();
+
+		x_mouse_coordinate_up = GET_X_LPARAM(tempCoords);
+		y_mouse_coordinate_up = GET_Y_LPARAM(tempCoords);
+
+		//calc distance
+		//double distance = sqrt( (x_mouse_coordinate - x_mouse_coordinate_up)*(x_mouse_coordinate - x_mouse_coordinate_up) + (y_mouse_coordinate - y_mouse_coordinate_up)*(y_mouse_coordinate - y_mouse_coordinate_up));
+		double distance = x_mouse_coordinate - x_mouse_coordinate_up;
+		
+		
+		getTransformationMatrix(distance);
+		Invalidate();
+		//choose function
+	}
+	return TRUE;
 }
