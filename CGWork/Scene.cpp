@@ -89,7 +89,7 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r) {
 	for (auto tmp_model = model_list.begin(); tmp_model != model_list.end(); tmp_model++) 
 	{
 		Matrix tmp_camera_trans = camera_list[camera_number].getTransformation();
-		Matrix tmp_model_trans = tmp_model->getTransformation();
+		Matrix tmp_model_trans = tmp_model->getTransformationMatrix();
 		Matrix all_trans = tmp_camera_trans * tmp_model_trans * strechToScreenSize(r);
 		
 
@@ -238,23 +238,40 @@ void Scene::DrawLine(CDC* pDC, Line line, COLORREF _color) {
 
 }
 
-Line Scene::tranformLine(Line line, Matrix transformations)
+Line Scene::tranformLine(Line line, Matrix transformationMatrix)
 {
 	Point new_p1, new_p2;
-	new_p1 = tranformPoint(line.getP1(), transformations);
-	new_p2 = tranformPoint(line.getP2(), transformations);
+	new_p1 = tranformPoint(line.getP1(), transformationMatrix);
+	new_p2 = tranformPoint(line.getP2(), transformationMatrix);
 	Line tranformed_line(new_p1, new_p2);
 	   
 	return tranformed_line;
 }
 
-Point Scene::tranformPoint(Point p, Matrix transformations)
+Point Scene::tranformPoint(Point p, Matrix transformationMatrix)
 {
 	Point tranformed_point;
 	//transformations.printMatrix();
-	tranformed_point = transformations.tranformation(p);
+	tranformed_point = transformationMatrix.getTranformation(p);
 
 	return tranformed_point;
 }
 
+void Scene::updateTransformationMatricesOfAllObjects(Matrix transformationMatrix, bool isRotation)
+{
+	for (int i = 0; i < model_list.size(); i++) 
+	{
+		if (isRotation) {
+			model_list[i].rotateBy(transformationMatrix);
+		}
+		else
+		{
+			model_list[i].translateBy(transformationMatrix);
+		}
+	}
+}
 
+void Scene::updateTransformationMatrixOfCamera(Matrix transformationMatrix, bool isRotation)
+{
+
+}

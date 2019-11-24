@@ -15,7 +15,7 @@ public:
 	Matrix operator + (Matrix const &matrix2);
 	Matrix operator - (Matrix const &matrix2);
 	Matrix Transpose();
-	Point tranformation(Point p);
+	Point getTranformation(Point p);
 	void printMatrix();
 
 	Vector columns[NUM_OF_VECTORS];

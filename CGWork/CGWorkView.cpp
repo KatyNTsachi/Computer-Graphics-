@@ -12,6 +12,7 @@ using std::endl;
 #include "MaterialDlg.h"
 #include "LightDialog.h"
 #include "Model.h"
+#include "Transformations.h"
 
 
 #ifdef _DEBUG
@@ -67,7 +68,6 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
 END_MESSAGE_MAP()
-
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
 void auxSolidCone(GLdouble radius, GLdouble height) {
@@ -303,7 +303,7 @@ void CCGWorkView::OnFileLoad()
 
 		Invalidate();	// force a WM_PAINT for drawing.
 	} 
-
+	updateTransformationMatrices(4);
 }
 
 
@@ -335,9 +335,6 @@ void CCGWorkView::OnUpdateViewPerspective(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_nView == ID_VIEW_PERSPECTIVE);
 }
-
-
-
 
 // ACTION HANDLERS ///////////////////////////////////////////
 
@@ -470,4 +467,39 @@ void CCGWorkView::OnTimer(UINT_PTR nIDEvent)
 	CView::OnTimer(nIDEvent);
 	//if (nIDEvent == 1)
 	//	Invalidate();
+}
+
+void CCGWorkView::updateTransformationMatrices(double mouceDraggingDistance)
+{
+	Matrix transformationMatrix = getTransformationMatrix(mouceDraggingDistance);
+	int space = 1; 
+	int OBJECT_SCPACE = 1;
+	int VIEW_SCPACE = 1;
+	if (space == OBJECT_SCPACE)
+	{
+		scene.updateTransformationMatricesOfAllObjects(transformationMatrix, m_nAction == ID_ACTION_ROTATE);
+	}
+	else if (space == VIEW_SCPACE)
+	{
+		scene.updateTransformationMatrixOfCamera(transformationMatrix, m_nAction == ID_ACTION_ROTATE);
+	}
+}
+
+Matrix CCGWorkView::getTransformationMatrix(double mouceDraggingDistance)
+{
+	Matrix transformationMatrix;
+	if (m_nAction == ID_ACTION_ROTATE) {
+		transformationMatrix = Transformations::rotation(mouceDraggingDistance, m_nAxis);
+	}
+	else if (m_nAction == ID_ACTION_TRANSLATE) {
+		transformationMatrix = Transformations::translation(mouceDraggingDistance * (m_nAxis == ID_AXIS_X),
+															mouceDraggingDistance * (m_nAxis == ID_AXIS_Y),
+															mouceDraggingDistance * (m_nAxis == ID_AXIS_Z));
+	}
+	else if (m_nAction == ID_ACTION_SCALE) {
+		transformationMatrix = Transformations::scale(mouceDraggingDistance * (m_nAxis == ID_AXIS_X),
+													  mouceDraggingDistance * (m_nAxis == ID_AXIS_Y),
+													  mouceDraggingDistance * (m_nAxis == ID_AXIS_Z));
+	}
+	return transformationMatrix;
 }

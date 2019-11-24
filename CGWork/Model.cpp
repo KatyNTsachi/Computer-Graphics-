@@ -36,14 +36,24 @@ COLORREF Model::getModelColor()
 	return color;
 }
 
-Matrix Model::getTransformation()
+Matrix Model::getTransformationMatrix()
 {
-	return transformation;
+	return rotationTransformation * affainTransformation;
 }
 
 void Model::addScaleMatrix(Matrix scale_matrix)
 {
-	transformation = transformation * scale_matrix;
-	transformation.printMatrix();
+	rotationTransformation = rotationTransformation * scale_matrix;
+	rotationTransformation.printMatrix();
+}
+
+void Model::rotateBy(Matrix _rotationMatrix)
+{
+	rotationTransformation = rotationTransformation * _rotationMatrix;
+}
+
+void Model::translateBy(Matrix _affainMatrix) 
+{
+	affainTransformation = affainTransformation * _affainMatrix;
 }
 

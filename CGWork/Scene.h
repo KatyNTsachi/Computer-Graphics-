@@ -17,8 +17,10 @@ public:
 	void AddCamera(Camera _camera);
 	void Draw(CDC* pDC, int camera_number, CRect r);
 	Matrix strechToScreenSize( CRect r);
-	Line tranformLine(Line line, Matrix transformations);
-	Point tranformPoint(Point p, Matrix transformations);
+	Line tranformLine(Line line, Matrix transformationMatrix);
+	Point tranformPoint(Point p, Matrix transformationMatrix);
+	void updateTransformationMatricesOfAllObjects(Matrix transformationMatrix, bool isRotation);
+	void updateTransformationMatrixOfCamera(Matrix transformationMatrix, bool isRotation);
 	
 
 private:
@@ -26,4 +28,3 @@ private:
 	std::vector<Camera> camera_list;
 	void DrawLine(CDC* pDC, Line line, COLORREF _color);
 };
-

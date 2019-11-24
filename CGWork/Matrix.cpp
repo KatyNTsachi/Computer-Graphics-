@@ -7,8 +7,6 @@ using namespace std;
 
 
 
-
-
 Matrix::Matrix()
 {
 	columns[0] = Vector( 1, 0, 0, 0 );
@@ -83,7 +81,7 @@ Matrix  Matrix::operator - (Matrix const &matrix2)
 }
 
 
-Point Matrix::tranformation(Point p)
+Point Matrix::getTranformation(Point p)
 {
 	Point new_point;
 	// columns of other.

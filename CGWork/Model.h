@@ -19,12 +19,14 @@ public:
 	void setColor(COLORREF _color);
 	void setColor(int RGB[]);
 	COLORREF getModelColor();
-	Matrix getTransformation();
+	Matrix getTransformationMatrix();
 	void addScaleMatrix(Matrix scale_matrix);
-
+	void rotateBy(Matrix rotationMatrix);
+	void translateBy(Matrix affainMatrix);
 private:
 	std::vector<Poligon> poligon_list;
-	Matrix transformation;
+	Matrix rotationTransformation;
+	Matrix affainTransformation;
 	COLORREF color = RGB(0, 0, 0);
 
 };

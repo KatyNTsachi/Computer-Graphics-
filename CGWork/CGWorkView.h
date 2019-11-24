@@ -34,6 +34,7 @@ private:
 	int m_nAxis;				// Axis of Action, X Y or Z
 	int m_nAction;				// Rotate, Translate, Scale
 	int m_nView;				// Orthographic, perspective
+	int m_nSpace;               // Object or view 
 	bool m_bIsPerspective;			// is the view perspective
 	
 	CString m_strItdFileName;		// file name of IRIT data
@@ -49,7 +50,8 @@ private:
 
 	LightParams m_lights[MAX_LIGHT];	//configurable lights array
 	LightParams m_ambientLight;		//ambient light (only RGB is used)
-
+	void updateTransformationMatrices(double mouceDraggingDistance);
+	Matrix getTransformationMatrix(double mouceDraggingDistance);
 
 // Overrides
 	// ClassWizard generated virtual function overrides
