@@ -44,7 +44,7 @@ Matrix Model::getTransformationMatrix()
 void Model::addScaleMatrix(Matrix scale_matrix)
 {
 	rotationTransformation = rotationTransformation * scale_matrix;
-	rotationTransformation.printMatrix();
+	//rotationTransformation.printMatrix();
 }
 
 void Model::rotateBy(Matrix _rotationMatrix)

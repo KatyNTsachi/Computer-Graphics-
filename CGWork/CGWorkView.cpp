@@ -13,7 +13,7 @@ using std::endl;
 #include "LightDialog.h"
 #include "Model.h"
 #include "Transformations.h"
-
+#include <math.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -56,6 +56,8 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_UPDATE_COMMAND_UI(ID_ACTION_ROTATE, OnUpdateActionRotate)
 	ON_COMMAND(ID_ACTION_SCALE, OnActionScale)
 	ON_UPDATE_COMMAND_UI(ID_ACTION_SCALE, OnUpdateActionScale)
+	ON_COMMAND(ID_ACTION_SCALE_ALL, OnActionScaleAll)
+	ON_UPDATE_COMMAND_UI(ID_ACTION_SCALE_ALL, OnUpdateActionScaleAll)
 	ON_COMMAND(ID_ACTION_TRANSLATE, OnActionTranslate)
 	ON_UPDATE_COMMAND_UI(ID_ACTION_TRANSLATE, OnUpdateActionTranslate)
 	ON_COMMAND(ID_AXIS_X, OnAxisX)
@@ -69,6 +71,12 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_COMMAND(ID_LIGHT_SHADING_GOURAUD, OnLightShadingGouraud)
 	ON_UPDATE_COMMAND_UI(ID_LIGHT_SHADING_GOURAUD, OnUpdateLightShadingGouraud)
 	ON_COMMAND(ID_LIGHT_CONSTANTS, OnLightConstants)
+	ON_COMMAND(ID_ACTION_TRANSITIONS_MODEL, OnModelTranslations)
+	ON_UPDATE_COMMAND_UI(ID_ACTION_TRANSITIONS_MODEL, OnUpdateModelTranslations)
+	ON_COMMAND(ID_ACTION_TRANSITIONS_CAMERA, OnCameraTranslations)
+	ON_UPDATE_COMMAND_UI(ID_ACTION_TRANSITIONS_CAMERA, OnUpdateOnCameraTranslations)
+
+
 
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
@@ -91,6 +99,8 @@ CCGWorkView::CCGWorkView()
 	m_nAxis = ID_AXIS_X;
 	m_nAction = ID_ACTION_ROTATE;
 	m_nView = ID_VIEW_ORTHOGRAPHIC;	
+	m_translations_object = ID_ACTION_TRANSITIONS_MODEL;
+
 	m_bIsPerspective = false;
 
 	m_nLightShading = ID_LIGHT_SHADING_FLAT;
@@ -308,7 +318,6 @@ void CCGWorkView::OnFileLoad()
 
 		Invalidate();	// force a WM_PAINT for drawing.
 	} 
-	updateTransformationMatrices(4);
 }
 
 
@@ -373,7 +382,15 @@ void CCGWorkView::OnUpdateActionScale(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(m_nAction == ID_ACTION_SCALE);
 }
 
+void CCGWorkView::OnActionScaleAll()
+{
+	m_nAction = ID_ACTION_SCALE_ALL;
+}
 
+void CCGWorkView::OnUpdateActionScaleAll(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(m_nAction == ID_ACTION_SCALE_ALL);
+}
 
 
 // AXIS HANDLERS ///////////////////////////////////////////
@@ -477,14 +494,12 @@ void CCGWorkView::OnTimer(UINT_PTR nIDEvent)
 void CCGWorkView::updateTransformationMatrices(double mouceDraggingDistance)
 {
 	Matrix transformationMatrix = getTransformationMatrix(mouceDraggingDistance);
-	int space = 1; 
-	int OBJECT_SCPACE = 1;
-	int VIEW_SCPACE = 2;
-	if (space == OBJECT_SCPACE)
+
+	if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL)
 	{
 		scene.updateTransformationMatricesOfAllObjects(transformationMatrix, m_nAction == ID_ACTION_ROTATE);
 	}
-	else if (space == VIEW_SCPACE)
+	else if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA)
 	{
 		scene.updateTransformationMatrixOfCamera(transformationMatrix, m_nAction == ID_ACTION_ROTATE);
 	}
@@ -493,28 +508,26 @@ void CCGWorkView::updateTransformationMatrices(double mouceDraggingDistance)
 Matrix CCGWorkView::getTransformationMatrix(double mouseDraggingDistance)
 {
 
-
-	std::string  s = "mouse distance:   " + to_string(mouseDraggingDistance) 
-				   + "action rotation?   " + to_string(m_nAction == ID_ACTION_ROTATE)
-				   + "axis x?  " + to_string(m_nAxis == ID_AXIS_X);
-	std::wstring widestr = std::wstring(s.begin(), s.end());
-	const wchar_t *c = widestr.c_str();
-	AfxMessageBox(c, MB_OK);
-
 	Matrix transformationMatrix;
 	if (m_nAction == ID_ACTION_ROTATE) {
-		transformationMatrix = Transformations::rotation(mouseDraggingDistance, m_nAxis);
+		transformationMatrix = Transformations::rotation(M_PI * (mouseDraggingDistance / m_WindowWidth), m_nAxis);
 	}
 	else if (m_nAction == ID_ACTION_TRANSLATE) {
-		transformationMatrix = Transformations::translation(mouseDraggingDistance * (m_nAxis == ID_AXIS_X),
-															mouseDraggingDistance * (m_nAxis == ID_AXIS_Y),
-															mouseDraggingDistance * (m_nAxis == ID_AXIS_Z));
+		transformationMatrix = Transformations::translation((mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_X),
+															(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
+															(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
 	}
 	else if (m_nAction == ID_ACTION_SCALE) {
-		transformationMatrix = Transformations::scale(mouseDraggingDistance * (m_nAxis == ID_AXIS_X),
-													  mouseDraggingDistance * (m_nAxis == ID_AXIS_Y),
-													  mouseDraggingDistance * (m_nAxis == ID_AXIS_Z));
+		transformationMatrix = Transformations::scale(	(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_X),
+														(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
+														(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
 	}
+	else if (m_nAction == ID_ACTION_SCALE_ALL) {
+		transformationMatrix = Transformations::scale(	(mouseDraggingDistance / m_WindowWidth),
+														(mouseDraggingDistance / m_WindowWidth),
+														(mouseDraggingDistance / m_WindowWidth));
+	}
+
 	return transformationMatrix;
 }
 
@@ -539,12 +552,32 @@ BOOL CCGWorkView::PreTranslateMessage(MSG * pMsg)
 
 		//calc distance
 		//double distance = sqrt( (x_mouse_coordinate - x_mouse_coordinate_up)*(x_mouse_coordinate - x_mouse_coordinate_up) + (y_mouse_coordinate - y_mouse_coordinate_up)*(y_mouse_coordinate - y_mouse_coordinate_up));
-		double distance = x_mouse_coordinate - x_mouse_coordinate_up;
+		double distance = x_mouse_coordinate_up - x_mouse_coordinate;
 		
 		
-		getTransformationMatrix(distance);
+		updateTransformationMatrices(distance);
 		Invalidate();
 		//choose function
 	}
 	return TRUE;
+}
+
+void CCGWorkView::OnModelTranslations()
+{
+	m_translations_object = ID_ACTION_TRANSITIONS_MODEL;
+}
+
+void CCGWorkView::OnUpdateModelTranslations(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(m_translations_object == ID_ACTION_TRANSITIONS_MODEL);
+}
+
+void CCGWorkView::OnCameraTranslations()
+{
+	m_translations_object = ID_ACTION_TRANSITIONS_CAMERA;
+}
+
+void CCGWorkView::OnUpdateOnCameraTranslations(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(m_translations_object == ID_ACTION_TRANSITIONS_CAMERA);
 }

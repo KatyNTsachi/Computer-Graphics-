@@ -48,17 +48,23 @@
 #define ID_LIGHT_CONSTANTS              32783
 #define ID_ANIM_PLAY                    32793
 #define ID_ANIM_CLEAR                   32794
+#define ID_ACTION_TRANSITIONS_CAMERA    32794
 #define ID_ANIM_SNAPSHOT                32795
 #define ID_BUTTON_SUBDIVIDE             32797
 #define ID_OPTIONS_PERSPECTIVECONTROL   32798
 #define ID_OPTIONS_MOUSESENSITIVITY     32799
+#define ID_ACTION_TRANSITIONS_MODEL     32801
+#define ID_BUTTON32803                  32803
+#define ID_ACTION_TRANSLATE_ALL         32803
+#define ID_ACTION_SCALE_ALL             32803
+#define ID_BUTTON32804                  32804
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        139
-#define _APS_NEXT_COMMAND_VALUE         32801
+#define _APS_NEXT_COMMAND_VALUE         32805
 #define _APS_NEXT_CONTROL_VALUE         1040
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

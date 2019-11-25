@@ -37,7 +37,8 @@ private:
 	int m_nView;				// Orthographic, perspective
 	int m_nSpace;               // Object or view 
 	bool m_bIsPerspective;			// is the view perspective
-	
+	int m_translations_object;
+
 	CString m_strItdFileName;		// file name of IRIT data
 
 	int m_nLightShading;			// shading: Flat, Gouraud.
@@ -86,6 +87,7 @@ protected:
 	CDC*     m_pDC;			// holds the Device Context
 	int m_WindowWidth;		// hold the windows width
 	int m_WindowHeight;		// hold the windows height
+
 	double m_AspectRatio;		// hold the fixed Aspect Ration
 
 	HBITMAP m_pDbBitMap;
@@ -107,6 +109,8 @@ protected:
 	afx_msg void OnUpdateActionRotate(CCmdUI* pCmdUI);
 	afx_msg void OnActionScale();
 	afx_msg void OnUpdateActionScale(CCmdUI* pCmdUI);
+	afx_msg void OnActionScaleAll();
+	afx_msg void OnUpdateActionScaleAll(CCmdUI* pCmdUI);
 	afx_msg void OnActionTranslate();
 	afx_msg void OnUpdateActionTranslate(CCmdUI* pCmdUI);
 	afx_msg void OnAxisX();
@@ -120,6 +124,11 @@ protected:
 	afx_msg void OnLightShadingGouraud();
 	afx_msg void OnUpdateLightShadingGouraud(CCmdUI* pCmdUI);
 	afx_msg void OnLightConstants();
+	afx_msg void OnModelTranslations();
+	afx_msg void OnUpdateModelTranslations(CCmdUI* pCmdUI);
+	afx_msg void OnCameraTranslations();
+	afx_msg void OnUpdateOnCameraTranslations(CCmdUI* pCmdUI);
+
 	
 
 	//}}AFX_MSG
