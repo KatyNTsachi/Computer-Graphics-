@@ -15,6 +15,7 @@ public:
 	Matrix operator + (Matrix const &matrix2);
 	Matrix operator - (Matrix const &matrix2);
 	Matrix Transpose();
+	Matrix inverse();
 	Point getTranformation(Point p);
 	void printMatrix();
 
