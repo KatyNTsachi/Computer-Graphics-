@@ -100,7 +100,7 @@ void CLightDialog::OnBnClickedRadioLight()
     m_currentLightIdx=GetCheckedRadioButton(IDC_RADIO_LIGHT1,IDC_RADIO_LIGHT8)-IDC_RADIO_LIGHT1;
     //Update all dialog fields according to the new light index
     UpdateData(FALSE);
-    Invalidate();
+	UpdateWindow();
 }
 
 BOOL CLightDialog::OnInitDialog()

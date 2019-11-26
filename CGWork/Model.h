@@ -21,7 +21,7 @@ public:
 	void setColor(int RGB[]);
 	COLORREF getModelColor();
 	Matrix getTransformationMatrix();
-	void addScaleMatrix(Matrix scale_matrix);
+	void scaleBy(Matrix scale_matrix);
 	void rotateBy(Matrix rotationMatrix);
 	void translateBy(Matrix affainMatrix);
 	void setMinMaxValues(double min_x, double max_x, double min_y, double max_y, double min_z, double max_z);

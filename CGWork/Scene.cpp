@@ -96,7 +96,7 @@ void Scene::addModel(Model _model)
 		scale_factor = max_z - min_z;
 
 	scale_factor = scale_factor;
-	_model.addScaleMatrix(Matrix(	Vector(2 / scale_factor, 0, 0, -(max_x / scale_factor + min_x / scale_factor) ),
+	_model.scaleBy(Matrix(	Vector(2 / scale_factor, 0, 0, -(max_x / scale_factor + min_x / scale_factor) ),
 									Vector(0, 2 / scale_factor, 0, -(max_y / scale_factor + min_y / scale_factor) ),
 									Vector(0, 0, 2 / scale_factor, 0),
 									Vector(0, 0, 0, 1)));	
@@ -319,7 +319,16 @@ void Scene::updateTransformationMatricesOfAllObjects(Matrix transformationMatrix
 
 void Scene::updateTransformationMatrixOfCamera(Matrix transformationMatrix, bool isRotation)
 {
-
+	for (int i = 0; i < model_list.size(); i++)
+	{
+		if (isRotation) {
+			camera_list[i].rotateByInversOf(transformationMatrix);
+		}
+		else
+		{
+			camera_list[i].translateByInversOf(transformationMatrix);
+		}
+	}
 }
 
 void Scene::showBoundingBox(bool _show_bounding_box)

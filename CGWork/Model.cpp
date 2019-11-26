@@ -58,7 +58,7 @@ Matrix Model::getTransformationMatrix()
 	return rotationTransformation * affainTransformation;
 }
 
-void Model::addScaleMatrix(Matrix scale_matrix)
+void Model::scaleBy(Matrix scale_matrix)
 {
 	rotationTransformation = rotationTransformation * scale_matrix;
 	//rotationTransformation.printMatrix();

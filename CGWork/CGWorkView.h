@@ -53,7 +53,6 @@ private:
 	LightParams m_lights[MAX_LIGHT];	//configurable lights array
 	LightParams m_ambientLight;		//ambient light (only RGB is used)
 	void updateTransformationMatrices(double mouseDraggingDistance);
-	Matrix getTransformationMatrix(double mouseDraggingDistance);
 
 	//mouse coordinates
 	int x_mouse_coordinate, y_mouse_coordinate;

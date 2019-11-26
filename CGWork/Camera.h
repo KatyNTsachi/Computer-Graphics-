@@ -7,9 +7,12 @@ public:
 	Camera();
 	~Camera();
 	Matrix getTransformation();
+	void scaleByInversOf(Matrix scale_matrix);
+	void rotateByInversOf(Matrix rotationMatrix);
+	void translateByInversOf(Matrix affainMatrix);
 
 private:
-	Matrix tranformation;
-	Matrix projection;
+	Matrix inverseRotationTransformation;
+	Matrix InverseAffainTransformation;
 };
 

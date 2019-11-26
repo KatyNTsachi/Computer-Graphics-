@@ -109,8 +109,3 @@ void Matrix::printMatrix()
 	const wchar_t *c = widestr.c_str();
 	AfxMessageBox(c, MB_OK);
 }
-
-Matrix Matrix::inverse()
-{
-
-}

@@ -497,44 +497,70 @@ void CCGWorkView::OnTimer(UINT_PTR nIDEvent)
 	//if (nIDEvent == 1)
 }
 
-void CCGWorkView::updateTransformationMatrices(double mouceDraggingDistance)
+void CCGWorkView::updateTransformationMatrices(double mouseDraggingDistance)
 {
-	Matrix transformationMatrix = getTransformationMatrix(mouceDraggingDistance);
+	Matrix transformationMatrix;
 
-	if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL)
+	// Rotation
+	if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL && m_nAction == ID_ACTION_ROTATE)
 	{
+		transformationMatrix = Transformations::rotation(M_PI * (mouseDraggingDistance / m_WindowWidth), m_nAxis);
 		scene.updateTransformationMatricesOfAllObjects(transformationMatrix, m_nAction == ID_ACTION_ROTATE);
 	}
-	else if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA)
+	else if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA && m_nAction == ID_ACTION_ROTATE)
 	{
+		transformationMatrix = Transformations::inverseRotation(M_PI * (mouseDraggingDistance / m_WindowWidth), m_nAxis);
 		scene.updateTransformationMatrixOfCamera(transformationMatrix, m_nAction == ID_ACTION_ROTATE);
 	}
-}
-
-Matrix CCGWorkView::getTransformationMatrix(double mouseDraggingDistance)
-{
-
-	Matrix transformationMatrix;
-	if (m_nAction == ID_ACTION_ROTATE) {
-		transformationMatrix = Transformations::rotation(M_PI * (mouseDraggingDistance / m_WindowWidth), m_nAxis);
-	}
-	else if (m_nAction == ID_ACTION_TRANSLATE) {
+	
+	// Translation
+	else if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL && m_nAction == ID_ACTION_TRANSLATE)
+	{
 		transformationMatrix = Transformations::translation((mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_X),
-															(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
-															(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
+			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
+			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
+		scene.updateTransformationMatricesOfAllObjects(transformationMatrix, m_nAction == ID_ACTION_ROTATE);
 	}
-	else if (m_nAction == ID_ACTION_SCALE) {
-		transformationMatrix = Transformations::scale(	(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_X),
-														(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
-														(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
-	}
-	else if (m_nAction == ID_ACTION_SCALE_ALL) {
-		transformationMatrix = Transformations::scale(	(mouseDraggingDistance / m_WindowWidth),
-														(mouseDraggingDistance / m_WindowWidth),
-														(mouseDraggingDistance / m_WindowWidth));
+	else if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA && m_nAction == ID_ACTION_TRANSLATE)
+	{
+		transformationMatrix = Transformations::inverseTranslation((mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_X),
+			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
+			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
+		scene.updateTransformationMatrixOfCamera(transformationMatrix, m_nAction == ID_ACTION_ROTATE);
 	}
 
-	return transformationMatrix;
+	// Scale
+	else if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL && m_nAction == ID_ACTION_SCALE)
+	{
+		transformationMatrix = Transformations::scale((mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_X),
+			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
+			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
+		scene.updateTransformationMatricesOfAllObjects(transformationMatrix, true);
+	}
+	else if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA && m_nAction == ID_ACTION_SCALE)
+	{
+		transformationMatrix = Transformations::inverseScale((mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_X),
+			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
+			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
+		scene.updateTransformationMatrixOfCamera(transformationMatrix, true);
+	}
+
+	// Uniform scale
+	else if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL && m_nAction == ID_ACTION_SCALE_ALL)
+	{
+		transformationMatrix = Transformations::scale((mouseDraggingDistance / m_WindowWidth),
+													  (mouseDraggingDistance / m_WindowWidth),
+													  (mouseDraggingDistance / m_WindowWidth));
+		scene.updateTransformationMatricesOfAllObjects(transformationMatrix, true);
+	}
+	else if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA && m_nAction == ID_ACTION_SCALE_ALL)
+	{
+		transformationMatrix = Transformations::scale((mouseDraggingDistance / m_WindowWidth),
+													  (mouseDraggingDistance / m_WindowWidth),
+													  (mouseDraggingDistance / m_WindowWidth));
+		scene.updateTransformationMatrixOfCamera(transformationMatrix, true);
+	}
+	UpdateWindow();	// force a WM_PAINT for drawing.;
 }
 
 BOOL CCGWorkView::PreTranslateMessage(MSG * pMsg)
