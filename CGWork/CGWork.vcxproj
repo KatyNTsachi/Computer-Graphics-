@@ -207,9 +207,10 @@
     <ClCompile Include="MaterialDlg.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="MouseSensitivity.cpp" />
     <ClCompile Include="PngWrapper.cpp" />
     <ClCompile Include="Point.cpp" />
-    <ClCompile Include="Poligon.cpp" />
+    <ClCompile Include="MyPolygon.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
@@ -242,9 +243,10 @@
     <ClInclude Include="MaterialDlg.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="MouseSensitivity.h" />
     <ClInclude Include="PngWrapper.h" />
     <ClInclude Include="Point.h" />
-    <ClInclude Include="Poligon.h" />
+    <ClInclude Include="MyPolygon.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="StdAfx.h" />

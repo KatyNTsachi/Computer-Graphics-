@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "MyPolygon.h"
 
 Scene::Scene()
 {
@@ -11,12 +12,12 @@ Scene::~Scene()
 void Scene::addModel(Model _model)
 {
 	double MAX_VAL = 1000;
-	double min_x = MAX_VAL, max_x = -MAX_VAL, min_y = MAX_VAL, max_y = -MAX_VAL;
+	double min_x = MAX_VAL, max_x = -MAX_VAL, min_y = MAX_VAL, max_y = -MAX_VAL, min_z = MAX_VAL, max_z = -MAX_VAL;
 
-	vector<Poligon> poligon_list = _model.getModelPoligons();
-	for (auto poligon = poligon_list.begin(); poligon != poligon_list.end(); poligon++)
+	vector<MyPolygon> polygon_list = _model.getModelPolygons();
+	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
 	{
-		vector<Line> line_list = poligon->getLines();
+		vector<Line> line_list = polygon->getLines();
 		for (auto line = line_list.begin(); line != line_list.end(); line++)
 		{
 			if (max_x < line->getP1().getX())
@@ -29,6 +30,12 @@ void Scene::addModel(Model _model)
 			if (min_y > line->getP1().getY())
 				min_y = line->getP1().getY();
 
+			if (max_z < line->getP1().getZ())
+				max_z = line->getP1().getZ();
+			if (min_z > line->getP1().getZ())
+				min_z = line->getP1().getZ();
+
+
 			//p2
 			if (max_x < line->getP2().getX())
 				max_x = line->getP2().getX();
@@ -39,20 +46,60 @@ void Scene::addModel(Model _model)
 				max_y = line->getP2().getY();
 			if (min_y > line->getP2().getY())
 				min_y = line->getP2().getY();
+
+			if (max_z < line->getP2().getZ())
+				max_z = line->getP2().getZ();
+			if (min_z > line->getP2().getZ())
+				min_z = line->getP2().getZ();
+
 		}
 	}
+	_model.setMinMaxValues(min_x, max_x, min_y, max_y, min_z, max_z);
+	
+	MyPolygon tmp_polygon;
+	tmp_polygon.addLine(Line(Point(min_x, min_y, min_z), Point(max_x, min_y, min_z))); tmp_polygon.addLine(Line(Point(max_x, min_y, min_z), Point(max_x, max_y, min_z)));
+	tmp_polygon.addLine(Line(Point(max_x, max_y, min_z), Point(min_x, max_y, min_z))); tmp_polygon.addLine(Line(Point(min_x, max_y, min_z), Point(min_x, min_y, min_z)));
+	_model.addPolygonToBoundingBox(tmp_polygon);
+
+	tmp_polygon = MyPolygon();
+	tmp_polygon.addLine(Line(Point(min_x, min_y, max_z), Point(min_x, max_y, max_z))); tmp_polygon.addLine(Line(Point(min_x, max_y, max_z), Point(max_x, max_y, max_z)));
+	tmp_polygon.addLine(Line(Point(max_x, max_y, max_z), Point(max_x, min_y, max_z))); tmp_polygon.addLine(Line(Point(max_x, min_y, max_z), Point(min_x, min_y, max_z)));
+	_model.addPolygonToBoundingBox(tmp_polygon);
+
+	tmp_polygon = MyPolygon();
+	tmp_polygon.addLine(Line(Point(min_x, min_y, min_z), Point(min_x, max_y, min_z))); tmp_polygon.addLine(Line(Point(min_x, max_y, min_z), Point(min_x, max_y, max_z)));
+	tmp_polygon.addLine(Line(Point(min_x, max_y, max_z), Point(min_x, min_y, max_z))); tmp_polygon.addLine(Line(Point(min_x, min_y, max_z), Point(min_x, min_y, min_z)));
+	_model.addPolygonToBoundingBox(tmp_polygon);
+
+	tmp_polygon = MyPolygon();
+	tmp_polygon.addLine(Line(Point(max_x, min_y, min_z), Point(max_x, max_y, min_z))); tmp_polygon.addLine(Line(Point(max_x, max_y, min_z), Point(max_x, max_y, max_z)));
+	tmp_polygon.addLine(Line(Point(max_x, max_y, max_z), Point(max_x, min_y, max_z))); tmp_polygon.addLine(Line(Point(max_x, min_y, max_z), Point(max_x, min_y, min_z)));
+	_model.addPolygonToBoundingBox(tmp_polygon);
+
+	tmp_polygon = MyPolygon();
+	tmp_polygon.addLine(Line(Point(min_x, min_y, min_z), Point(min_x, min_y, max_z))); tmp_polygon.addLine(Line(Point(min_x, min_y, max_z), Point(max_x, min_y, max_z)));
+	tmp_polygon.addLine(Line(Point(max_x, min_y, max_z), Point(max_x, min_y, min_z))); tmp_polygon.addLine(Line(Point(max_x, min_y, min_z), Point(min_x, min_y, min_z)));
+	_model.addPolygonToBoundingBox(tmp_polygon);
+
+	tmp_polygon = MyPolygon();
+	tmp_polygon.addLine(Line(Point(min_x, max_y, min_z), Point(min_x, max_y, max_z))); tmp_polygon.addLine(Line(Point(min_x, max_y, max_z), Point(max_x, max_y, max_z)));
+	tmp_polygon.addLine(Line(Point(max_x, max_y, max_z), Point(max_x, max_y, min_z))); tmp_polygon.addLine(Line(Point(max_x, max_y, min_z), Point(min_x, max_y, min_z)));
+	_model.addPolygonToBoundingBox(tmp_polygon);
+
 
 	double scale_factor;
-	if (max_x - min_x > max_y - min_y)
+	if (max_x - min_x > max_y - min_y && max_x - min_x > max_z - min_z)
 		scale_factor = max_x - min_x;
-	else
+	else if(max_y - min_y > max_x - min_x && max_y - min_y > max_z - min_z)
 		scale_factor = max_y - min_y;
+	else 
+		scale_factor = max_z - min_z;
 
 	scale_factor = scale_factor;
 	_model.addScaleMatrix(Matrix(	Vector(2 / scale_factor, 0, 0, -(max_x / scale_factor + min_x / scale_factor) ),
 									Vector(0, 2 / scale_factor, 0, -(max_y / scale_factor + min_y / scale_factor) ),
 									Vector(0, 0, 2 / scale_factor, 0),
-									Vector(0, 0, 0, 1)));
+									Vector(0, 0, 0, 1)));	
 
 	model_list.push_back(_model);
 }
@@ -93,10 +140,10 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r) {
 		Matrix all_trans = tmp_camera_trans * tmp_model_trans * strechToScreenSize(r);
 		
 
-		vector<Poligon> poligon_list = tmp_model->getModelPoligons();
-		for (auto poligon = poligon_list.begin(); poligon != poligon_list.end(); poligon++)
+		vector<MyPolygon> polygon_list = tmp_model->getModelPolygons();
+		for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
 		{
-			vector<Line> line_list = poligon->getLines();
+			vector<Line> line_list = polygon->getLines();
 			for (auto line = line_list.begin(); line != line_list.end(); line++)
 			{
 				Line transformed_line = tranformLine(*line, all_trans);
@@ -119,7 +166,6 @@ Matrix Scene::strechToScreenSize( CRect r)
 	
 
 }
-
 
 
 void Scene::DrawLine(CDC* pDC, Line line, COLORREF _color) {
@@ -274,4 +320,12 @@ void Scene::updateTransformationMatricesOfAllObjects(Matrix transformationMatrix
 void Scene::updateTransformationMatrixOfCamera(Matrix transformationMatrix, bool isRotation)
 {
 
+}
+
+void Scene::showBoundingBox(bool _show_bounding_box)
+{
+	for (auto tmp_model = model_list.begin(); tmp_model != model_list.end(); tmp_model++)
+	{
+		tmp_model->paintBoundingBox(_show_bounding_box);
+	}
 }

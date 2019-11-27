@@ -66,10 +66,13 @@
     <ClCompile Include="Point.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Poligon.cpp">
+    <ClCompile Include="Transformations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Transformations.cpp">
+    <ClCompile Include="MouseSensitivity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyPolygon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -205,10 +208,13 @@
     <ClInclude Include="Point.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Poligon.h">
+    <ClInclude Include="Transformations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Transformations.h">
+    <ClInclude Include="MouseSensitivity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyPolygon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

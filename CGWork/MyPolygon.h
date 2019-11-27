@@ -5,12 +5,12 @@
 #include <vector>
 #include "stdafx.h"
 
-class Poligon
+class MyPolygon
 {
 
 public:
-	Poligon();
-	~Poligon();
+	MyPolygon();
+	~MyPolygon();
 	void addLine(Line line);
 	std::vector<Line> getLines();
 

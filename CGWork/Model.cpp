@@ -1,23 +1,40 @@
 #include "Model.h"
 
 
-
 Model::Model()
 {
+	paint_bounding_box = false;
 }
 
 Model::~Model()
 {
 }
 
-std::vector<Poligon> Model::getModelPoligons ()
+std::vector<MyPolygon> Model::getModelPolygons ()
 {
-	return poligon_list;
+	if (paint_bounding_box == false)
+		return polygon_list;
+	else
+	{
+		std::vector<MyPolygon> tmp_polygon;
+		tmp_polygon = polygon_list;
+
+		for(int i = 0; i < bounding_box_polygon_list.size(); i++)
+			tmp_polygon.push_back(bounding_box_polygon_list[i]);
+
+		return tmp_polygon;
+	}
+	
 }
 
-void Model::addPoligon(Poligon _poligon)
+void Model::addPolygon(MyPolygon _polygon)
 {
-	poligon_list.push_back(_poligon);
+	polygon_list.push_back(_polygon);
+}
+
+void Model::addPolygonToBoundingBox(MyPolygon _polygon)
+{
+	bounding_box_polygon_list.push_back(_polygon);
 }
 
 void Model::setColor(COLORREF _color)
@@ -55,5 +72,20 @@ void Model::rotateBy(Matrix _rotationMatrix)
 void Model::translateBy(Matrix _affainMatrix) 
 {
 	affainTransformation = affainTransformation * _affainMatrix;
+}
+
+void Model::setMinMaxValues(double _min_x, double _max_x, double _min_y, double _max_y, double _min_z, double _max_z)
+{
+	min_x = _min_x;
+	max_x = _max_x;
+	min_y = _min_y;
+	max_y = _max_y;
+	min_z = _min_z;
+	max_z = _max_z;
+}
+
+void Model::paintBoundingBox(bool _paint_bounding_box)
+{
+	paint_bounding_box = _paint_bounding_box;
 }
 

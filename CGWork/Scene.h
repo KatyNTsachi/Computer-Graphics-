@@ -21,7 +21,7 @@ public:
 	Point tranformPoint(Point p, Matrix transformationMatrix);
 	void updateTransformationMatricesOfAllObjects(Matrix transformationMatrix, bool isRotation);
 	void updateTransformationMatrixOfCamera(Matrix transformationMatrix, bool isRotation);
-	
+	void showBoundingBox(bool _show_bounding_box);
 
 private:
 	std::vector<Model> model_list;

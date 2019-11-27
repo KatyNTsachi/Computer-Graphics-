@@ -89,9 +89,10 @@ protected:
 	int m_WindowHeight;		// hold the windows height
 
 	double m_AspectRatio;		// hold the fixed Aspect Ration
-
+	double sensitivity_scalar = 1;
 	HBITMAP m_pDbBitMap;
 	CDC* m_pDbDC;
+	int show_bounding_box;
 
 // Generated message map functions
 protected:
@@ -128,8 +129,11 @@ protected:
 	afx_msg void OnUpdateModelTranslations(CCmdUI* pCmdUI);
 	afx_msg void OnCameraTranslations();
 	afx_msg void OnUpdateOnCameraTranslations(CCmdUI* pCmdUI);
+	afx_msg void OnAppMouseSensitivity();
+	afx_msg void OnAppBoundingBox();
+	afx_msg void OnUpdateBoundingBox(CCmdUI* pCmdUI);
 
-	
+
 
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

@@ -63,7 +63,7 @@ BEGIN
     BUTTON      ID_ACTION_SCALE
     BUTTON      ID_ACTION_SCALE_ALL
     SEPARATOR
-    BUTTON      ID_BUTTON32804
+    BUTTON      ID_BOUNDING_BOX
 END
 
 
@@ -102,7 +102,7 @@ BEGIN
     POPUP "&Options"
     BEGIN
         MENUITEM "Perspective Control...",      ID_OPTIONS_PERSPECTIVECONTROL
-        MENUITEM "Mouse Sensitivity...",        ID_OPTIONS_MOUSESENSITIVITY
+        MENUITEM "Mouse Sensitivity...",        IDD_MOUSE_SENSITIVITY
     END
     POPUP "&Light"
     BEGIN
@@ -233,6 +233,16 @@ BEGIN
     GROUPBOX        "Texture Mapping",IDC_STATIC,118,7,182,91
 END
 
+IDD_MOUSE_SENSITIVITY DIALOGEX 0, 0, 249, 60
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,70,34,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,134,35,50,14
+    CONTROL         "",IDC_SENSETIVITY_SCROLL,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,28,17,196,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -303,6 +313,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 131
     END
+
+    IDD_MOUSE_SENSITIVITY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 246
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 53
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -324,6 +342,17 @@ BEGIN
 0x6956, 0x7765, "\000" 
     IDC_LIGHT_SPACE, 0x403, 6, 0
 0x6f4c, 0x6163, 0x006c, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_MOUSE_SENSITIVITY AFX_DIALOG_LAYOUT
+BEGIN
     0
 END
 

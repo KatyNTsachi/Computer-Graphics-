@@ -6,11 +6,11 @@ TASKS
 		phase 1-------------------------------------------------------------2 hours
 			a. of objects 
 			b. pf views
-			c. rotate        - V
+			c. rotate        --------------------------------------------------------------------------V
 			d. scale
 				i.  by axis 		
 				ii. uniform
-			c. move          - V 
+			c. move          --------------------------------------------------------------------------V 
 		phase 2-------------------------------------------------------------2 hours
 			get input from the user	
 			add sensitivity to mouse
@@ -18,10 +18,6 @@ TASKS
 		add another translation matrix to every model
 		add another translation matrix to every camera
 		
-		
-		BUGS -
-			a. get inverse mat
-			b. selection have lag of 1 click. we always see the last click
 	=================================================monday===========================================			
 	2. see the normals------------------------------------------------------4 hours indepedent
 		a. calc the normal of every polygons
@@ -34,8 +30,7 @@ TASKS
 		b. create perspective class 
 	
 	=================================================wendsday=========================================
-	4. add buttom to choose the axis for the translations-------------------1 hours
-	5. draw bounding box to object------------------------------------------2 hours indepedent
+	5. draw bounding box to object------------------------------------------2 hours indepedent---------V
 	6. control the number of polygons that we get from the model------------1 hour indepedent
 	7. change colors (using CColorDialog)-----------------------------------2 hours after normals
 		a. lines 
@@ -43,7 +38,7 @@ TASKS
 		c. bouckground
 		
 BUGS
-	1. min - max also in z--------------------------------------------------15 min  
+	1. min - max also in z--------------------------------------------------15 min----------------------V 
 	2. print all to matrix and then print the whole mat
 	
 QUESTIONS

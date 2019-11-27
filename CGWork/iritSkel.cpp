@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "iritSkel.h"
-#include "Poligon.h"
+#include "MyPolygon.h"
 Model model;
 
 /*****************************************************************************
@@ -183,16 +183,16 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 			p1.setY( PVertex->Coord[1] );
 			p1.setZ( PVertex->Coord[2] );
 
-			Poligon poligon;
+			MyPolygon polygon;
 
 			for (PVertex = PPolygon->PVertex->Pnext ; PVertex != NULL ; PVertex = PVertex->Pnext)
 			{
-				//add line to Poligon
+				//add line to polygon
 				p2.setX( PVertex->Coord[0] );
 				p2.setY( PVertex->Coord[1] );
 				p2.setZ( PVertex->Coord[2] );
 
-				poligon.addLine(Line(p1, p2));
+				polygon.addLine(Line(p1, p2));
 
 				//update for next iter
 				p1 = p2;
@@ -200,7 +200,7 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 					break;
 			}
 
-			model.addPoligon(poligon);
+			model.addPolygon(polygon);
 
 
 

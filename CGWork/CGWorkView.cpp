@@ -14,6 +14,7 @@ using std::endl;
 #include "Model.h"
 #include "Transformations.h"
 #include <math.h>
+#include "MouseSensitivity.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,7 +36,6 @@ static char THIS_FILE[] = __FILE__;
 // Use this macro to display text messages in the status bar.
 #define STATUS_BAR_TEXT(str) (((CMainFrame*)GetParentFrame())->getStatusBar().SetWindowText(str))
 
-
 /////////////////////////////////////////////////////////////////////////////
 // CCGWorkView
 
@@ -47,6 +47,8 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
+
+	//our buttons
 	ON_COMMAND(ID_FILE_LOAD, OnFileLoad)
 	ON_COMMAND(ID_VIEW_ORTHOGRAPHIC, OnViewOrthographic)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_ORTHOGRAPHIC, OnUpdateViewOrthographic)
@@ -75,8 +77,11 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_UPDATE_COMMAND_UI(ID_ACTION_TRANSITIONS_MODEL, OnUpdateModelTranslations)
 	ON_COMMAND(ID_ACTION_TRANSITIONS_CAMERA, OnCameraTranslations)
 	ON_UPDATE_COMMAND_UI(ID_ACTION_TRANSITIONS_CAMERA, OnUpdateOnCameraTranslations)
+	ON_COMMAND(IDD_MOUSE_SENSITIVITY, OnAppMouseSensitivity)
+	ON_COMMAND(ID_BOUNDING_BOX, OnAppBoundingBox)
+	ON_UPDATE_COMMAND_UI(ID_BOUNDING_BOX, OnUpdateBoundingBox)
 
-
+	
 
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
@@ -118,6 +123,8 @@ CCGWorkView::CCGWorkView()
 	//add camera
 	Camera camera;
 	scene.AddCamera(camera);
+	show_bounding_box = false;
+
 }
 
 CCGWorkView::~CCGWorkView()
@@ -316,7 +323,7 @@ void CCGWorkView::OnFileLoad()
 
 		model = Model();
 
-		Invalidate();	// force a WM_PAINT for drawing.
+		RedrawWindow();
 	} 
 }
 
@@ -330,7 +337,7 @@ void CCGWorkView::OnViewOrthographic()
 {
 	m_nView = ID_VIEW_ORTHOGRAPHIC;
 	m_bIsPerspective = false;
-	Invalidate();		// redraw using the new view.
+	RedrawWindow();		// redraw using the new view.
 }
 
 void CCGWorkView::OnUpdateViewOrthographic(CCmdUI* pCmdUI) 
@@ -342,7 +349,7 @@ void CCGWorkView::OnViewPerspective()
 {
 	m_nView = ID_VIEW_PERSPECTIVE;
 	m_bIsPerspective = true;
-	Invalidate();
+	RedrawWindow();
 }
 
 void CCGWorkView::OnUpdateViewPerspective(CCmdUI* pCmdUI) 
@@ -480,7 +487,7 @@ void CCGWorkView::OnLightConstants()
 	    }
 	    m_ambientLight = dlg.GetDialogData(LIGHT_ID_AMBIENT);
 	}	
-	Invalidate();
+	RedrawWindow();
 }
 
 void CCGWorkView::OnTimer(UINT_PTR nIDEvent)
@@ -488,7 +495,6 @@ void CCGWorkView::OnTimer(UINT_PTR nIDEvent)
 	// TODO: Add your message handler code here and/or call default
 	CView::OnTimer(nIDEvent);
 	//if (nIDEvent == 1)
-	//	Invalidate();
 }
 
 void CCGWorkView::updateTransformationMatrices(double mouceDraggingDistance)
@@ -555,8 +561,8 @@ BOOL CCGWorkView::PreTranslateMessage(MSG * pMsg)
 		double distance = x_mouse_coordinate_up - x_mouse_coordinate;
 		
 		
-		updateTransformationMatrices(distance);
-		Invalidate();
+		updateTransformationMatrices(distance * sensitivity_scalar);
+		RedrawWindow();
 		//choose function
 	}
 	return TRUE;
@@ -581,3 +587,25 @@ void CCGWorkView::OnUpdateOnCameraTranslations(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_translations_object == ID_ACTION_TRANSITIONS_CAMERA);
 }
+
+void CCGWorkView::OnAppMouseSensitivity()
+{
+	MouseSensitivity mouse_sensitivity;
+	mouse_sensitivity.DoModal();
+	
+	sensitivity_scalar = mouse_sensitivity.getSensitivityScalar();
+}
+
+void CCGWorkView::OnAppBoundingBox()
+{
+	show_bounding_box = ID_BOUNDING_BOX;
+	scene.showBoundingBox(show_bounding_box = ID_BOUNDING_BOX);
+	RedrawWindow();
+}
+
+void CCGWorkView::OnUpdateBoundingBox(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(show_bounding_box == ID_BOUNDING_BOX);	
+
+}
+
