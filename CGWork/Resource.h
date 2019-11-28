@@ -52,7 +52,7 @@
 #define ID_LIGHT_CONSTANTS              32783
 #define ID_ANIM_PLAY                    32793
 #define ID_ANIM_CLEAR                   32794
-#define ID_ACTION_TRANSITIONS_CAMERA    32794
+#define ID_ACTION_TRANSITIONS_VIEW_SPACE    32794
 #define ID_SCEEN_SPACE_TRANSFORMATIONS  32794
 #define ID_ANIM_SNAPSHOT                32795
 #define ID_BUTTON_SUBDIVIDE             32797

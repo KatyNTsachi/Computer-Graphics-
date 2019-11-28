@@ -20,9 +20,10 @@ public:
 	Matrix strechToScreenSize( CRect r);
 	Line tranformLine(Line line, Matrix transformationMatrix);
 	Point tranformPoint(Point p, Matrix transformationMatrix);
-	void updateTransformationMatricesOfAllObjects(Matrix transformationMatrix, bool isRotation);
+	void updateTransformationObjectSpaceMatricesOfAllObjects(Matrix transformationMatrix);
+	void updateTransformationViewSpaceMatricesOfAllObjects(Matrix transformationMatrix);
 	void updateTransformationMatrixOfCamera(Matrix transformationMatrix, bool isRotation);
-	void showBoundingBox(bool _show_bounding_box);
+	void setSouldShowBoundingBox(bool _show_bounding_box);
 	void setModelColor(COLORREF color);
 	void setBoundingBoxColor(COLORREF color);
 	void setNormalsColor(COLORREF color);
@@ -31,4 +32,5 @@ private:
 	std::vector<Model> model_list;
 	std::vector<Camera> camera_list;
 	void DrawLine(CDC* pDC, Line line, COLORREF _color);
+	bool paint_bounding_box;
 };

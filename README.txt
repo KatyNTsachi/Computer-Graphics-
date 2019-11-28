@@ -5,11 +5,11 @@ TASKS
 	1. transformations
 		phase 1-------------------------------------------------------------2 hours
 			a. of objects 
-			b. pf views
+			b. pf views      --------------------------------------------------------------------------
 			c. rotate        --------------------------------------------------------------------------V
-			d. scale
-				i.  by axis 		
-				ii. uniform
+			d. scale		 --------------------------------------------------------------------------
+				i.  by axis	 --------------------------------------------------------------------------	
+				ii. uniform  --------------------------------------------------------------------------
 			c. move          --------------------------------------------------------------------------V 
 		phase 2-------------------------------------------------------------2 hours
 			get input from the user	
@@ -40,6 +40,7 @@ TASKS
 BUGS
 	1. min - max also in z--------------------------------------------------15 min----------------------V 
 	2. print all to matrix and then print the whole mat
+	3. set color before loading model doesn't work
 	
 QUESTIONS
 	1. how do we need to rotate? do we nned to allow the user to select from the screen?

@@ -3,6 +3,7 @@
 
 Scene::Scene()
 {
+	paint_bounding_box = false;
 }
 
 Scene::~Scene()
@@ -101,7 +102,7 @@ void Scene::addModel(Model _model)
 									Vector(0, 2 / scale_factor, 0, -(max_y / scale_factor + min_y / scale_factor) ),
 									Vector(0, 0, 2 / scale_factor, 0),
 									Vector(0, 0, 0, 1)));	
-
+	_model.setShouldBoundingBox(paint_bounding_box);
 	model_list.push_back(_model);
 }
 
@@ -135,10 +136,13 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r) {
 		Matrix tmp_model_trans = tmp_model->getTransformationMatrix();
 		Matrix all_trans = tmp_camera_trans * tmp_model_trans * strechToScreenSize(r);
 		
-		vector<MyPolygon> bounding_box_polygon_list = tmp_model->getBoundingBoxPolygons();
 		vector<MyPolygon> model_polygon_list = tmp_model->getModelPolygons();
 		drawPoligons(model_polygon_list, tmp_model->getModelColor(), all_trans, pDC);
-		drawPoligons(bounding_box_polygon_list, tmp_model->getBoundingBoxColor(), all_trans, pDC);
+		if (tmp_model->getShouldBoundingBox() )
+		{
+			vector<MyPolygon> bounding_box_polygon_list = tmp_model->getBoundingBoxPolygons();
+			drawPoligons(bounding_box_polygon_list, tmp_model->getBoundingBoxColor(), all_trans, pDC);
+		}
 	}
 }
 
@@ -305,19 +309,21 @@ Point Scene::tranformPoint(Point p, Matrix transformationMatrix)
 	return tranformed_point;
 }
 
-void Scene::updateTransformationMatricesOfAllObjects(Matrix transformationMatrix, bool isRotation)
+void Scene::updateTransformationObjectSpaceMatricesOfAllObjects(Matrix transformationMatrix)
 {
+
 	for (int i = 0; i < model_list.size(); i++) 
-	{
-		if (isRotation) {
-			model_list[i].rotateBy(transformationMatrix);
-		}
-		else
-		{
-			model_list[i].translateBy(transformationMatrix);
-		}
-	}
+		model_list[i].transformInObjectSpace(transformationMatrix);
+
 }
+
+void Scene::updateTransformationViewSpaceMatricesOfAllObjects(Matrix transformationMatrix)
+{
+	for (int i = 0; i < model_list.size(); i++)
+		model_list[i].transformInViewSpace(transformationMatrix);
+
+}
+
 
 void Scene::updateTransformationMatrixOfCamera(Matrix transformationMatrix, bool isRotation)
 {
@@ -357,10 +363,11 @@ void Scene::setNormalsColor(COLORREF color)
 	}
 }
 
-void Scene::showBoundingBox(bool _show_bounding_box)
+void Scene::setSouldShowBoundingBox(bool _show_bounding_box)
 {
+	paint_bounding_box = _show_bounding_box;
 	for (auto tmp_model = model_list.begin(); tmp_model != model_list.end(); tmp_model++)
 	{
-		tmp_model->paintBoundingBox(_show_bounding_box);
+		tmp_model->setShouldBoundingBox(_show_bounding_box);
 	}
 }

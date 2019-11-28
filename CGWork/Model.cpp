@@ -85,14 +85,14 @@ void Model::scaleBy(Matrix scale_matrix)
 	//rotationTransformation.printMatrix();
 }
 
-void Model::rotateBy(Matrix _rotationMatrix)
+void Model::transformInObjectSpace(Matrix _transformationnMatrix)
 {
-	objectSpaceTransformation = objectSpaceTransformation * _rotationMatrix;
+	objectSpaceTransformation = objectSpaceTransformation * _transformationnMatrix;
 }
 
-void Model::translateBy(Matrix _affainMatrix) 
+void Model::transformInViewSpace(Matrix _transformationnMatrix)
 {
-	sceenSpaceTransformation = sceenSpaceTransformation * _affainMatrix;
+	sceenSpaceTransformation = sceenSpaceTransformation * _transformationnMatrix;
 }
 
 void Model::setMinMaxValues(double _min_x, double _max_x, double _min_y, double _max_y, double _min_z, double _max_z)
@@ -105,8 +105,12 @@ void Model::setMinMaxValues(double _min_x, double _max_x, double _min_y, double 
 	max_z = _max_z;
 }
 
-void Model::paintBoundingBox(bool _paint_bounding_box)
+void Model::setShouldBoundingBox(bool _paint_bounding_box)
 {
 	paint_bounding_box = _paint_bounding_box;
 }
 
+bool Model::getShouldBoundingBox()
+{
+	return paint_bounding_box;
+}

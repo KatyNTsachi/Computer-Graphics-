@@ -26,10 +26,11 @@ public:
 	COLORREF getModelColor();
 	Matrix getTransformationMatrix();
 	void scaleBy(Matrix scale_matrix);
-	void rotateBy(Matrix rotationMatrix);
-	void translateBy(Matrix affainMatrix);
+	void transformInObjectSpace(Matrix transformationMatrix);
+	void transformInViewSpace(Matrix _transformationnMatrix);
 	void setMinMaxValues(double min_x, double max_x, double min_y, double max_y, double min_z, double max_z);
-	void paintBoundingBox(bool _print_bounding_box);
+	void setShouldBoundingBox(bool _print_bounding_box);
+	bool getShouldBoundingBox();
 
 private:
 	std::vector<MyPolygon> polygon_list;
