@@ -31,8 +31,9 @@ private:
 	std::vector<MyPolygon> polygon_list;
 	std::vector<MyPolygon> bounding_box_polygon_list;
 
-	Matrix rotationTransformation;
-	Matrix affainTransformation;
+	Matrix objectSpaceTransformation;
+	Matrix sceenSpaceTransformation;
+
 	COLORREF color = RGB(0, 0, 0);
 	double min_x, max_x, min_y, max_y, min_z, max_z;
 	bool paint_bounding_box;

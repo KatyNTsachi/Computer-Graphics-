@@ -548,14 +548,15 @@ void CCGWorkView::updateTransformationMatrices(double mouseDraggingDistance)
 	// Uniform scale
 	else if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL && m_nAction == ID_ACTION_SCALE_ALL)
 	{
-		transformationMatrix = Transformations::scale((mouseDraggingDistance / m_WindowWidth),
-													  (mouseDraggingDistance / m_WindowWidth),
-													  (mouseDraggingDistance / m_WindowWidth));
+		int alpha = 30;
+		transformationMatrix = Transformations::scale((mouseDraggingDistance*alpha / m_WindowWidth),
+													  (mouseDraggingDistance*alpha / m_WindowWidth),
+													  (mouseDraggingDistance*alpha / m_WindowWidth));
 		scene.updateTransformationMatricesOfAllObjects(transformationMatrix, true);
 	}
 	else if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA && m_nAction == ID_ACTION_SCALE_ALL)
 	{
-		transformationMatrix = Transformations::scale((mouseDraggingDistance / m_WindowWidth),
+		transformationMatrix = Transformations::inverseScale((mouseDraggingDistance / m_WindowWidth),
 													  (mouseDraggingDistance / m_WindowWidth),
 													  (mouseDraggingDistance / m_WindowWidth));
 		scene.updateTransformationMatrixOfCamera(transformationMatrix, true);

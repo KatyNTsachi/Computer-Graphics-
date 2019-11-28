@@ -36,7 +36,7 @@ Matrix Transformations::rotation(double _angle, int _axis)
 	{
 		res_matrix = Matrix(Vector(cos(_angle), 0, -sin(_angle), 0),
 							Vector(0          , 1, 0           , 0),
-							Vector(sin(_angle), 0, 1           , cos(_angle)),
+							Vector(sin(_angle), 0, cos(_angle) , 0),
 							Vector(0          , 0, 0           , 1));
 	}
 	else if(_axis == ID_AXIS_Z)//z axis

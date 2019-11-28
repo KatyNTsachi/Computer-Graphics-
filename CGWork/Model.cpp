@@ -55,23 +55,23 @@ COLORREF Model::getModelColor()
 
 Matrix Model::getTransformationMatrix()
 {
-	return rotationTransformation * affainTransformation;
+	return objectSpaceTransformation * sceenSpaceTransformation;
 }
 
 void Model::scaleBy(Matrix scale_matrix)
 {
-	rotationTransformation = rotationTransformation * scale_matrix;
+	objectSpaceTransformation = objectSpaceTransformation * scale_matrix;
 	//rotationTransformation.printMatrix();
 }
 
 void Model::rotateBy(Matrix _rotationMatrix)
 {
-	rotationTransformation = rotationTransformation * _rotationMatrix;
+	objectSpaceTransformation = objectSpaceTransformation * _rotationMatrix;
 }
 
 void Model::translateBy(Matrix _affainMatrix) 
 {
-	affainTransformation = affainTransformation * _affainMatrix;
+	sceenSpaceTransformation = sceenSpaceTransformation * _affainMatrix;
 }
 
 void Model::setMinMaxValues(double _min_x, double _max_x, double _min_y, double _max_y, double _min_z, double _max_z)
