@@ -9,6 +9,7 @@ Scene::~Scene()
 {
 }
 
+/// we are scaling every model we bring in 
 void Scene::addModel(Model _model)
 {
 	double MAX_VAL = 1000;

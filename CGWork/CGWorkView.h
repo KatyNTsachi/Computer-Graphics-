@@ -128,6 +128,8 @@ protected:
 	afx_msg void OnUpdateModelTranslations(CCmdUI* pCmdUI);
 	afx_msg void OnCameraTranslations();
 	afx_msg void OnUpdateOnCameraTranslations(CCmdUI* pCmdUI);
+	afx_msg void OnScreenSpaceTranslations();
+	afx_msg void OnUpdateOnScreenSpaceTranslations(CCmdUI* pCmdUI);
 	afx_msg void OnAppMouseSensitivity();
 	afx_msg void OnAppBoundingBox();
 	afx_msg void OnUpdateBoundingBox(CCmdUI* pCmdUI);

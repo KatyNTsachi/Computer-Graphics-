@@ -77,6 +77,8 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_UPDATE_COMMAND_UI(ID_ACTION_TRANSITIONS_MODEL, OnUpdateModelTranslations)
 	ON_COMMAND(ID_ACTION_TRANSITIONS_CAMERA, OnCameraTranslations)
 	ON_UPDATE_COMMAND_UI(ID_ACTION_TRANSITIONS_CAMERA, OnUpdateOnCameraTranslations)
+	ON_COMMAND(ID_ACTION_TRANSITIONS_CAMERA, OnScreenSpaceTranslations)
+	ON_UPDATE_COMMAND_UI(ID_ACTION_TRANSITIONS_CAMERA, OnUpdateOnScreenSpaceTranslations)
 	ON_COMMAND(IDD_MOUSE_SENSITIVITY, OnAppMouseSensitivity)
 	ON_COMMAND(ID_BOUNDING_BOX, OnAppBoundingBox)
 	ON_UPDATE_COMMAND_UI(ID_BOUNDING_BOX, OnUpdateBoundingBox)
@@ -507,43 +509,48 @@ void CCGWorkView::updateTransformationMatrices(double mouseDraggingDistance)
 		transformationMatrix = Transformations::rotation(M_PI * (mouseDraggingDistance / m_WindowWidth), m_nAxis);
 		scene.updateTransformationMatricesOfAllObjects(transformationMatrix, m_nAction == ID_ACTION_ROTATE);
 	}
-	else if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA && m_nAction == ID_ACTION_ROTATE)
+	if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA && m_nAction == ID_ACTION_ROTATE)
+	{
+		transformationMatrix = Transformations::rotation(M_PI * (mouseDraggingDistance / m_WindowWidth), m_nAxis);
+		scene.updateTransformationMatricesOfAllObjects(transformationMatrix, false);
+	}
+	/*else if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA && m_nAction == ID_ACTION_ROTATE)
 	{
 		transformationMatrix = Transformations::inverseRotation(M_PI * (mouseDraggingDistance / m_WindowWidth), m_nAxis);
 		scene.updateTransformationMatrixOfCamera(transformationMatrix, m_nAction == ID_ACTION_ROTATE);
-	}
+	}*/
 	
 	// Translation
-	else if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL && m_nAction == ID_ACTION_TRANSLATE)
+	else if (m_nAction == ID_ACTION_TRANSLATE)
 	{
 		transformationMatrix = Transformations::translation((mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_X),
 			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
 			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
 		scene.updateTransformationMatricesOfAllObjects(transformationMatrix, m_nAction == ID_ACTION_ROTATE);
 	}
-	else if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA && m_nAction == ID_ACTION_TRANSLATE)
+	/*else if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA && m_nAction == ID_ACTION_TRANSLATE)
 	{
 		transformationMatrix = Transformations::inverseTranslation((mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_X),
 			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
 			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
 		scene.updateTransformationMatrixOfCamera(transformationMatrix, m_nAction == ID_ACTION_ROTATE);
-	}
+	}*/
 
 	// Scale
-	else if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL && m_nAction == ID_ACTION_SCALE)
+	else if (m_nAction == ID_ACTION_SCALE)
 	{
 		transformationMatrix = Transformations::scale((mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_X),
 			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
 			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
 		scene.updateTransformationMatricesOfAllObjects(transformationMatrix, true);
 	}
-	else if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA && m_nAction == ID_ACTION_SCALE)
+	/*else if (m_translations_object == ID_ACTION_TRANSITIONS_CAMERA && m_nAction == ID_ACTION_SCALE)
 	{
 		transformationMatrix = Transformations::inverseScale((mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_X),
 			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
 			(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
 		scene.updateTransformationMatrixOfCamera(transformationMatrix, true);
-	}
+	}*/
 
 	// Uniform scale
 	else if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL && m_nAction == ID_ACTION_SCALE_ALL)
@@ -629,6 +636,7 @@ void CCGWorkView::OnAppBoundingBox()
 	scene.showBoundingBox(show_bounding_box = ID_BOUNDING_BOX);
 	RedrawWindow();
 }
+
 
 void CCGWorkView::OnUpdateBoundingBox(CCmdUI* pCmdUI)
 {
