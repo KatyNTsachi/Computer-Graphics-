@@ -77,16 +77,16 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_UPDATE_COMMAND_UI(ID_ACTION_TRANSITIONS_MODEL, OnUpdateModelTranslations)
 	ON_COMMAND(ID_ACTION_TRANSITIONS_CAMERA, OnCameraTranslations)
 	ON_UPDATE_COMMAND_UI(ID_ACTION_TRANSITIONS_CAMERA, OnUpdateOnCameraTranslations)
-	ON_COMMAND(ID_ACTION_TRANSITIONS_CAMERA, OnScreenSpaceTranslations)
-	ON_UPDATE_COMMAND_UI(ID_ACTION_TRANSITIONS_CAMERA, OnUpdateOnScreenSpaceTranslations)
 	ON_COMMAND(IDD_MOUSE_SENSITIVITY, OnAppMouseSensitivity)
 	ON_COMMAND(ID_BOUNDING_BOX, OnAppBoundingBox)
 	ON_UPDATE_COMMAND_UI(ID_BOUNDING_BOX, OnUpdateBoundingBox)
-
+	ON_COMMAND(ID_COLOR_MODELCOLOR, &CCGWorkView::OnModelColerPicker)
 	
 
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
+	ON_COMMAND(ID_COLOR_BOUNDINGBOXCOLOR, &CCGWorkView::OnColorBoundingboxcolor)
+	ON_COMMAND(ID_COLOR_NORMALSCOLOR, &CCGWorkView::OnColorNormalscolor)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -210,6 +210,13 @@ BOOL CCGWorkView::InitializeCGWork()
 /////////////////////////////////////////////////////////////////////////////
 // CCGWorkView message handlers
 
+void CCGWorkView::OnModelColerPicker() {
+	CColorDialog colorDialog;
+	if (colorDialog.DoModal() == IDOK) {
+		scene.setModelColor(colorDialog.GetColor());
+		RedrawWindow();
+	}
+}
 
 void CCGWorkView::OnSize(UINT nType, int cx, int cy) 
 {
@@ -644,3 +651,23 @@ void CCGWorkView::OnUpdateBoundingBox(CCmdUI* pCmdUI)
 
 }
 
+
+
+void CCGWorkView::OnColorBoundingboxcolor()
+{
+	CColorDialog colorDialog;
+	if (colorDialog.DoModal() == IDOK) {
+		scene.setBoundingBoxColor(colorDialog.GetColor());
+		RedrawWindow();
+	}
+}
+
+
+void CCGWorkView::OnColorNormalscolor()
+{
+	CColorDialog colorDialog;
+	if (colorDialog.DoModal() == IDOK) {
+		scene.setNormalsColor(colorDialog.GetColor());
+		RedrawWindow();
+	}
+}

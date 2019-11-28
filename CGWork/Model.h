@@ -15,10 +15,14 @@ public:
 	Model();
 	~Model();
 	std::vector<MyPolygon> getModelPolygons();
+	std::vector<MyPolygon> getBoundingBoxPolygons();
 	void addPolygon(MyPolygon polygon);
 	void addPolygonToBoundingBox(MyPolygon _polygon);
 	void setColor(COLORREF _color);
 	void setColor(int RGB[]);
+	void setBoundingBoxColor(COLORREF _color);
+	void setNormalsColor(COLORREF _color);
+	COLORREF getBoundingBoxColor();
 	COLORREF getModelColor();
 	Matrix getTransformationMatrix();
 	void scaleBy(Matrix scale_matrix);
@@ -35,8 +39,9 @@ private:
 	Matrix sceenSpaceTransformation;
 
 	COLORREF color = RGB(0, 0, 0);
+	COLORREF boundingBoxColor = RGB(1, 0, 0);
+	COLORREF normalsColor = RGB(0, 1, 0);
 	double min_x, max_x, min_y, max_y, min_z, max_z;
 	bool paint_bounding_box;
-
 };
 

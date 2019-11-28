@@ -12,6 +12,7 @@ Model::~Model()
 
 std::vector<MyPolygon> Model::getModelPolygons ()
 {
+	/*
 	if (paint_bounding_box == false)
 		return polygon_list;
 	else
@@ -24,7 +25,12 @@ std::vector<MyPolygon> Model::getModelPolygons ()
 
 		return tmp_polygon;
 	}
-	
+	*/
+	return polygon_list;
+}
+
+std::vector<MyPolygon> Model::getBoundingBoxPolygons() {
+	return bounding_box_polygon_list;
 }
 
 void Model::addPolygon(MyPolygon _polygon)
@@ -48,9 +54,24 @@ void Model::setColor(int _RGB[])
 	color = RGB(_RGB[0], _RGB[1], _RGB[2]);
 }
 
+void Model::setBoundingBoxColor(COLORREF _color)
+{
+	boundingBoxColor = _color;
+}
+
+void Model::setNormalsColor(COLORREF _color)
+{
+	normalsColor = _color;
+}
+
 COLORREF Model::getModelColor() 
 {
 	return color;
+}
+
+COLORREF Model::getBoundingBoxColor()
+{
+	return boundingBoxColor;
 }
 
 Matrix Model::getTransformationMatrix()

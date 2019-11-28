@@ -8,6 +8,7 @@
 #define IDD_LIGHTS_DLG                  134
 #define IDD_MATERIAL_DLG                136
 #define IDD_MOUSE_SENSITIVITY           139
+#define IDD_DIALOG1                     149
 #define IDC_LIGHT_SPACE                 1010
 #define IDC_RADIO_LIGHT1                1017
 #define IDC_RADIO_LIGHT2                1018
@@ -61,13 +62,18 @@
 #define ID_ACTION_SCALE_ALL             32803
 #define ID_BUTTON32804                  32804
 #define ID_BOUNDING_BOX                 32804
+#define ID_OPTIONS_VVVVVVVVVVVVVVVVVV   32805
+#define ID_OPTIONS_BOUNDINGBOXCOLOR     32806
+#define ID_COLOR_MODELCOLOR             32807
+#define ID_COLOR_BOUNDINGBOXCOLOR       32808
+#define ID_COLOR_NORMALSCOLOR           32809
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        149
-#define _APS_NEXT_COMMAND_VALUE         32805
+#define _APS_NEXT_RESOURCE_VALUE        151
+#define _APS_NEXT_COMMAND_VALUE         32810
 #define _APS_NEXT_CONTROL_VALUE         1046
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

@@ -125,14 +125,9 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r) {
 	std::vector<Line> model_lines;
 	Matrix tmp;
 
-
 	Point p1;
 	Point p2;
 	Line tmpl(p1, p2);
-
-
-	COLORREF color = (255, 0, 0);
-	
 
 	for (auto tmp_model = model_list.begin(); tmp_model != model_list.end(); tmp_model++) 
 	{
@@ -140,17 +135,23 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r) {
 		Matrix tmp_model_trans = tmp_model->getTransformationMatrix();
 		Matrix all_trans = tmp_camera_trans * tmp_model_trans * strechToScreenSize(r);
 		
+		vector<MyPolygon> bounding_box_polygon_list = tmp_model->getBoundingBoxPolygons();
+		vector<MyPolygon> model_polygon_list = tmp_model->getModelPolygons();
+		drawPoligons(model_polygon_list, tmp_model->getModelColor(), all_trans, pDC);
+		drawPoligons(bounding_box_polygon_list, tmp_model->getBoundingBoxColor(), all_trans, pDC);
+	}
+}
 
-		vector<MyPolygon> polygon_list = tmp_model->getModelPolygons();
-		for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
+void Scene::drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix transformation, CDC* pDC)
+{
+	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
+	{
+		vector<Line> line_list = polygon->getLines();
+		for (auto line = line_list.begin(); line != line_list.end(); line++)
 		{
-			vector<Line> line_list = polygon->getLines();
-			for (auto line = line_list.begin(); line != line_list.end(); line++)
-			{
-				Line transformed_line = tranformLine(*line, all_trans);
+			Line transformed_line = tranformLine(*line, transformation);
 
-				this->DrawLine(pDC, transformed_line, color);
-			}
+			this->DrawLine(pDC, transformed_line, color);
 		}
 	}
 }
@@ -329,6 +330,30 @@ void Scene::updateTransformationMatrixOfCamera(Matrix transformationMatrix, bool
 		{
 			camera_list[i].translateByInversOf(transformationMatrix);
 		}
+	}
+}
+
+void Scene::setModelColor(COLORREF color) 
+{
+	for (int i = 0; i < model_list.size(); i++)
+	{
+		model_list[i].setColor(color);
+	}
+}
+
+void Scene::setBoundingBoxColor(COLORREF color)
+{
+	for (int i = 0; i < model_list.size(); i++)
+	{
+		model_list[i].setBoundingBoxColor(color);
+	}
+}
+
+void Scene::setNormalsColor(COLORREF color)
+{
+	for (int i = 0; i < model_list.size(); i++)
+	{
+		model_list[i].setNormalsColor(color);
 	}
 }
 

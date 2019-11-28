@@ -52,7 +52,7 @@ BEGIN
     BUTTON      ID_VIEW_PERSPECTIVE
     SEPARATOR
     BUTTON      ID_ACTION_TRANSITIONS_MODEL
-    BUTTON      ID_SCEEN_SPACE_TRANSFORMATIONS
+    BUTTON      ID_ACTION_TRANSITIONS_CAMERA
     SEPARATOR
     BUTTON      ID_AXIS_X
     BUTTON      ID_AXIS_Y
@@ -103,6 +103,12 @@ BEGIN
     BEGIN
         MENUITEM "Perspective Control...",      ID_OPTIONS_PERSPECTIVECONTROL
         MENUITEM "Mouse Sensitivity...",        IDD_MOUSE_SENSITIVITY
+        POPUP "Color ...                                                                                                                                        "
+        BEGIN
+            MENUITEM "Model Color...",              ID_COLOR_MODELCOLOR
+            MENUITEM "Bounding Box Color...",       ID_COLOR_BOUNDINGBOXCOLOR
+            MENUITEM "Normals Color...",            ID_COLOR_NORMALSCOLOR
+        END
     END
     POPUP "&Light"
     BEGIN
@@ -243,6 +249,15 @@ BEGIN
     CONTROL         "",IDC_SENSETIVITY_SCROLL,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,28,17,196,14
 END
 
+IDD_DIALOG1 DIALOGEX 0, 0, 309, 176
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,198,155,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,252,155,50,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -321,6 +336,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 53
     END
+
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -352,6 +375,11 @@ END
 //
 
 IDD_MOUSE_SENSITIVITY AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG1 AFX_DIALOG_LAYOUT
 BEGIN
     0
 END

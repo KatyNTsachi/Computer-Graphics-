@@ -128,11 +128,11 @@ protected:
 	afx_msg void OnUpdateModelTranslations(CCmdUI* pCmdUI);
 	afx_msg void OnCameraTranslations();
 	afx_msg void OnUpdateOnCameraTranslations(CCmdUI* pCmdUI);
-	afx_msg void OnScreenSpaceTranslations();
-	afx_msg void OnUpdateOnScreenSpaceTranslations(CCmdUI* pCmdUI);
 	afx_msg void OnAppMouseSensitivity();
 	afx_msg void OnAppBoundingBox();
 	afx_msg void OnUpdateBoundingBox(CCmdUI* pCmdUI);
+	afx_msg void OnModelColerPicker();
+
 
 
 
@@ -140,6 +140,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnColorBoundingboxcolor();
+	afx_msg void OnColorNormalscolor();
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp
