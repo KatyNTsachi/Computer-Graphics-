@@ -33,4 +33,8 @@ private:
 	std::vector<Camera> camera_list;
 	void DrawLine(CDC* pDC, Line line, COLORREF _color);
 	bool paint_bounding_box;
+	COLORREF modelsColor;
+	bool isModelColorSet = false;
+	COLORREF boundingBoxColor = RGB(1, 0, 0);
+	COLORREF normalsColor = RGB(0, 1, 0);
 };

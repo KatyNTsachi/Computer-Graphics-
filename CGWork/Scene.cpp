@@ -15,6 +15,17 @@ void Scene::addModel(Model _model)
 {
 	double MAX_VAL = 1000;
 	double min_x = MAX_VAL, max_x = -MAX_VAL, min_y = MAX_VAL, max_y = -MAX_VAL, min_z = MAX_VAL, max_z = -MAX_VAL;
+	
+	if (!isModelColorSet)
+	{
+		modelsColor = _model.getModelColor();
+	}
+	else
+	{
+		_model.setColor(modelsColor);
+	}
+	_model.setBoundingBoxColor(boundingBoxColor);
+	_model.setNormalsColor(normalsColor);
 
 	vector<MyPolygon> polygon_list = _model.getModelPolygons();
 	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
@@ -341,6 +352,8 @@ void Scene::updateTransformationMatrixOfCamera(Matrix transformationMatrix, bool
 
 void Scene::setModelColor(COLORREF color) 
 {
+	modelsColor = color;
+	isModelColorSet = true;
 	for (int i = 0; i < model_list.size(); i++)
 	{
 		model_list[i].setColor(color);
@@ -349,6 +362,7 @@ void Scene::setModelColor(COLORREF color)
 
 void Scene::setBoundingBoxColor(COLORREF color)
 {
+	boundingBoxColor = color;
 	for (int i = 0; i < model_list.size(); i++)
 	{
 		model_list[i].setBoundingBoxColor(color);
@@ -357,6 +371,7 @@ void Scene::setBoundingBoxColor(COLORREF color)
 
 void Scene::setNormalsColor(COLORREF color)
 {
+	normalsColor = color;
 	for (int i = 0; i < model_list.size(); i++)
 	{
 		model_list[i].setNormalsColor(color);
