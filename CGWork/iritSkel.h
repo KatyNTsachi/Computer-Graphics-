@@ -27,5 +27,6 @@ const char *CGSkelGetObjectPTexture(IPObjectStruct *PObj);
 int CGSkelGetObjectTransp(IPObjectStruct *PObj, double *Transp);
 
 bool CGSkelStoreData(IPObjectStruct *PObj);
+Vector calculatorPlaneNormal(IPPolygonStruct* PPolygon);
 
 #endif // IRIT_SKEL_H

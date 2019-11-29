@@ -29,12 +29,20 @@ public:
 	void transformInObjectSpace(Matrix transformationMatrix);
 	void transformInViewSpace(Matrix _transformationnMatrix);
 	void setMinMaxValues(double min_x, double max_x, double min_y, double max_y, double min_z, double max_z);
+	void getMinMaxValues(double &_min_x, double &_max_x, double &_min_y, double &_max_y, double &_min_z, double &_max_z);
 	void setShouldBoundingBox(bool _print_bounding_box);
 	bool getShouldBoundingBox();
+	void addNormals();
+	std::vector<Line> getPoligonNormalList();
+	std::vector<Line> getVertexNormalList();
+	COLORREF getNormalsColor();
 
 private:
 	std::vector<MyPolygon> polygon_list;
 	std::vector<MyPolygon> bounding_box_polygon_list;
+	std::vector<Line> polygon_normal_list;
+	std::vector<Line> vertex_normal_list;
+
 
 	Matrix objectSpaceTransformation;
 	Matrix sceenSpaceTransformation;

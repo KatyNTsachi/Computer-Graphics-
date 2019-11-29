@@ -10,22 +10,10 @@ Scene::~Scene()
 {
 }
 
-/// we are scaling every model we bring in 
-void Scene::addModel(Model _model)
+void Scene::calcModelMinMax(Model &_model)
 {
 	double MAX_VAL = 1000;
 	double min_x = MAX_VAL, max_x = -MAX_VAL, min_y = MAX_VAL, max_y = -MAX_VAL, min_z = MAX_VAL, max_z = -MAX_VAL;
-	
-	if (!isModelColorSet)
-	{
-		modelsColor = _model.getModelColor();
-	}
-	else
-	{
-		_model.setColor(modelsColor);
-	}
-	_model.setBoundingBoxColor(boundingBoxColor);
-	_model.setNormalsColor(normalsColor);
 
 	vector<MyPolygon> polygon_list = _model.getModelPolygons();
 	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
@@ -68,7 +56,14 @@ void Scene::addModel(Model _model)
 		}
 	}
 	_model.setMinMaxValues(min_x, max_x, min_y, max_y, min_z, max_z);
-	
+
+}
+
+void Scene::addBoundingBox(Model &_model)
+{
+	double min_x, min_y, min_z, max_x, max_y, max_z;
+	_model.getMinMaxValues(min_x, min_y, min_z, max_x, max_y, max_z);
+
 	MyPolygon tmp_polygon;
 	tmp_polygon.addLine(Line(Point(min_x, min_y, min_z), Point(max_x, min_y, min_z))); tmp_polygon.addLine(Line(Point(max_x, min_y, min_z), Point(max_x, max_y, min_z)));
 	tmp_polygon.addLine(Line(Point(max_x, max_y, min_z), Point(min_x, max_y, min_z))); tmp_polygon.addLine(Line(Point(min_x, max_y, min_z), Point(min_x, min_y, min_z)));
@@ -98,22 +93,56 @@ void Scene::addModel(Model _model)
 	tmp_polygon.addLine(Line(Point(min_x, max_y, min_z), Point(min_x, max_y, max_z))); tmp_polygon.addLine(Line(Point(min_x, max_y, max_z), Point(max_x, max_y, max_z)));
 	tmp_polygon.addLine(Line(Point(max_x, max_y, max_z), Point(max_x, max_y, min_z))); tmp_polygon.addLine(Line(Point(max_x, max_y, min_z), Point(min_x, max_y, min_z)));
 	_model.addPolygonToBoundingBox(tmp_polygon);
+}
 
+void Scene::normalizeTheModel(Model &_model)
+{
+	double min_x, min_y, min_z, max_x, max_y, max_z;
+	_model.getMinMaxValues(min_x, min_y, min_z, max_x, max_y, max_z);
 
 	double scale_factor;
 	if (max_x - min_x > max_y - min_y && max_x - min_x > max_z - min_z)
 		scale_factor = max_x - min_x;
-	else if(max_y - min_y > max_x - min_x && max_y - min_y > max_z - min_z)
+	else if (max_y - min_y > max_x - min_x && max_y - min_y > max_z - min_z)
 		scale_factor = max_y - min_y;
-	else 
+	else
 		scale_factor = max_z - min_z;
 
 	scale_factor = scale_factor;
-	_model.scaleBy(Matrix(	Vector(2 / scale_factor, 0, 0, -(max_x / scale_factor + min_x / scale_factor) ),
-									Vector(0, 2 / scale_factor, 0, -(max_y / scale_factor + min_y / scale_factor) ),
-									Vector(0, 0, 2 / scale_factor, 0),
-									Vector(0, 0, 0, 1)));	
+	_model.scaleBy(Matrix(Vector(2 / scale_factor, 0, 0, -(max_x / scale_factor + min_x / scale_factor)),
+		Vector(0, 2 / scale_factor, 0, -(max_y / scale_factor + min_y / scale_factor)),
+		Vector(0, 0, 2 / scale_factor, 0),
+		Vector(0, 0, 0, 1)));
+}
+
+void Scene::setModelColor(Model &_model)
+{
+	if (!isModelColorSet)
+		modelsColor = _model.getModelColor();
+
+	else
+		_model.setColor(modelsColor);
+
+	_model.setBoundingBoxColor(boundingBoxColor);
+	_model.setNormalsColor(normalsColor);
+}
+
+/// we are scaling every model we bring in 
+void Scene::addModel(Model _model)
+{
+
+	setModelColor(_model);
+
+	calcModelMinMax(_model);
+	
+	normalizeTheModel(_model);
+	
+	addBoundingBox(_model);
+
 	_model.setShouldBoundingBox(paint_bounding_box);
+
+	_model.addNormals();
+
 	model_list.push_back(_model);
 }
 
@@ -154,6 +183,18 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r) {
 			vector<MyPolygon> bounding_box_polygon_list = tmp_model->getBoundingBoxPolygons();
 			drawPoligons(bounding_box_polygon_list, tmp_model->getBoundingBoxColor(), all_trans, pDC);
 		}
+		
+		drawLines(pDC, tmp_model->getPoligonNormalList(), tmp_model->getNormalsColor(), all_trans);
+		drawLines(pDC, tmp_model->getVertexNormalList(), tmp_model->getNormalsColor(), all_trans);
+	}
+	//pDC->GetCurrentBitmap()->SetBitmapBits(view_width * view_height * 4, viewMatrix);
+}
+void Scene::drawLines(CDC* pDC, vector<Line> lines, COLORREF _color, Matrix _transformation)
+{
+	for (auto line = lines.begin(); line != lines.end(); line++)
+	{
+		Line transformed_line = tranformLine(*line, _transformation);
+		drawLine(pDC, transformed_line, _color);
 	}
 }
 
@@ -166,7 +207,7 @@ void Scene::drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix 
 		{
 			Line transformed_line = tranformLine(*line, transformation);
 
-			this->DrawLine(pDC, transformed_line, color);
+			this->drawLine(pDC, transformed_line, color);
 		}
 	}
 }
@@ -185,7 +226,7 @@ Matrix Scene::strechToScreenSize( CRect r)
 }
 
 
-void Scene::DrawLine(CDC* pDC, Line line, COLORREF _color) {
+void Scene::drawLine(CDC* pDC, Line line, COLORREF _color) {
 	
 	COLORREF color = _color;
 	Point p1 = line.getP1();

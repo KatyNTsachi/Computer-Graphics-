@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "iritSkel.h"
 #include "MyPolygon.h"
+#include <iostream> 
+#include <unordered_map>
 Model model;
 
 /*****************************************************************************
@@ -106,6 +108,18 @@ void CGSkelDumpOneTraversedObject(IPObjectStruct *PObj,
 
 }
 
+struct KeyHasher
+{
+	std::size_t operator()(const Point& k) const
+	{
+		using std::size_t;
+		using std::hash;
+		using std::string;
+		double tmp = k.getX() + k.getY() + k.getZ();
+		return std::hash<double>() (tmp);
+	}
+};
+
 /*****************************************************************************
 * DESCRIPTION:                                                               *
 *   Prints the data from given geometry object.								 *
@@ -124,6 +138,9 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 	double RGB[3], Transp;
 	IPPolygonStruct *PPolygon;
 	IPVertexStruct *PVertex;
+	IPVertexStruct *PVertex1;
+	IPVertexStruct *PVertex2;
+
 	const IPAttributeStruct *Attrs =
         AttrTraceAttributes(PObj -> Attr, PObj -> Attr);
 
@@ -164,6 +181,10 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 		}
 	}
 
+
+	//////////////////////////////////////////////////////// create hash table//////////////////////////////////////////////////////////////////////
+	unordered_map<Point, vector<Vector>, KeyHasher> point_hush_table;
+	bool is_there_point_without_normal = false;
 	for (PPolygon = PObj -> U.Pl; PPolygon != NULL;	PPolygon = PPolygon -> Pnext) 
 	{
 			if (PPolygon -> PVertex == NULL) {
@@ -171,36 +192,129 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 				return false;
 			}
 
-			/* Count number of vertices. */
-			for (PVertex = PPolygon -> PVertex -> Pnext, i = 1;
-				PVertex != PPolygon -> PVertex && PVertex != NULL;
-				PVertex = PVertex -> Pnext, i++);
-
-			Point p1, p2;
+			Point tmp_point;
 			PVertex = PPolygon->PVertex;
 
-			p1.setX( PVertex->Coord[0] );
-			p1.setY( PVertex->Coord[1] );
-			p1.setZ( PVertex->Coord[2] );
-
 			MyPolygon polygon;
+			Vector polygon_normal;
+
+			if (IP_HAS_PLANE_POLY(PPolygon)) 
+			{
+				polygon_normal[0] = PPolygon->Plane[0];
+				polygon_normal[1] = PPolygon->Plane[1];
+				polygon_normal[2] = PPolygon->Plane[2];
+			}
+			else
+			{
+				Vector tmp_normal = calculatorPlaneNormal(PPolygon);
+				polygon_normal[0] = tmp_normal[0];
+				polygon_normal[1] = tmp_normal[1];
+				polygon_normal[2] = tmp_normal[2];
+				PPolygon->Plane[0] = tmp_normal[0];
+				PPolygon->Plane[1] = tmp_normal[1];
+				PPolygon->Plane[2] = tmp_normal[2];
+			}
+			
 
 			for (PVertex = PPolygon->PVertex->Pnext ; PVertex != NULL ; PVertex = PVertex->Pnext)
 			{
-				//add line to polygon
-				p2.setX( PVertex->Coord[0] );
-				p2.setY( PVertex->Coord[1] );
-				p2.setZ( PVertex->Coord[2] );
+				tmp_point.setX(PVertex->Coord[0]);
+				tmp_point.setY(PVertex->Coord[1]);
+				tmp_point.setZ(PVertex->Coord[2]);
 
+				//add vertex to hash
+				point_hush_table[tmp_point].push_back(polygon_normal);
+
+				//add line to polygon
+				if (PVertex == PPolygon->PVertex)
+					break;
+
+			}
+
+	}
+	//////////////////////////////////////////////////////// create hash table//////////////////////////////////////////////////////////////////////
+
+
+
+	//////////////////////////////////////////////////////// creating model///////////////////////////////////////////////////////////////////////
+	for (PPolygon = PObj -> U.Pl; PPolygon != NULL;	PPolygon = PPolygon -> Pnext) 
+	{
+			if (PPolygon -> PVertex == NULL) {
+				AfxMessageBox(_T("Dump: Attemp to dump empty polygon"));
+				return false;
+			}
+
+			Point p1, p2;
+			PVertex1 = PPolygon->PVertex;
+
+			p1.setX( PVertex1->Coord[0] );
+			p1.setY( PVertex1->Coord[1] );
+			p1.setZ( PVertex1->Coord[2] );
+
+			MyPolygon polygon;
+			Vector polygon_normal;
+
+			polygon_normal[0] = PPolygon->Plane[0];
+			polygon_normal[1] = PPolygon->Plane[1];
+			polygon_normal[2] = PPolygon->Plane[2];
+			
+			polygon.setNormal(polygon_normal);
+			Point center = p1;
+			int vertexCount = 1;
+
+			for (PVertex2 = PPolygon->PVertex->Pnext ; PVertex2 != NULL ; PVertex2 = PVertex2->Pnext)
+			{
+				//add vertex to hash
+				point_hush_table[p1].push_back(polygon_normal);
+
+				//add line to polygon
+				p2.setX( PVertex2->Coord[0] );
+				p2.setY( PVertex2->Coord[1] );
+				p2.setZ( PVertex2->Coord[2] );
+
+				center.setX(center.getX() + p2.getX());
+				center.setY(center.getY() + p2.getY());
+				center.setZ(center.getZ() + p2.getZ());
+				vertexCount++;
+
+				//check whether we need to calculate all the vertex normals
+				if (IP_HAS_NORMAL_VRTX(PVertex1))
+					p1.setNormal(Vector(PVertex1->Normal[0], PVertex1->Normal[1], PVertex1->Normal[2], 0));
+
+				else
+				{
+					int tmp_counter = 0;
+					double x = 0; double y = 0; double z = 0;
+					Vector tmp_normal;
+
+					for (auto tmp_normal = point_hush_table[p1].begin(); tmp_normal != point_hush_table[p1].end(); tmp_normal++)
+					{
+						x = x + (*tmp_normal)[0];
+						y = y + (*tmp_normal)[1];
+						z = z + (*tmp_normal)[2];
+						tmp_counter = tmp_counter + 1;
+					}
+					p1.setNormal(Vector(x/ tmp_counter, y / tmp_counter, z/ tmp_counter, 0));
+				}
+
+				polygon.setCenter(Point(center.getX() / vertexCount, center.getY() / vertexCount, center.getZ() / vertexCount));
 				polygon.addLine(Line(p1, p2));
 
 				//update for next iter
 				p1 = p2;
-				if (PVertex == PPolygon->PVertex)
+				PVertex1 = PVertex2;
+
+				if (PVertex2 == PPolygon->PVertex)
 					break;
+
+
 			}
 
+
+
 			model.addPolygon(polygon);
+			
+
 
 
 
@@ -226,6 +340,8 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 	/* Close the object. */
 	return true;
 }
+
+
 
 /*****************************************************************************
 * DESCRIPTION:                                                               *
@@ -338,3 +454,19 @@ int CGSkelGetObjectTransp(IPObjectStruct *PObj, double *Transp)
 	return !IP_ATTR_IS_BAD_REAL(*Transp);
 }
 
+Vector calculatorPlaneNormal(IPPolygonStruct* PPolygon)
+{
+	IPVertexStruct* v0 = PPolygon->PVertex;
+	IPVertexStruct* v1 = PPolygon->PVertex->Pnext;
+	IPVertexStruct* v2 = PPolygon->PVertex->Pnext->Pnext;
+
+
+	Vector vector1(v2->Coord[0] - v1->Coord[0], v2->Coord[1] - v1->Coord[1], v2->Coord[2] - v1->Coord[2], 0);
+	Vector vector2(v0->Coord[0] - v1->Coord[0], v0->Coord[1] - v1->Coord[1], v0->Coord[2] - v1->Coord[2], 0);
+
+	Vector res(	vector1[1] * vector2[2] - vector1[2] * vector2[1],
+				-(vector1[0] * vector2[2] - vector1[2] * vector2[0]),
+				vector1[0] * vector2[1] - vector1[1] * vector2[0], 0);
+
+	return res;
+}

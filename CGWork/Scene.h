@@ -31,10 +31,15 @@ public:
 private:
 	std::vector<Model> model_list;
 	std::vector<Camera> camera_list;
-	void DrawLine(CDC* pDC, Line line, COLORREF _color);
+	void drawLine(CDC* pDC, Line line, COLORREF _color);
+	void drawLines(CDC* pDC, vector<Line> line, COLORREF _color, Matrix _transformation);
 	bool paint_bounding_box;
 	COLORREF modelsColor;
 	bool isModelColorSet = false;
 	COLORREF boundingBoxColor = RGB(1, 0, 0);
 	COLORREF normalsColor = RGB(0, 1, 0);
+	void calcModelMinMax(Model &_model);
+	void addBoundingBox(Model &_model);
+	void normalizeTheModel(Model &_model);
+	void setModelColor(Model &_model);
 };

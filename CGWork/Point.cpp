@@ -1,5 +1,6 @@
 #include "Point.h"
 #include "stdafx.h"
+#include "Vector.h"
 #include <sstream>
 #include <iostream>
 #include <string.h>
@@ -23,19 +24,26 @@ Point::~Point()
 {
 }
 
-double Point::getX() 
+double Point::getX() const
 {
 	return x;
 }
 
-double Point::getY()
+double Point::getY() const
 {
 	return y;
 }
 
-double Point::getZ()
+double Point::getZ() const
 {
 	return z;
+}
+
+bool Point::operator==(const Point &other) const
+{
+	return (	   x == other.getX()
+				&& y == other.getY()
+				&& z == other.getZ());
 }
 
 void Point::setX(double _x)
@@ -63,4 +71,14 @@ void Point::printPoint()
 	std::wstring widestr = std::wstring(s.begin(), s.end());
 	const wchar_t *c = widestr.c_str();
 	AfxMessageBox(c, MB_OK);
+}
+
+void Point::setNormal(Vector _normal)
+{
+	normal = _normal;
+}
+
+Vector Point::getNormal()
+{
+	return normal;
 }

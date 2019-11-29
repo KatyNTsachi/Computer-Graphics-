@@ -1,4 +1,5 @@
 #include "MyPolygon.h"
+#include "Vector.h"
 
 
 
@@ -19,4 +20,25 @@ void MyPolygon::addLine(Line line)
 std::vector<Line> MyPolygon::getLines()
 {
 	return lines;
+}
+
+void MyPolygon::setNormal(Vector _normal)
+{
+	normal = _normal;
+}
+
+
+void MyPolygon::setCenter(Point _p)
+{
+	center_of_polygon = _p;
+}
+
+Point MyPolygon::getCenter()
+{
+	return center_of_polygon;
+}
+
+Vector MyPolygon::getNormal()
+{
+	return normal;
 }

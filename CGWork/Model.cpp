@@ -105,6 +105,17 @@ void Model::setMinMaxValues(double _min_x, double _max_x, double _min_y, double 
 	max_z = _max_z;
 }
 
+void Model::getMinMaxValues(double &_min_x, double &_max_x, double &_min_y, double &_max_y, double &_min_z, double &_max_z)
+{
+	_min_x = min_x;
+	_max_x = max_x;
+	_min_y = min_y;
+	_max_y = max_y;
+	_min_z = min_z;
+	_max_z = max_z;
+
+}
+
 void Model::setShouldBoundingBox(bool _paint_bounding_box)
 {
 	paint_bounding_box = _paint_bounding_box;
@@ -113,4 +124,42 @@ void Model::setShouldBoundingBox(bool _paint_bounding_box)
 bool Model::getShouldBoundingBox()
 {
 	return paint_bounding_box;
+}
+
+void Model::addNormals()
+{
+	for (auto tmp_polygon = polygon_list.begin(); tmp_polygon != polygon_list.end(); tmp_polygon++)
+	{
+		Point center = tmp_polygon->getCenter();
+		Vector normal = tmp_polygon->getNormal();
+		polygon_normal_list.push_back(Line(	Point(center.getX(), center.getY(), center.getZ()),
+											Point(center.getX() + normal[0], center.getY() + normal[1] , center.getZ() + normal[2] )));
+
+		vector<Line> all_polygon_lines = tmp_polygon->getLines();
+		for (auto tmp_line = all_polygon_lines.begin(); tmp_line != all_polygon_lines.end(); tmp_line++)
+		{
+			Vector point_normal = tmp_line->getP1().getNormal();
+
+			vertex_normal_list.push_back(Line(	tmp_line->getP1(),
+												Point(	tmp_line->getP1().getX() + point_normal[0],
+														tmp_line->getP1().getY() + point_normal[1],
+														tmp_line->getP1().getZ() + point_normal[2])));
+		}
+	}
+
+
+}
+		
+std::vector<Line> Model::getPoligonNormalList()
+{
+	return polygon_normal_list;
+}
+std::vector<Line> Model::getVertexNormalList()
+{
+	return vertex_normal_list;
+}
+
+COLORREF Model::getNormalsColor()
+{
+	return normalsColor;
 }
