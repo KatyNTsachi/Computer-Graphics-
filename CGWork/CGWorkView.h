@@ -38,6 +38,9 @@ private:
 	int m_nSpace;               // Object or view 
 	bool m_bIsPerspective;			// is the view perspective
 	int m_translations_object;
+	int m_show_normals;
+	int m_show_vertex_normals;
+	int m_show_polygon_normals;
 
 	CString m_strItdFileName;		// file name of IRIT data
 
@@ -132,16 +135,17 @@ protected:
 	afx_msg void OnAppBoundingBox();
 	afx_msg void OnUpdateBoundingBox(CCmdUI* pCmdUI);
 	afx_msg void OnModelColerPicker();
-
-
-
+	afx_msg void OnColorBoundingboxcolor();
+	afx_msg void OnColorNormalscolor();
+	afx_msg void OnOptionsShowVertexNormals();
+	afx_msg void OnUpdateOptionsShowVertexNormals(CCmdUI *pCmdUI);
+	afx_msg void OnOptionsShowPolygonNormals();
+	afx_msg void OnUpdateOptionsShowPolygonNormals(CCmdUI *pCmdUI);
 
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnColorBoundingboxcolor();
-	afx_msg void OnColorNormalscolor();
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp

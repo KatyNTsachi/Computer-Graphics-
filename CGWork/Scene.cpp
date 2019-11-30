@@ -62,7 +62,7 @@ void Scene::calcModelMinMax(Model &_model)
 void Scene::addBoundingBox(Model &_model)
 {
 	double min_x, min_y, min_z, max_x, max_y, max_z;
-	_model.getMinMaxValues(min_x, min_y, min_z, max_x, max_y, max_z);
+	_model.getMinMaxValues(min_x, max_x, min_y, max_y, min_z, max_z);
 
 	MyPolygon tmp_polygon;
 	tmp_polygon.addLine(Line(Point(min_x, min_y, min_z), Point(max_x, min_y, min_z))); tmp_polygon.addLine(Line(Point(max_x, min_y, min_z), Point(max_x, max_y, min_z)));
@@ -109,10 +109,10 @@ void Scene::normalizeTheModel(Model &_model)
 		scale_factor = max_z - min_z;
 
 	scale_factor = scale_factor;
-	_model.scaleBy(Matrix(Vector(2 / scale_factor, 0, 0, -(max_x / scale_factor + min_x / scale_factor)),
-		Vector(0, 2 / scale_factor, 0, -(max_y / scale_factor + min_y / scale_factor)),
-		Vector(0, 0, 2 / scale_factor, 0),
-		Vector(0, 0, 0, 1)));
+	_model.scaleBy(Matrix(	Vector(2 / scale_factor, 0, 0, -(max_x / scale_factor + min_x / scale_factor)),
+							Vector(0, 2 / scale_factor, 0, -(max_y / scale_factor + min_y / scale_factor)),
+							Vector(0, 0, 2 / scale_factor, 0),
+							Vector(0, 0, 0, 1)));
 }
 
 void Scene::setModelColor(Model &_model)
@@ -151,7 +151,7 @@ void Scene::AddCamera(Camera _camera)
 	camera_list.push_back(_camera);
 }
 
-void Scene::Draw(CDC* pDC, int camera_number, CRect r) {
+void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[]) {
 
 	//error messege
 	if (camera_number > camera_list.size() - 1)
@@ -177,28 +177,31 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r) {
 		Matrix all_trans = tmp_camera_trans * tmp_model_trans * strechToScreenSize(r);
 		
 		vector<MyPolygon> model_polygon_list = tmp_model->getModelPolygons();
-		drawPoligons(model_polygon_list, tmp_model->getModelColor(), all_trans, pDC);
+		drawPoligons(model_polygon_list, tmp_model->getModelColor(), all_trans, pDC, view_mat);
 		if (tmp_model->getShouldBoundingBox() )
 		{
 			vector<MyPolygon> bounding_box_polygon_list = tmp_model->getBoundingBoxPolygons();
-			drawPoligons(bounding_box_polygon_list, tmp_model->getBoundingBoxColor(), all_trans, pDC);
+			drawPoligons(bounding_box_polygon_list, tmp_model->getBoundingBoxColor(), all_trans, pDC, view_mat);
 		}
-		
-		drawLines(pDC, tmp_model->getPoligonNormalList(), tmp_model->getNormalsColor(), all_trans);
-		drawLines(pDC, tmp_model->getVertexNormalList(), tmp_model->getNormalsColor(), all_trans);
+		if (paint_vertex_normals) {
+			drawLines(pDC, tmp_model->getVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat);
+		}
+		if (paint_polygon_normals) {
+			drawLines(pDC, tmp_model->getPoligonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat);
+		}
 	}
 	//pDC->GetCurrentBitmap()->SetBitmapBits(view_width * view_height * 4, viewMatrix);
 }
-void Scene::drawLines(CDC* pDC, vector<Line> lines, COLORREF _color, Matrix _transformation)
+void Scene::drawLines(CDC* pDC, vector<Line> lines, COLORREF _color, Matrix _transformation, int view_mat[])
 {
 	for (auto line = lines.begin(); line != lines.end(); line++)
 	{
 		Line transformed_line = tranformLine(*line, _transformation);
-		drawLine(pDC, transformed_line, _color);
+		drawLine(pDC, transformed_line, _color, view_mat);
 	}
 }
 
-void Scene::drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix transformation, CDC* pDC)
+void Scene::drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[])
 {
 	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
 	{
@@ -207,26 +210,32 @@ void Scene::drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix 
 		{
 			Line transformed_line = tranformLine(*line, transformation);
 
-			this->drawLine(pDC, transformed_line, color);
+			this->drawLine(pDC, transformed_line, color, view_mat);
 		}
 	}
 }
 
 Matrix Scene::strechToScreenSize( CRect r)
 {
-	int width = abs(r.right - r.left);
-	int height = abs(r.bottom - r.top);
+	width = abs(r.right - r.left);
+	height = abs(r.bottom - r.top);
 	
-	return Matrix(Vector(width / 2, 0, 0, width / 2),
-				  Vector(0, height / 2, 0, height / 2),
-				  Vector(0, 0, 1, 0),
+	double min_axis;
+	if ((width / 2) < (height / 2))
+		min_axis = (width / 2);
+	else
+		min_axis = (height / 2);
+
+	return Matrix(Vector(min_axis, 0, 0, width / 2),
+				  Vector(0, min_axis, 0, height / 2),
+				  Vector(0, 0, min_axis, 0),
 				  Vector(0, 0, 0, 1));
 	
 
 }
 
 
-void Scene::drawLine(CDC* pDC, Line line, COLORREF _color) {
+void Scene::drawLine(CDC* pDC, Line line, COLORREF _color, int view_mat[]) {
 	
 	COLORREF color = _color;
 	Point p1 = line.getP1();
@@ -333,11 +342,32 @@ void Scene::drawLine(CDC* pDC, Line line, COLORREF _color) {
 
 		
 		//slope is too big
+		/*
 		if( slope_too_big == false )
 			pDC->SetPixel(tmp_x, tmp_y, color);
 		else
 			pDC->SetPixel(tmp_y, tmp_x, color);
+		*/
+		int tmp_color = 0;
+		tmp_color = (GetBValue(color)) + (GetRValue(color) << 16) + (GetGValue(color) << 8);
 
+		if (slope_too_big == false)
+		{
+			
+			if ((tmp_y >= 0) && (tmp_y < height) && (tmp_x >= 0) && (tmp_x < width))
+			{
+				//view_mat[tmp_x * width + tmp_y] = tmp_color;
+				view_mat[tmp_y * width + tmp_x] = tmp_color;
+			}
+		}
+		
+		else
+			if ((tmp_y >= 0) && (tmp_y < width) && (tmp_x >= 0) && (tmp_x < height))
+			{
+				//view_mat[tmp_y * width + tmp_x] = tmp_color;
+				view_mat[tmp_x * width + tmp_y] = tmp_color;
+			}
+			
 	}		
 
 }

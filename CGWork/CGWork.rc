@@ -109,6 +109,8 @@ BEGIN
             MENUITEM "Bounding Box Color...",       ID_COLOR_BOUNDINGBOXCOLOR
             MENUITEM "Normals Color...",            ID_COLOR_NORMALSCOLOR
         END
+        MENUITEM "Show Vertex Normals",         ID_OPTIONS_SHOWVERTEXNORMALS
+        MENUITEM "Show Polygon Normals",        ID_OPTIONS_SHOWPOLYGONNORMALS
     END
     POPUP "&Light"
     BEGIN

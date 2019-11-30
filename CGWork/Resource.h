@@ -52,7 +52,7 @@
 #define ID_LIGHT_CONSTANTS              32783
 #define ID_ANIM_PLAY                    32793
 #define ID_ANIM_CLEAR                   32794
-#define ID_ACTION_TRANSITIONS_VIEW_SPACE    32794
+#define ID_ACTION_TRANSITIONS_VIEW_SPACE 32794
 #define ID_SCEEN_SPACE_TRANSFORMATIONS  32794
 #define ID_ANIM_SNAPSHOT                32795
 #define ID_BUTTON_SUBDIVIDE             32797
@@ -67,13 +67,15 @@
 #define ID_COLOR_MODELCOLOR             32807
 #define ID_COLOR_BOUNDINGBOXCOLOR       32808
 #define ID_COLOR_NORMALSCOLOR           32809
+#define ID_OPTIONS_SHOWVERTEXNORMALS    32810
+#define ID_OPTIONS_SHOWPOLYGONNORMALS   32811
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        151
-#define _APS_NEXT_COMMAND_VALUE         32810
+#define _APS_NEXT_COMMAND_VALUE         32812
 #define _APS_NEXT_CONTROL_VALUE         1046
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

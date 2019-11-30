@@ -81,12 +81,15 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_COMMAND(ID_BOUNDING_BOX, OnAppBoundingBox)
 	ON_UPDATE_COMMAND_UI(ID_BOUNDING_BOX, OnUpdateBoundingBox)
 	ON_COMMAND(ID_COLOR_MODELCOLOR, &CCGWorkView::OnModelColerPicker)
-	
+	ON_COMMAND(ID_COLOR_BOUNDINGBOXCOLOR, &CCGWorkView::OnColorBoundingboxcolor)
+	ON_COMMAND(ID_COLOR_NORMALSCOLOR, &CCGWorkView::OnColorNormalscolor)
+	ON_COMMAND(ID_OPTIONS_SHOWVERTEXNORMALS, &CCGWorkView::OnOptionsShowVertexNormals)
+	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWVERTEXNORMALS, &CCGWorkView::OnUpdateOptionsShowVertexNormals)
+	ON_COMMAND(ID_OPTIONS_SHOWPOLYGONNORMALS, &CCGWorkView::OnOptionsShowPolygonNormals)
+	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWPOLYGONNORMALS, &CCGWorkView::OnUpdateOptionsShowPolygonNormals)
 
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
-	ON_COMMAND(ID_COLOR_BOUNDINGBOXCOLOR, &CCGWorkView::OnColorBoundingboxcolor)
-	ON_COMMAND(ID_COLOR_NORMALSCOLOR, &CCGWorkView::OnColorNormalscolor)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -107,6 +110,9 @@ CCGWorkView::CCGWorkView()
 	m_nAction = ID_ACTION_ROTATE;
 	m_nView = ID_VIEW_ORTHOGRAPHIC;	
 	m_translations_object = ID_ACTION_TRANSITIONS_MODEL;
+	m_show_normals = 0;
+	m_show_vertex_normals = 0;
+	m_show_polygon_normals = 0;
 
 	m_bIsPerspective = false;
 
@@ -276,11 +282,28 @@ BOOL CCGWorkView::OnEraseBkgnd(CDC* pDC)
 
 void CCGWorkView::OnDraw(CDC* pDC)
 {
+	CCGWorkDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	CDC *pDCToUse = m_pDbDC;
+
 	CRect r;
 	GetClientRect(&r);
 	pDC->FillSolidRect(&r, RGB(255, 255, 255));
-	
-	scene.Draw(pDC, 0, r);
+	int height = r.Height();
+	int width = r.Width();
+	int* view_mat = new int[height*width];
+
+	scene.Draw(pDC, 0, r, view_mat);
+
+	pDCToUse->GetCurrentBitmap()->SetBitmapBits(width * height * 4, view_mat);
+	if (pDCToUse != pDC)
+	{
+		pDC->BitBlt(r.left, r.top, r.Width(), r.Height(), pDCToUse, r.left, r.top, SRCCOPY);
+	}
+
+	delete[] view_mat;
 
 }
 
@@ -563,7 +586,7 @@ void CCGWorkView::updateTransformationMatrices(double mouseDraggingDistance)
 		scene.updateTransformationViewSpaceMatricesOfAllObjects(transformationMatrix);
 	
 
-	RedrawWindow();	// force a WM_PAINT for drawing.;
+	//RedrawWindow();	// force a WM_PAINT for drawing.;
 }
 
 BOOL CCGWorkView::PreTranslateMessage(MSG * pMsg)
@@ -660,4 +683,48 @@ void CCGWorkView::OnColorNormalscolor()
 		scene.setNormalsColor(colorDialog.GetColor());
 		RedrawWindow();
 	}
+}
+
+
+void CCGWorkView::OnOptionsShowVertexNormals()
+{
+	if (m_show_vertex_normals == ID_OPTIONS_SHOWVERTEXNORMALS)
+	{
+		m_show_vertex_normals = 0;
+	}
+	else
+	{
+		m_show_vertex_normals = ID_OPTIONS_SHOWVERTEXNORMALS;
+	}
+	scene.paint_vertex_normals = !scene.paint_vertex_normals;
+	RedrawWindow();
+}
+
+
+void CCGWorkView::OnUpdateOptionsShowVertexNormals(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_show_vertex_normals == ID_OPTIONS_SHOWVERTEXNORMALS);
+}
+
+
+void CCGWorkView::OnOptionsShowPolygonNormals()
+{
+	// TODO: Add your command handler code here
+	
+	if (m_show_polygon_normals == ID_OPTIONS_SHOWPOLYGONNORMALS)
+	{
+		m_show_polygon_normals = 0;
+	}
+	else
+	{
+		m_show_polygon_normals = ID_OPTIONS_SHOWPOLYGONNORMALS;
+	}
+	scene.paint_polygon_normals = !scene.paint_polygon_normals;
+	RedrawWindow();
+}
+
+void CCGWorkView::OnUpdateOptionsShowPolygonNormals(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_show_polygon_normals == ID_OPTIONS_SHOWPOLYGONNORMALS);
+	// TODO: Add your command update UI handler code here
 }
