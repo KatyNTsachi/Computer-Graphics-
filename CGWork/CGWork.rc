@@ -114,6 +114,7 @@ BEGIN
         MENUITEM "Show Polygon Normals",        ID_OPTIONS_SHOWPOLYGONNORMALS
         MENUITEM "Show Original Normals",       ID_OPTIONS_SHOWORIGINALNORMALS
         MENUITEM "Show Calculated Normals",     ID_OPTIONS_SHOWCALCULATEDNORMALS
+        MENUITEM "Number Of Polygons",          ID_OPTIONS_NUMBEROFPOLYGONS
     END
     POPUP "&Light"
     BEGIN
@@ -263,6 +264,18 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,252,155,50,14
 END
 
+IDD_FUNCTION_NUM DIALOGEX 0, 0, 303, 108
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,92,72,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,159,72,50,14
+    LTEXT           "Inset the number of polygons that you would like to have",IDC_STATIC,68,14,228,16
+    EDITTEXT        IDC_NUM,120,28,56,12,ES_AUTOHSCROLL | ES_NUMBER | NOT WS_BORDER
+    LTEXT           "Insert number between [2, 20]",IDC_STATIC,96,55,134,16
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -349,6 +362,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 169
     END
+
+    IDD_FUNCTION_NUM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 296
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 101
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -385,6 +406,11 @@ BEGIN
 END
 
 IDD_DIALOG1 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_FUNCTION_NUM AFX_DIALOG_LAYOUT
 BEGIN
     0
 END

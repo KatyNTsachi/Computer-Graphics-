@@ -15,7 +15,7 @@ using std::endl;
 #include "Transformations.h"
 #include <math.h>
 #include "MouseSensitivity.h"
-
+#include"InputParametersDialogBar.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -92,7 +92,9 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWCALCULATEDNORMALS, &CCGWorkView::OnUpdateOptionsShowCalculatedNormals)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWORIGINALNORMALS, &CCGWorkView::OnUpdateOptionsShowOriginalNormals)
 	ON_COMMAND(ID_COLOR_BACKGOUNDCOLOR, &CCGWorkView::OnColorBackgoundColor)
-	
+	ON_COMMAND(ID_OPTIONS_NUMBEROFPOLYGONS, &CCGWorkView::OnOptionsNumberOfPolygons)
+
+
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
 END_MESSAGE_MAP()
@@ -138,6 +140,7 @@ CCGWorkView::CCGWorkView()
 	scene.AddCamera(camera);
 	show_bounding_box = 0;
 	background_color = RGB(255, 255, 255);
+	number_of_polygons = 20;
 }
 
 CCGWorkView::~CCGWorkView()
@@ -355,7 +358,7 @@ void CCGWorkView::OnFileLoad()
 	if (dlg.DoModal () == IDOK) {
 		m_strItdFileName = dlg.GetPathName();		// Full path and filename
 		PngWrapper p;
-		CGSkelProcessIritDataFiles(m_strItdFileName, 1);
+		CGSkelProcessIritDataFiles(m_strItdFileName, 1, number_of_polygons);
 		// Open the file and read it.
 		// Your code here...
 
@@ -775,5 +778,25 @@ void CCGWorkView::OnColorBackgoundColor()
 		background_color = colorDialog.GetColor();
 		RedrawWindow();
 	}
+}
+
+void CCGWorkView::OnOptionsNumberOfPolygons()
+{
+	InputParametersDialogBar numberOfPolygons;
+	numberOfPolygons.DoModal();
+	int tmp_number_of_polygons = numberOfPolygons.getNumber();
+	if (tmp_number_of_polygons > 20 || tmp_number_of_polygons < 0)
+	{
+		std::string  s = "Please insert num between 2 and 20";
+		std::wstring widestr = std::wstring(s.begin(), s.end());
+		const wchar_t *c = widestr.c_str();
+		AfxMessageBox(c, MB_OK);
+	}
+	else
+	{
+		number_of_polygons = tmp_number_of_polygons;
+		RedrawWindow();
+	}
+	
 }
 

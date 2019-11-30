@@ -83,6 +83,7 @@ protected:
 	BOOL SetupViewingOrthoConstAspect(void);
 
 	virtual void RenderScene();
+	
 
 
 	HGLRC    m_hRC;			// holds the Rendering Context
@@ -97,6 +98,7 @@ protected:
 	int show_bounding_box;
 	int m_show_calculated_or_original_normals;
 	COLORREF background_color;
+	int number_of_polygons;
 
 // Generated message map functions
 protected:
@@ -148,6 +150,7 @@ protected:
 	afx_msg void OnUpdateOptionsShowCalculatedNormals(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateOptionsShowOriginalNormals(CCmdUI *pCmdUI);
 	afx_msg void OnColorBackgoundColor();
+	afx_msg void OnOptionsNumberOfPolygons();
 
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

@@ -19,7 +19,7 @@
 extern Model model;
 
 
-bool CGSkelProcessIritDataFiles(CString &FileNames, int NumFiles);
+bool CGSkelProcessIritDataFiles(CString &FileNames, int NumFiles, int _number_of_polygons);
 void CGSkelDumpOneTraversedObject(IPObjectStruct *PObj, IrtHmgnMatType Mat, void *Data);
 int CGSkelGetObjectColor(IPObjectStruct *PObj, double RGB[3]);
 const char *CGSkelGetObjectTexture(IPObjectStruct *PObj);
