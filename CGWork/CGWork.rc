@@ -108,9 +108,12 @@ BEGIN
             MENUITEM "Model Color...",              ID_COLOR_MODELCOLOR
             MENUITEM "Bounding Box Color...",       ID_COLOR_BOUNDINGBOXCOLOR
             MENUITEM "Normals Color...",            ID_COLOR_NORMALSCOLOR
+            MENUITEM "Backgound Color",             ID_COLOR_BACKGOUNDCOLOR
         END
         MENUITEM "Show Vertex Normals",         ID_OPTIONS_SHOWVERTEXNORMALS
         MENUITEM "Show Polygon Normals",        ID_OPTIONS_SHOWPOLYGONNORMALS
+        MENUITEM "Show Original Normals",       ID_OPTIONS_SHOWORIGINALNORMALS
+        MENUITEM "Show Calculated Normals",     ID_OPTIONS_SHOWCALCULATEDNORMALS
     END
     POPUP "&Light"
     BEGIN

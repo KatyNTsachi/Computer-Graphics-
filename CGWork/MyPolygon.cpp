@@ -17,14 +17,9 @@ void MyPolygon::addLine(Line line)
 	lines.push_back(line);
 }
 
-std::vector<Line> MyPolygon::getLines()
+std::vector<Line>& MyPolygon::getLines()
 {
 	return lines;
-}
-
-void MyPolygon::setNormal(Vector _normal)
-{
-	normal = _normal;
 }
 
 
@@ -38,7 +33,27 @@ Point MyPolygon::getCenter()
 	return center_of_polygon;
 }
 
-Vector MyPolygon::getNormal()
+void MyPolygon::setOriginalNormal(Vector _normal)
 {
-	return normal;
+	original_normal = _normal;
+}
+
+void MyPolygon::setCalculatedNormal(Vector _normal)
+{
+	calculated_normal = _normal;
+}
+
+Vector MyPolygon::getOriginalNormal()
+{
+	return original_normal;
+}
+
+Vector MyPolygon::getCalculatedNormal()
+{
+	return calculated_normal;
+}
+
+void MyPolygon::setListOfLines(std::vector<Line> _list_of_lines)
+{
+	lines = _list_of_lines;
 }

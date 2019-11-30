@@ -87,7 +87,12 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWVERTEXNORMALS, &CCGWorkView::OnUpdateOptionsShowVertexNormals)
 	ON_COMMAND(ID_OPTIONS_SHOWPOLYGONNORMALS, &CCGWorkView::OnOptionsShowPolygonNormals)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWPOLYGONNORMALS, &CCGWorkView::OnUpdateOptionsShowPolygonNormals)
-
+	ON_COMMAND(ID_OPTIONS_SHOWORIGINALNORMALS, &CCGWorkView::OnOptionsShowOriginalNormals)
+	ON_COMMAND(ID_OPTIONS_SHOWCALCULATEDNORMALS, &CCGWorkView::OnOptionsShowCalculatedNormals)
+	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWCALCULATEDNORMALS, &CCGWorkView::OnUpdateOptionsShowCalculatedNormals)
+	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWORIGINALNORMALS, &CCGWorkView::OnUpdateOptionsShowOriginalNormals)
+	ON_COMMAND(ID_COLOR_BACKGOUNDCOLOR, &CCGWorkView::OnColorBackgoundColor)
+	
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
 END_MESSAGE_MAP()
@@ -113,7 +118,7 @@ CCGWorkView::CCGWorkView()
 	m_show_normals = 0;
 	m_show_vertex_normals = 0;
 	m_show_polygon_normals = 0;
-
+	m_show_calculated_or_original_normals = ID_OPTIONS_SHOWORIGINALNORMALS;
 	m_bIsPerspective = false;
 
 	m_nLightShading = ID_LIGHT_SHADING_FLAT;
@@ -132,7 +137,7 @@ CCGWorkView::CCGWorkView()
 	Camera camera;
 	scene.AddCamera(camera);
 	show_bounding_box = 0;
-
+	background_color = RGB(255, 255, 255);
 }
 
 CCGWorkView::~CCGWorkView()
@@ -290,10 +295,14 @@ void CCGWorkView::OnDraw(CDC* pDC)
 
 	CRect r;
 	GetClientRect(&r);
-	pDC->FillSolidRect(&r, RGB(255, 255, 255));
+
 	int height = r.Height();
 	int width = r.Width();
 	int* view_mat = new int[height*width];
+
+	//set backgroundcolor
+	for(int i = 0 ; i < height*width ; i++)
+		view_mat[i] = (GetBValue(background_color)) + (GetRValue(background_color) << 16) + (GetGValue(background_color) << 8);
 
 	scene.Draw(pDC, 0, r, view_mat);
 
@@ -728,3 +737,41 @@ void CCGWorkView::OnUpdateOptionsShowPolygonNormals(CCmdUI *pCmdUI)
 	pCmdUI->SetCheck(m_show_polygon_normals == ID_OPTIONS_SHOWPOLYGONNORMALS);
 	// TODO: Add your command update UI handler code here
 }
+
+
+void CCGWorkView::OnOptionsShowOriginalNormals()
+{
+	m_show_calculated_or_original_normals = ID_OPTIONS_SHOWORIGINALNORMALS;
+	scene.showOriginalNormals(true);
+	RedrawWindow();
+}
+
+void CCGWorkView::OnUpdateOptionsShowOriginalNormals(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_show_calculated_or_original_normals == ID_OPTIONS_SHOWORIGINALNORMALS);
+}
+
+void CCGWorkView::OnOptionsShowCalculatedNormals()
+{
+	m_show_calculated_or_original_normals = ID_OPTIONS_SHOWCALCULATEDNORMALS;
+	scene.showOriginalNormals(false);
+	RedrawWindow();
+
+}
+
+void CCGWorkView::OnUpdateOptionsShowCalculatedNormals(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_show_calculated_or_original_normals == ID_OPTIONS_SHOWCALCULATEDNORMALS);
+}
+
+
+
+void CCGWorkView::OnColorBackgoundColor()
+{
+	CColorDialog colorDialog;
+	if (colorDialog.DoModal() == IDOK) {
+		background_color = colorDialog.GetColor();
+		RedrawWindow();
+	}
+}
+

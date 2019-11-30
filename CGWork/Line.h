@@ -11,6 +11,7 @@ public:
 	~Line();
 	Point getP1();
 	Point getP2();
+	void setP1(Point _p);
 
 private:
 	Point p1, p2;

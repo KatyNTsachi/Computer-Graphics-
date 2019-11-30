@@ -2,6 +2,10 @@
 
 Vector::Vector() 
 {
+	entries[0] = 0;
+	entries[1] = 0;
+	entries[2] = 0;
+	entries[3] = 0;
 }
 
 Vector::Vector(double x, double y, double z, double w)
@@ -63,3 +67,9 @@ double & Vector::operator [] (int index)
 Vector::~Vector()
 {
 }
+
+bool const Vector::operator== (Vector const _vector) 
+{
+	return (entries[0] == _vector.entries[0] && entries[1] == _vector.entries[1] && entries[2] == _vector.entries[2] && entries[3] == _vector.entries[3]);
+}
+

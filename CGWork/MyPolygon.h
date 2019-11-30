@@ -13,15 +13,19 @@ public:
 	MyPolygon();
 	~MyPolygon();
 	void addLine(Line line);
-	std::vector<Line> getLines();
-	void setNormal(Vector _normal);
+	std::vector<Line>& getLines();
 	void setCenter(Point _p);
 	Point getCenter();
-	Vector getNormal();
+	void setOriginalNormal(Vector _normal);
+	void setCalculatedNormal(Vector _normal);
+	Vector getOriginalNormal();
+	Vector getCalculatedNormal();
+	void setListOfLines(std::vector<Line> _list_of_lines);
 
 private:
 	std::vector<Line> lines;
-	Vector normal;
+	Vector original_normal;
+	Vector calculated_normal;
 	Point center_of_polygon;
 };
 

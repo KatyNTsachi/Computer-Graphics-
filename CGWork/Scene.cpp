@@ -4,6 +4,7 @@
 Scene::Scene()
 {
 	paint_bounding_box = false;
+	show_original_normals = true;
 }
 
 Scene::~Scene()
@@ -184,10 +185,17 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[]) {
 			drawPoligons(bounding_box_polygon_list, tmp_model->getBoundingBoxColor(), all_trans, pDC, view_mat);
 		}
 		if (paint_vertex_normals) {
-			drawLines(pDC, tmp_model->getVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat);
+			if(show_original_normals)
+				drawLines(pDC, tmp_model->getOriginalVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat);
+			else
+				drawLines(pDC, tmp_model->getCalculatedVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat);
 		}
 		if (paint_polygon_normals) {
-			drawLines(pDC, tmp_model->getPoligonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat);
+			if (show_original_normals)
+				drawLines(pDC, tmp_model->getOriginalPoligonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat);
+			else
+				drawLines(pDC, tmp_model->getCalculatedPoligonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat);
+
 		}
 	}
 	//pDC->GetCurrentBitmap()->SetBitmapBits(view_width * view_height * 4, viewMatrix);
@@ -456,4 +464,9 @@ void Scene::setSouldShowBoundingBox(bool _show_bounding_box)
 	{
 		tmp_model->setShouldBoundingBox(_show_bounding_box);
 	}
+}
+
+void Scene::showOriginalNormals(bool _show_original_normals)
+{
+	show_original_normals = _show_original_normals;
 }

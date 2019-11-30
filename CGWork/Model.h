@@ -33,15 +33,20 @@ public:
 	void setShouldBoundingBox(bool _print_bounding_box);
 	bool getShouldBoundingBox();
 	void addNormals();
-	std::vector<Line> getPoligonNormalList();
-	std::vector<Line> getVertexNormalList();
+	std::vector<Line> getOriginalVertexNormalList();
+	std::vector<Line> getCalculatedVertexNormalList();
+	std::vector<Line> getOriginalPoligonNormalList();
+	std::vector<Line> getCalculatedPoligonNormalList();
+	void setListOfPolygons(std::vector<MyPolygon> _list_of_polygons);
 	COLORREF getNormalsColor();
 
 private:
 	std::vector<MyPolygon> polygon_list;
 	std::vector<MyPolygon> bounding_box_polygon_list;
-	std::vector<Line> polygon_normal_list;
-	std::vector<Line> vertex_normal_list;
+	std::vector<Line> polygon_original_normal_list;
+	std::vector<Line> polygon_calculated_normal_list;
+	std::vector<Line> vertex_original_normal_list;
+	std::vector<Line> vertex_calculated_normal_list;
 
 
 	Matrix objectSpaceTransformation;

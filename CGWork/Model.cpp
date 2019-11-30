@@ -131,35 +131,64 @@ void Model::addNormals()
 	for (auto tmp_polygon = polygon_list.begin(); tmp_polygon != polygon_list.end(); tmp_polygon++)
 	{
 		Point center = tmp_polygon->getCenter();
-		Vector normal = tmp_polygon->getNormal();
-		polygon_normal_list.push_back(Line(	Point(center.getX(), center.getY(), center.getZ()),
-											Point(center.getX() + normal[0], center.getY() + normal[1] , center.getZ() + normal[2] )));
+		Vector original_normal = tmp_polygon->getOriginalNormal();
+		Vector calculated_normal = tmp_polygon->getCalculatedNormal();
+
+		polygon_original_normal_list.push_back(Line(	Point(center.getX(), center.getY(), center.getZ()),
+														Point(center.getX() + original_normal[0], center.getY() + original_normal[1] , center.getZ() + original_normal[2] )));
+
+		polygon_calculated_normal_list.push_back(Line(	Point(center.getX(), center.getY(), center.getZ()),
+									  					Point(center.getX() + calculated_normal[0], center.getY() + calculated_normal[1], center.getZ() + calculated_normal[2])));
+
 
 		vector<Line> all_polygon_lines = tmp_polygon->getLines();
 		for (auto tmp_line = all_polygon_lines.begin(); tmp_line != all_polygon_lines.end(); tmp_line++)
 		{
-			Vector point_normal = tmp_line->getP1().getNormal();
+			Vector point_original_normal = tmp_line->getP1().getOriginalNormal();
+			Vector point_calculated_normal = tmp_line->getP1().getCalculatedNormal();
 
-			vertex_normal_list.push_back(Line(	tmp_line->getP1(),
-												Point(	tmp_line->getP1().getX() + point_normal[0],
-														tmp_line->getP1().getY() + point_normal[1],
-														tmp_line->getP1().getZ() + point_normal[2])));
+			vertex_original_normal_list.push_back(Line(	tmp_line->getP1(),
+														Point(	tmp_line->getP1().getX() + point_original_normal[0],
+																tmp_line->getP1().getY() + point_original_normal[1],
+																tmp_line->getP1().getZ() + point_original_normal[2])));
+			vertex_calculated_normal_list.push_back(Line(	tmp_line->getP1(),
+															Point(	tmp_line->getP1().getX() + point_calculated_normal[0],
+																	tmp_line->getP1().getY() + point_calculated_normal[1],
+																	tmp_line->getP1().getZ() + point_calculated_normal[2])));
+
 		}
 	}
 
 
 }
-		
-std::vector<Line> Model::getPoligonNormalList()
+
+
+std::vector<Line> Model::getOriginalPoligonNormalList()
 {
-	return polygon_normal_list;
+	return polygon_original_normal_list;
 }
-std::vector<Line> Model::getVertexNormalList()
+
+std::vector<Line> Model::getCalculatedPoligonNormalList()
 {
-	return vertex_normal_list;
+	return polygon_calculated_normal_list;
+}
+
+std::vector<Line> Model::getOriginalVertexNormalList()
+{
+	return vertex_original_normal_list;
+}
+
+std::vector<Line> Model::getCalculatedVertexNormalList()
+{
+	return vertex_calculated_normal_list;
 }
 
 COLORREF Model::getNormalsColor()
 {
 	return normalsColor;
+}
+
+void Model::setListOfPolygons(std::vector<MyPolygon> _list_of_polygons)
+{
+	polygon_list = _list_of_polygons;
 }

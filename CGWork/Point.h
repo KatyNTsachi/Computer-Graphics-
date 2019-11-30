@@ -18,11 +18,14 @@ public:
 	void setY(double _y);
 	void setZ(double _z);
 	void printPoint();
-	void setNormal(Vector _normal);
-	Vector getNormal();
+	void setOriginalNormal(Vector _normal);
+	void setCalculatedNormal(Vector _normal);
+	Vector getOriginalNormal();
+	Vector getCalculatedNormal();
 
 private:
 	double x, y, z;
-	Vector normal;
+	Vector original_normal;
+	Vector calculated_normal;
 };
 

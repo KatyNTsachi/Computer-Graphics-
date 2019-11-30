@@ -95,6 +95,8 @@ protected:
 	HBITMAP m_pDbBitMap;
 	CDC* m_pDbDC;
 	int show_bounding_box;
+	int m_show_calculated_or_original_normals;
+	COLORREF background_color;
 
 // Generated message map functions
 protected:
@@ -141,6 +143,11 @@ protected:
 	afx_msg void OnUpdateOptionsShowVertexNormals(CCmdUI *pCmdUI);
 	afx_msg void OnOptionsShowPolygonNormals();
 	afx_msg void OnUpdateOptionsShowPolygonNormals(CCmdUI *pCmdUI);
+	afx_msg void OnOptionsShowOriginalNormals();
+	afx_msg void OnOptionsShowCalculatedNormals();
+	afx_msg void OnUpdateOptionsShowCalculatedNormals(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateOptionsShowOriginalNormals(CCmdUI *pCmdUI);
+	afx_msg void OnColorBackgoundColor();
 
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

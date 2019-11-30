@@ -13,7 +13,6 @@ TASKS
 	choose object
 	
 BUGS
-	4. buttum to choose wich normals to use the calculated or the provided
 	5. change the background color
 	
 QUESTIONS

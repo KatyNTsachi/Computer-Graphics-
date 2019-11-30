@@ -9,7 +9,7 @@ public:
 	Vector operator - (Vector const &vector2);
 	double &operator [] (int index);
 	const double &operator [] (int index) const;
-    //double & const operator [] (int index);
+    bool const operator== (Vector const _vector);
 	~Vector();
 private:
 	double entries[4];

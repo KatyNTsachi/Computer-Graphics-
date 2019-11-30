@@ -29,7 +29,7 @@ public:
 	void setNormalsColor(COLORREF color);
 	bool paint_vertex_normals = false;
 	bool paint_polygon_normals = false;
-
+	void showOriginalNormals(bool _show_original_normals);
 private:
 	std::vector<Model> model_list;
 	std::vector<Camera> camera_list;
@@ -45,4 +45,5 @@ private:
 	void normalizeTheModel(Model &_model);
 	void setModelColor(Model &_model);
 	int height, width;
+	bool show_original_normals;
 };

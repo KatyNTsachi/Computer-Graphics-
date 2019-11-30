@@ -28,3 +28,7 @@ Point Line::getP2()
 	return p2;
 }
 
+void Line::setP1(Point _p)
+{
+	p1 = _p;
+}

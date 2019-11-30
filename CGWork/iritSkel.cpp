@@ -160,18 +160,6 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 		tmp_RGB[2] = RGB[2] * 255;
 		model.setColor(tmp_RGB);
 	}
-	if (CGSkelGetObjectTransp(PObj, &Transp))
-	{
-		/* transparency code */
-	}
-	if ((Str = CGSkelGetObjectTexture(PObj)) != NULL)
-	{
-		/* volumetric texture code */
-	}
-	if ((Str = CGSkelGetObjectPTexture(PObj)) != NULL)
-	{
-		/* parametric texture code */
-	}
 	if (Attrs != NULL) 
 	{
 		printf("[OBJECT\n");
@@ -183,8 +171,10 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 
 
 	//////////////////////////////////////////////////////// create hash table//////////////////////////////////////////////////////////////////////
-	unordered_map<Point, vector<Vector>, KeyHasher> point_hush_table;
-	bool is_there_point_without_normal = false;
+	unordered_map<Point, vector<Vector>, KeyHasher> original_point_hush_table;
+	unordered_map<Point, vector<Vector>, KeyHasher> calculated_point_hush_table;
+
+	bool first = true;
 	for (PPolygon = PObj -> U.Pl; PPolygon != NULL;	PPolygon = PPolygon -> Pnext) 
 	{
 			if (PPolygon -> PVertex == NULL) {
@@ -192,152 +182,127 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 				return false;
 			}
 
-			Point tmp_point;
-			PVertex = PPolygon->PVertex;
 
 			MyPolygon polygon;
-			Vector polygon_normal;
+			Vector polygon_original_normal;
+			Vector polygon_calculated_normal = calculatorPlaneNormal(PPolygon);
 
 			if (IP_HAS_PLANE_POLY(PPolygon)) 
 			{
-				polygon_normal[0] = PPolygon->Plane[0];
-				polygon_normal[1] = PPolygon->Plane[1];
-				polygon_normal[2] = PPolygon->Plane[2];
+				polygon_original_normal[0] = PPolygon->Plane[0];
+				polygon_original_normal[1] = PPolygon->Plane[1];
+				polygon_original_normal[2] = PPolygon->Plane[2];
 			}
 			else
 			{
-				Vector tmp_normal = calculatorPlaneNormal(PPolygon);
-				polygon_normal[0] = tmp_normal[0];
-				polygon_normal[1] = tmp_normal[1];
-				polygon_normal[2] = tmp_normal[2];
-				PPolygon->Plane[0] = tmp_normal[0];
-				PPolygon->Plane[1] = tmp_normal[1];
-				PPolygon->Plane[2] = tmp_normal[2];
+				polygon_original_normal = polygon_calculated_normal;
 			}
 			
+			//set the polygon normals
+			polygon.setOriginalNormal(polygon_original_normal);
+			polygon.setCalculatedNormal(polygon_calculated_normal);
 
+			//addin all points to polygon
+			PVertex = PPolygon->PVertex;
+			Point p1, p2, center;
+
+			p1.setX(PVertex->Coord[0]);
+			p1.setY(PVertex->Coord[1]);
+			p1.setZ(PVertex->Coord[2]);
+
+			
+			int vertexCount = 1;
+			center = p1;
+
+			//add all the vertex to our polygon
 			for (PVertex = PPolygon->PVertex->Pnext ; PVertex != NULL ; PVertex = PVertex->Pnext)
 			{
-				tmp_point.setX(PVertex->Coord[0]);
-				tmp_point.setY(PVertex->Coord[1]);
-				tmp_point.setZ(PVertex->Coord[2]);
 
-				//add vertex to hash
-				point_hush_table[tmp_point].push_back(polygon_normal);
+				//set the new point to p2
+				p2.setX(PVertex->Coord[0]);
+				p2.setY(PVertex->Coord[1]);
+				p2.setZ(PVertex->Coord[2]);
 
-				//add line to polygon
-				if (PVertex == PPolygon->PVertex)
-					break;
-
-			}
-
-	}
-	//////////////////////////////////////////////////////// create hash table//////////////////////////////////////////////////////////////////////
-
-
-
-	//////////////////////////////////////////////////////// creating model///////////////////////////////////////////////////////////////////////
-	for (PPolygon = PObj -> U.Pl; PPolygon != NULL;	PPolygon = PPolygon -> Pnext) 
-	{
-			if (PPolygon -> PVertex == NULL) {
-				AfxMessageBox(_T("Dump: Attemp to dump empty polygon"));
-				return false;
-			}
-
-			Point p1, p2;
-			PVertex1 = PPolygon->PVertex;
-
-			p1.setX( PVertex1->Coord[0] );
-			p1.setY( PVertex1->Coord[1] );
-			p1.setZ( PVertex1->Coord[2] );
-
-			MyPolygon polygon;
-			Vector polygon_normal;
-
-			polygon_normal[0] = PPolygon->Plane[0];
-			polygon_normal[1] = PPolygon->Plane[1];
-			polygon_normal[2] = PPolygon->Plane[2];
-			
-			polygon.setNormal(polygon_normal);
-			Point center = p1;
-			int vertexCount = 1;
-
-			for (PVertex2 = PPolygon->PVertex->Pnext ; PVertex2 != NULL ; PVertex2 = PVertex2->Pnext)
-			{
-				//add vertex to hash
-				point_hush_table[p1].push_back(polygon_normal);
-
-				//add line to polygon
-				p2.setX( PVertex2->Coord[0] );
-				p2.setY( PVertex2->Coord[1] );
-				p2.setZ( PVertex2->Coord[2] );
-
+				//calc center of polygon
 				center.setX(center.getX() + p2.getX());
 				center.setY(center.getY() + p2.getY());
 				center.setZ(center.getZ() + p2.getZ());
 				vertexCount++;
 
-				//check whether we need to calculate all the vertex normals
-				if (IP_HAS_NORMAL_VRTX(PVertex1))
-					p1.setNormal(Vector(PVertex1->Normal[0], PVertex1->Normal[1], PVertex1->Normal[2], 0));
-
-				else
+				//add normal
+				if (IP_HAS_NORMAL_VRTX(PVertex))
 				{
-					int tmp_counter = 0;
-					double x = 0; double y = 0; double z = 0;
-					Vector tmp_normal;
-
-					for (auto tmp_normal = point_hush_table[p1].begin(); tmp_normal != point_hush_table[p1].end(); tmp_normal++)
-					{
-						x = x + (*tmp_normal)[0];
-						y = y + (*tmp_normal)[1];
-						z = z + (*tmp_normal)[2];
-						tmp_counter = tmp_counter + 1;
-					}
-					p1.setNormal(Vector(x/ tmp_counter, y / tmp_counter, z/ tmp_counter, 0));
+					p1.setOriginalNormal(Vector(PVertex->Normal[0], PVertex->Normal[1], PVertex->Normal[2], 0));
 				}
 
-				polygon.setCenter(Point(center.getX() / vertexCount, center.getY() / vertexCount, center.getZ() / vertexCount));
 				polygon.addLine(Line(p1, p2));
 
-				//update for next iter
+				//add vertex to hash
+
+				original_point_hush_table[p1].push_back(polygon_original_normal);
+				calculated_point_hush_table[p1].push_back(polygon_calculated_normal);
+
 				p1 = p2;
-				PVertex1 = PVertex2;
 
-				if (PVertex2 == PPolygon->PVertex)
+				if (PVertex == PPolygon->PVertex)
 					break;
-
-
 			}
 
-
+			//set center of polygon
+			polygon.setCenter(Point(center.getX() / vertexCount, center.getY() / vertexCount, center.getZ() / vertexCount));
 
 			model.addPolygon(polygon);
-			
+	}
+	//////////////////////////////////////////////////////// create hash table//////////////////////////////////////////////////////////////////////
 
 
+	//////////////////////////////////////////////////////// add vertex normals///////////////////////////////////////////////////////////////////////
+	vector<MyPolygon> list_of_poligons = model.getModelPolygons();
 
+	for (vector<MyPolygon>::iterator tmp_polygon = list_of_poligons.begin() ; tmp_polygon != list_of_poligons.end(); tmp_polygon++)
+	{
 
-			/* use if(IP_HAS_PLANE_POLY(PPolygon)) to know whether a normal is defined for the polygon
-			   access the normal by the first 3 components of PPolygon->Plane */
-			PVertex = PPolygon -> PVertex;
-			do {			     /* Assume at least one edge in polygon! */
-				/* code handeling all vertex/normal/texture coords */
-				if(IP_HAS_NORMAL_VRTX(PVertex)) 
-				{
-				    int x = 0;
-				    ++x;
-				}
+		vector<Line> list_of_lines = tmp_polygon->getLines();
+		
+		for (auto tmp_line = list_of_lines.begin(); tmp_line != list_of_lines.end(); tmp_line++)
+		{
 
-
-				PVertex = PVertex -> Pnext;
+			//for the calculated normals
+			Point p1 = tmp_line->getP1();
+			double x =0, y=0 , z = 0;
+			int tmp_counter = 0;
+			for (auto tmp_normal = calculated_point_hush_table[p1].begin(); tmp_normal != calculated_point_hush_table[p1].end(); tmp_normal++)
+			{
+				x = x + (*tmp_normal)[0];
+				y = y + (*tmp_normal)[1];
+				z = z + (*tmp_normal)[2];
+				tmp_counter = tmp_counter + 1;
 			}
-			while (PVertex != PPolygon -> PVertex && PVertex != NULL);
-			/* Close the polygon. */
+			if(tmp_counter != 0)
+				p1.setCalculatedNormal(Vector(x / tmp_counter, y / tmp_counter, z / tmp_counter, 0));
+
+			//for the original normals
+			if (p1.getOriginalNormal() == Vector(0, 0, 0, 0))
+			{
+				double x=0, y=0, z = 0;
+				int tmp_counter = 0;
+				for (auto tmp_normal = original_point_hush_table[p1].begin(); tmp_normal != original_point_hush_table[p1].end(); tmp_normal++)
+				{
+					x = x + (*tmp_normal)[0];
+					y = y + (*tmp_normal)[1];
+					z = z + (*tmp_normal)[2];
+					tmp_counter = tmp_counter + 1;
+				}
+				if (tmp_counter != 0)
+					p1.setOriginalNormal( Vector(x / tmp_counter, y / tmp_counter, z / tmp_counter, 0) );
+			}
+
+			tmp_line->setP1(p1);
+		}
+		tmp_polygon->setListOfLines(list_of_lines);
 	}
 
-
-	/* Close the object. */
+	model.setListOfPolygons(list_of_poligons);
 	return true;
 }
 

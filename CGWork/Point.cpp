@@ -73,12 +73,22 @@ void Point::printPoint()
 	AfxMessageBox(c, MB_OK);
 }
 
-void Point::setNormal(Vector _normal)
+void Point::setOriginalNormal(Vector _normal)
 {
-	normal = _normal;
+	original_normal = _normal;
 }
 
-Vector Point::getNormal()
+Vector Point::getOriginalNormal()
 {
-	return normal;
+	return original_normal;
+}
+
+void Point::setCalculatedNormal(Vector _normal)
+{
+	calculated_normal = _normal;
+}
+
+Vector Point::getCalculatedNormal()
+{
+	return calculated_normal;
 }
