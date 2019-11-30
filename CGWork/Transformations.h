@@ -12,6 +12,7 @@ public:
 	static Matrix inverseTranslation(double _x, double _y, double _z);
 	static Matrix inverseRotation(double _angle, int _axis);
 	static Matrix inverseScale(double _x, double _y, double _z);
+	static Matrix prespective(double alpha, double d);
 
 };
 

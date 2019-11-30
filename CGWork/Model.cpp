@@ -144,6 +144,11 @@ void Model::addNormals()
 		vector<Line> all_polygon_lines = tmp_polygon->getLines();
 		for (auto tmp_line = all_polygon_lines.begin(); tmp_line != all_polygon_lines.end(); tmp_line++)
 		{
+			if (tmp_line->getP1() == polygon_list[0].getLines()[0].getP1())
+			{
+				int xxx = 0;
+			}
+
 			Vector point_original_normal = tmp_line->getP1().getOriginalNormal();
 			Vector point_calculated_normal = tmp_line->getP1().getCalculatedNormal();
 

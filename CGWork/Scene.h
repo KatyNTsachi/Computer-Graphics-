@@ -30,6 +30,10 @@ public:
 	bool paint_vertex_normals = false;
 	bool paint_polygon_normals = false;
 	void showOriginalNormals(bool _show_original_normals);
+	void setIsPerspective(bool _isPerspective);
+	Matrix getTransformationMatrix(Model tmp_model, int camera_number, CRect r);
+
+
 private:
 	std::vector<Model> model_list;
 	std::vector<Camera> camera_list;
@@ -46,4 +50,11 @@ private:
 	void setModelColor(Model &_model);
 	int height, width;
 	bool show_original_normals;
+	Matrix perspectiveTransformation = Matrix(	Vector(1, 0, 0, 0),
+												Vector(1, 0, 0, 0),
+												Vector(0, 0, 2, 1),
+												Vector(0, 0, -1, 0));
+	double d;
+	bool isPerspective = false;
+
 };

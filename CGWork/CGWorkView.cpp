@@ -377,6 +377,7 @@ void CCGWorkView::OnViewOrthographic()
 {
 	m_nView = ID_VIEW_ORTHOGRAPHIC;
 	m_bIsPerspective = false;
+	scene.setIsPerspective(false);
 	RedrawWindow();		// redraw using the new view.
 }
 
@@ -389,6 +390,7 @@ void CCGWorkView::OnViewPerspective()
 {
 	m_nView = ID_VIEW_PERSPECTIVE;
 	m_bIsPerspective = true;
+	scene.setIsPerspective(true);
 	RedrawWindow();
 }
 

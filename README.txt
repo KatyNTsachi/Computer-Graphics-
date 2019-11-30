@@ -12,9 +12,6 @@ TASKS
 	=================================================wendsday=========================================
 	choose object
 	
-BUGS
-	5. change the background color
-	
 QUESTIONS
 	1. how do we need to rotate? do we nned to allow the user to select from the screen?
 	2. ask about point 4 in page 4

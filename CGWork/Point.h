@@ -24,7 +24,7 @@ public:
 	Vector getCalculatedNormal();
 
 private:
-	double x, y, z;
+	double x, y, z, w;
 	Vector original_normal;
 	Vector calculated_normal;
 };

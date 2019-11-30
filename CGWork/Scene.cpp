@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "MyPolygon.h"
+#include "Transformations.h"
 
 Scene::Scene()
 {
@@ -175,8 +176,8 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[]) {
 	{
 		Matrix tmp_camera_trans = camera_list[camera_number].getTransformation();
 		Matrix tmp_model_trans = tmp_model->getTransformationMatrix();
-		Matrix all_trans = tmp_camera_trans * tmp_model_trans * strechToScreenSize(r);
-		
+		Matrix all_trans = getTransformationMatrix(*tmp_model, camera_number, r);
+
 		vector<MyPolygon> model_polygon_list = tmp_model->getModelPolygons();
 		drawPoligons(model_polygon_list, tmp_model->getModelColor(), all_trans, pDC, view_mat);
 		if (tmp_model->getShouldBoundingBox() )
@@ -469,4 +470,29 @@ void Scene::setSouldShowBoundingBox(bool _show_bounding_box)
 void Scene::showOriginalNormals(bool _show_original_normals)
 {
 	show_original_normals = _show_original_normals;
+}
+
+void Scene::setIsPerspective(bool _isPerspective)
+{
+	isPerspective = _isPerspective;
+}
+
+Matrix Scene::getTransformationMatrix(Model tmp_model, int camera_number, CRect r)
+{
+	Matrix tmp_camera_trans = camera_list[camera_number].getTransformation();
+	Matrix tmp_model_trans = tmp_model.getTransformationMatrix();
+
+	Matrix all_trans;
+	if (isPerspective)
+	{
+		double alpha = 1;
+		double d = 3;
+		Matrix perspectiveTransformation = Transformations::prespective(alpha, d);
+		all_trans = tmp_camera_trans * tmp_model_trans * perspectiveTransformation * strechToScreenSize(r);
+	}
+	else
+	{
+		all_trans = tmp_camera_trans * tmp_model_trans * strechToScreenSize(r);
+	}
+	return all_trans;
 }

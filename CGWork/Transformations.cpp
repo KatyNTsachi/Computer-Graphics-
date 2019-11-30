@@ -122,3 +122,13 @@ Matrix Transformations::inverseScale(double _x = 1, double _y = 1, double _z = 1
 						Vector(0, 0, 0, 1));
 	return res_matrix;
 }
+
+Matrix Transformations::prespective(double alpha, double d)
+{
+	Matrix shift = Transformations::translation(0, 0, alpha + 1);
+	Matrix perspectiveMatrix = Matrix(Vector(1, 0, 0, 0),
+		Vector(0, 1, 0, 0),
+		Vector(0, 0, d / (d - alpha), -alpha * d / (d - alpha)),
+		Vector(0, 0, 1 / d, 0));
+	return shift * perspectiveMatrix;
+}
