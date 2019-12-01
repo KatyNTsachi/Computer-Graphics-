@@ -415,6 +415,23 @@ void Scene::updateTransformationViewSpaceMatricesOfAllObjects(Matrix transformat
 
 }
 
+void Scene::updateTransformationViewSpaceMatricesOfObjectAtIndex(Matrix _transformationMatrix, int _index)
+{
+	if (_index >= model_list.size() || _index < 0)
+	{
+		return;
+	}
+	model_list[_index].transformInViewSpace(_transformationMatrix);
+}
+void Scene::updateTransformationObjectSpaceMatricesOfObjectAtIndex(Matrix _transformationMatrix, int _index)
+{
+	if (_index >= model_list.size() || _index < 0)
+	{
+		return;
+	}
+	model_list[_index].transformInObjectSpace(_transformationMatrix);
+}
+
 
 void Scene::updateTransformationMatrixOfCamera(Matrix transformationMatrix, bool isRotation)
 {
@@ -503,4 +520,9 @@ Matrix Scene::getTransformationMatrix(Model tmp_model, int camera_number, CRect 
 		all_trans = tmp_camera_trans * tmp_model_trans * strechToScreenSize(r);
 	}
 	return all_trans;
+}
+
+int Scene::getNumberOfModels()
+{
+	return model_list.size();
 }

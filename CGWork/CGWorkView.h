@@ -33,7 +33,6 @@ public:
 // Operations
 public:
 	BOOL PreTranslateMessage(MSG * pMsg);
-
 private:
 	int m_nAxis;				// Axis of Action, X Y or Z
 	int m_nAction;				// Rotate, Translate, Scale
@@ -106,7 +105,8 @@ protected:
 	int number_of_polygons;
 	double alpha;
 	double d;
-
+	int isOneModelMode = false;
+	int chosenModelCircularIndex = 0;
 
 
 // Generated message map functions
@@ -160,6 +160,8 @@ protected:
 	afx_msg void OnUpdateOptionsShowOriginalNormals(CCmdUI *pCmdUI);
 	afx_msg void OnColorBackgoundColor();
 	afx_msg void OnOptionsNumberOfPolygons();
+	afx_msg void OnIsSingleMode();
+	afx_msg void OnUpdateIsSingleMode(CCmdUI *pCmdUI);
 
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

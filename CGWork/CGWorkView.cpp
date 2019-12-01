@@ -94,6 +94,8 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWORIGINALNORMALS, &CCGWorkView::OnUpdateOptionsShowOriginalNormals)
 	ON_COMMAND(ID_COLOR_BACKGOUNDCOLOR, &CCGWorkView::OnColorBackgoundColor)
 	ON_COMMAND(ID_OPTIONS_NUMBEROFPOLYGONS, &CCGWorkView::OnOptionsNumberOfPolygons)
+	ON_COMMAND(ID_IS_SINGLE_MODE, &CCGWorkView::OnIsSingleMode)
+	ON_UPDATE_COMMAND_UI(ID_IS_SINGLE_MODE, &CCGWorkView::OnUpdateIsSingleMode)
 
 
 	//}}AFX_MSG_MAP
@@ -415,6 +417,16 @@ void CCGWorkView::OnActionRotate()
 	m_nAction = ID_ACTION_ROTATE;
 }
 
+void CCGWorkView::OnIsSingleMode()
+{
+	isOneModelMode = !isOneModelMode;
+}
+
+void CCGWorkView::OnUpdateIsSingleMode(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(isOneModelMode);
+}
+
 void CCGWorkView::OnUpdateActionRotate(CCmdUI* pCmdUI) 
 {
 	pCmdUI->SetCheck(m_nAction == ID_ACTION_ROTATE);
@@ -600,14 +612,48 @@ void CCGWorkView::updateTransformationMatrices(double mouseDraggingDistance)
 
 		transformationMatrix = Transformations::scale(	factor, factor, factor);
 	}
-	if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL)
-		scene.updateTransformationObjectSpaceMatricesOfAllObjects(transformationMatrix);
+	if (isOneModelMode)
+	{
+		int size = scene.getNumberOfModels();
+		chosenModelCircularIndex = chosenModelCircularIndex % size;
+
+		if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL)			
+			scene.updateTransformationObjectSpaceMatricesOfObjectAtIndex(transformationMatrix, chosenModelCircularIndex);
+		else
+			scene.updateTransformationViewSpaceMatricesOfObjectAtIndex(transformationMatrix, chosenModelCircularIndex);
+	}
 	else
-		scene.updateTransformationViewSpaceMatricesOfAllObjects(transformationMatrix);
+	{
+		if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL)
+			scene.updateTransformationObjectSpaceMatricesOfAllObjects(transformationMatrix);
+		else
+			scene.updateTransformationViewSpaceMatricesOfAllObjects(transformationMatrix);
+	}
+
 	
 
 	//RedrawWindow();	// force a WM_PAINT for drawing.;
 }
+
+/*
+BOOL CCGWorkView::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		if (VK_LEFT == pMsg->wParam)
+		{
+			//..your process code
+		}
+
+		else if (VK_RIGHT == pMsg->wParam)
+		{
+			//..your process code
+		}
+	}
+
+	return true;
+}
+*/
 
 BOOL CCGWorkView::PreTranslateMessage(MSG * pMsg)
 {
@@ -636,6 +682,22 @@ BOOL CCGWorkView::PreTranslateMessage(MSG * pMsg)
 		updateTransformationMatrices(distance * sensitivity_scalar);
 		RedrawWindow();
 		//choose function
+	}
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		if (isOneModelMode)
+		{
+			if (VK_LEFT == pMsg->wParam)
+			{
+				chosenModelCircularIndex--;
+				chosenModelCircularIndex = chosenModelCircularIndex % scene.getNumberOfModels();
+			}
+			else if (VK_RIGHT == pMsg->wParam)
+			{
+				chosenModelCircularIndex++;
+				chosenModelCircularIndex = chosenModelCircularIndex % scene.getNumberOfModels();
+			}
+		}
 	}
 	return TRUE;
 }

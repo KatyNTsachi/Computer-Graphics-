@@ -34,6 +34,9 @@ public:
 	Matrix getTransformationMatrix(Model tmp_model, int camera_number, CRect r);
 	void setAlpha(double _alpha);
 	void setD(double _d);
+	int getNumberOfModels();
+	void updateTransformationViewSpaceMatricesOfObjectAtIndex(Matrix _transformationMatrix, int _index);
+	void updateTransformationObjectSpaceMatricesOfObjectAtIndex(Matrix _transformationMatrix, int _index);
 
 
 private:
