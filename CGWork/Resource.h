@@ -10,6 +10,7 @@
 #define IDD_MOUSE_SENSITIVITY           139
 #define IDD_DIALOG1                     149
 #define IDD_FUNCTION_NUM                151
+#define IDD_DIALOG2                     153
 #define IDC_LIGHT_SPACE                 1010
 #define IDC_RADIO_LIGHT1                1017
 #define IDC_RADIO_LIGHT2                1018
@@ -40,6 +41,8 @@
 #define IDC_MATERIAL_SPECULAR           1042
 #define IDC_SENSETIVITY_SCROLL          1045
 #define id_a                            1046
+#define ID_ALPHA                        1047
+#define ID_D                            1048
 #define ID_FILE_LOAD                    32771
 #define ID_VIEW_ORTHOGRAPHIC            32772
 #define ID_VIEW_PERSPECTIVE             32773
@@ -75,14 +78,15 @@
 #define ID_OPTIONS_SHOWCALCULATEDNORMALS 32813
 #define ID_COLOR_BACKGOUNDCOLOR         32814
 #define ID_OPTIONS_NUMBEROFPOLYGONS     32815
+#define ID_OPTIONS_PRESPECTIVEPARAMETERS 32816
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        153
-#define _APS_NEXT_COMMAND_VALUE         32816
-#define _APS_NEXT_CONTROL_VALUE         1047
+#define _APS_NEXT_RESOURCE_VALUE        155
+#define _APS_NEXT_COMMAND_VALUE         32817
+#define _APS_NEXT_CONTROL_VALUE         1049
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

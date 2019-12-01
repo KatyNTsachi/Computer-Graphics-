@@ -16,6 +16,7 @@ using std::endl;
 #include <math.h>
 #include "MouseSensitivity.h"
 #include"InputParametersDialogBar.h"
+#include "PrespectiveParametersDialog.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -97,6 +98,7 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
+	ON_COMMAND(ID_OPTIONS_PRESPECTIVEPARAMETERS, &CCGWorkView::OnOptionsPrespectiveParameters)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -141,6 +143,10 @@ CCGWorkView::CCGWorkView()
 	show_bounding_box = 0;
 	background_color = RGB(255, 255, 255);
 	number_of_polygons = 20;
+	alpha = 1;
+	d = 3;
+	scene.setAlpha(alpha);
+	scene.setD(d);
 }
 
 CCGWorkView::~CCGWorkView()
@@ -782,9 +788,8 @@ void CCGWorkView::OnColorBackgoundColor()
 
 void CCGWorkView::OnOptionsNumberOfPolygons()
 {
-	InputParametersDialogBar numberOfPolygons;
-	numberOfPolygons.DoModal();
-	int tmp_number_of_polygons = numberOfPolygons.getNumber();
+	numberOfPolygonDialog.DoModal();
+	int tmp_number_of_polygons = numberOfPolygonDialog.getNumber();
 	if (tmp_number_of_polygons > 20 || tmp_number_of_polygons < 0)
 	{
 		std::string  s = "Please insert num between 2 and 20";
@@ -800,3 +805,28 @@ void CCGWorkView::OnOptionsNumberOfPolygons()
 	
 }
 
+
+
+void CCGWorkView::OnOptionsPrespectiveParameters()
+{
+	prespectiveParametersDialog.DoModal();
+
+	int tmp_alpha = prespectiveParametersDialog.getAlpha();
+	int tmp_d = prespectiveParametersDialog.getD();
+
+	if (tmp_alpha < 0 || tmp_d < tmp_alpha)
+	{
+		std::string  s = "Please insert d > alpha > 0";
+		std::wstring widestr = std::wstring(s.begin(), s.end());
+		const wchar_t *c = widestr.c_str();
+		AfxMessageBox(c, MB_OK);
+	}
+	else
+	{
+		alpha = tmp_alpha;
+		d = tmp_d;
+		scene.setAlpha(alpha);
+		scene.setD(d);
+		RedrawWindow();
+	}
+}

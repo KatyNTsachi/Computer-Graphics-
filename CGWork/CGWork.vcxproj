@@ -212,6 +212,7 @@
     <ClCompile Include="PngWrapper.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="MyPolygon.cpp" />
+    <ClCompile Include="PrespectiveParametersDialog.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
@@ -249,6 +250,7 @@
     <ClInclude Include="PngWrapper.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="MyPolygon.h" />
+    <ClInclude Include="PrespectiveParametersDialog.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="StdAfx.h" />

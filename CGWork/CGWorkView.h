@@ -17,6 +17,9 @@
 #include "Light.h"
 #include "Scene.h"
 
+#include "InputParametersDialogBar.h"
+#include "prespectiveParametersDialog.h"
+
 class CCGWorkView : public CView
 {
 protected: // create from serialization only
@@ -72,6 +75,8 @@ private:
 // Implementation
 public:
 	virtual ~CCGWorkView();
+	InputParametersDialogBar numberOfPolygonDialog;
+	PrespectiveParametersDialog prespectiveParametersDialog;
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -99,6 +104,10 @@ protected:
 	int m_show_calculated_or_original_normals;
 	COLORREF background_color;
 	int number_of_polygons;
+	double alpha;
+	double d;
+
+
 
 // Generated message map functions
 protected:
@@ -156,6 +165,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnOptionsPrespectiveParameters();
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp

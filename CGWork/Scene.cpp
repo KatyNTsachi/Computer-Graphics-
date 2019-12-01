@@ -477,6 +477,16 @@ void Scene::setIsPerspective(bool _isPerspective)
 	isPerspective = _isPerspective;
 }
 
+void Scene::setAlpha(double _alpha)
+{
+	alpha = _alpha;
+}
+
+void Scene::setD(double _d)
+{
+	d = _d;
+}
+
 Matrix Scene::getTransformationMatrix(Model tmp_model, int camera_number, CRect r)
 {
 	Matrix tmp_camera_trans = camera_list[camera_number].getTransformation();
@@ -485,8 +495,6 @@ Matrix Scene::getTransformationMatrix(Model tmp_model, int camera_number, CRect 
 	Matrix all_trans;
 	if (isPerspective)
 	{
-		double alpha = 1;
-		double d = 3;
 		Matrix perspectiveTransformation = Transformations::prespective(alpha, d);
 		all_trans = tmp_camera_trans * tmp_model_trans * perspectiveTransformation * strechToScreenSize(r);
 	}

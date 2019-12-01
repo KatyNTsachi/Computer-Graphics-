@@ -32,6 +32,8 @@ public:
 	void showOriginalNormals(bool _show_original_normals);
 	void setIsPerspective(bool _isPerspective);
 	Matrix getTransformationMatrix(Model tmp_model, int camera_number, CRect r);
+	void setAlpha(double _alpha);
+	void setD(double _d);
 
 
 private:
@@ -54,7 +56,7 @@ private:
 												Vector(1, 0, 0, 0),
 												Vector(0, 0, 2, 1),
 												Vector(0, 0, -1, 0));
-	double d;
+	double d, alpha;
 	bool isPerspective = false;
 
 };
