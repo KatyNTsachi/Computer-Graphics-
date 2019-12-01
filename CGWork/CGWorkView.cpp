@@ -235,7 +235,7 @@ BOOL CCGWorkView::InitializeCGWork()
 void CCGWorkView::OnModelColerPicker() {
 	CColorDialog colorDialog;
 	if (colorDialog.DoModal() == IDOK) {
-		scene.setModelColor(colorDialog.GetColor());
+		scene.setColorOfAllModels(colorDialog.GetColor());
 		RedrawWindow();
 	}
 }
@@ -420,6 +420,15 @@ void CCGWorkView::OnActionRotate()
 void CCGWorkView::OnIsSingleMode()
 {
 	isOneModelMode = !isOneModelMode;
+	if (isOneModelMode)
+	{
+		scene.highlightModel(RGB(0, 255, 255), chosenModelCircularIndex);
+	}
+	else
+	{
+		scene.unHighlightModel();
+	}
+	RedrawWindow();
 }
 
 void CCGWorkView::OnUpdateIsSingleMode(CCmdUI *pCmdUI)
@@ -630,30 +639,7 @@ void CCGWorkView::updateTransformationMatrices(double mouseDraggingDistance)
 			scene.updateTransformationViewSpaceMatricesOfAllObjects(transformationMatrix);
 	}
 
-	
-
-	//RedrawWindow();	// force a WM_PAINT for drawing.;
 }
-
-/*
-BOOL CCGWorkView::PreTranslateMessage(MSG* pMsg)
-{
-	if (pMsg->message == WM_KEYDOWN)
-	{
-		if (VK_LEFT == pMsg->wParam)
-		{
-			//..your process code
-		}
-
-		else if (VK_RIGHT == pMsg->wParam)
-		{
-			//..your process code
-		}
-	}
-
-	return true;
-}
-*/
 
 BOOL CCGWorkView::PreTranslateMessage(MSG * pMsg)
 {
@@ -691,11 +677,19 @@ BOOL CCGWorkView::PreTranslateMessage(MSG * pMsg)
 			{
 				chosenModelCircularIndex--;
 				chosenModelCircularIndex = chosenModelCircularIndex % scene.getNumberOfModels();
+				if (chosenModelCircularIndex < 0)
+				{
+					chosenModelCircularIndex += scene.getNumberOfModels();
+				}
+				scene.highlightModel(RGB(0, 255, 255), chosenModelCircularIndex);
+				RedrawWindow();
 			}
 			else if (VK_RIGHT == pMsg->wParam)
 			{
 				chosenModelCircularIndex++;
 				chosenModelCircularIndex = chosenModelCircularIndex % scene.getNumberOfModels();
+				scene.highlightModel(RGB(0, 255, 255), chosenModelCircularIndex);
+				RedrawWindow();
 			}
 		}
 	}

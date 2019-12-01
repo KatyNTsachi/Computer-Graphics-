@@ -119,14 +119,29 @@ void Scene::normalizeTheModel(Model &_model)
 
 void Scene::setModelColor(Model &_model)
 {
-	if (!isModelColorSet)
-		modelsColor = _model.getModelColor();
-
-	else
+	if (isModelColorSet)
 		_model.setColor(modelsColor);
 
 	_model.setBoundingBoxColor(boundingBoxColor);
 	_model.setNormalsColor(normalsColor);
+}
+
+ void Scene::highlightModel(COLORREF _color, int modelIndex)
+{
+	 if (hilightedModelIndex != -1)
+	 {
+		 unHighlightModel();
+	 }
+	 hilightedModelIndex = modelIndex;
+	 originalColorOfHighlitedModel = model_list[modelIndex].getModelColor();
+	 model_list[modelIndex].setColor(modelsColor);
+}
+
+void Scene::unHighlightModel()
+{
+	model_list[hilightedModelIndex].setColor(originalColorOfHighlitedModel);
+	setModelColor(model_list[hilightedModelIndex]);
+	hilightedModelIndex = -1;
 }
 
 /// we are scaling every model we bring in 
@@ -447,7 +462,7 @@ void Scene::updateTransformationMatrixOfCamera(Matrix transformationMatrix, bool
 	}
 }
 
-void Scene::setModelColor(COLORREF color) 
+void Scene::setColorOfAllModels(COLORREF color) 
 {
 	modelsColor = color;
 	isModelColorSet = true;

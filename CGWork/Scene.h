@@ -24,7 +24,7 @@ public:
 	void updateTransformationViewSpaceMatricesOfAllObjects(Matrix transformationMatrix);
 	void updateTransformationMatrixOfCamera(Matrix transformationMatrix, bool isRotation);
 	void setSouldShowBoundingBox(bool _show_bounding_box);
-	void setModelColor(COLORREF color);
+	void setColorOfAllModels(COLORREF color);
 	void setBoundingBoxColor(COLORREF color);
 	void setNormalsColor(COLORREF color);
 	bool paint_vertex_normals = false;
@@ -37,7 +37,8 @@ public:
 	int getNumberOfModels();
 	void updateTransformationViewSpaceMatricesOfObjectAtIndex(Matrix _transformationMatrix, int _index);
 	void updateTransformationObjectSpaceMatricesOfObjectAtIndex(Matrix _transformationMatrix, int _index);
-
+	void highlightModel(COLORREF _color, int modelIndex);
+	void Scene::unHighlightModel();
 
 private:
 	std::vector<Model> model_list;
@@ -53,6 +54,8 @@ private:
 	void addBoundingBox(Model &_model);
 	void normalizeTheModel(Model &_model);
 	void setModelColor(Model &_model);
+	COLORREF originalColorOfHighlitedModel;
+	int hilightedModelIndex = -1;
 	int height, width;
 	bool show_original_normals;
 	Matrix perspectiveTransformation = Matrix(	Vector(1, 0, 0, 0),
