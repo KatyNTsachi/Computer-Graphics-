@@ -19,6 +19,7 @@
 
 #include "InputParametersDialogBar.h"
 #include "prespectiveParametersDialog.h"
+#include "MouseSensitivity.h"
 
 class CCGWorkView : public CView
 {
@@ -58,6 +59,11 @@ private:
 	LightParams m_lights[MAX_LIGHT];	//configurable lights array
 	LightParams m_ambientLight;		//ambient light (only RGB is used)
 	void updateTransformationMatrices(double mouseDraggingDistance);
+	Matrix getTransformationMatarix(double mouseDraggingDistance);
+	Matrix getRotationMatrix(double mouseDraggingDistance);
+	Matrix getTranslationMatrix(double mouseDraggingDistance);
+	Matrix getScaleMatrix(double mouseDraggingDistance);
+	Matrix getUniformScaleMatrix(double mouseDraggingDistance);
 
 	//mouse coordinates
 	int x_mouse_coordinate, y_mouse_coordinate;
@@ -76,6 +82,7 @@ public:
 	virtual ~CCGWorkView();
 	InputParametersDialogBar numberOfPolygonDialog;
 	PrespectiveParametersDialog prespectiveParametersDialog;
+	MouseSensitivity mouse_sensitivity;
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;

@@ -111,7 +111,7 @@ void Scene::normalizeTheModel(Model &_model)
 		scale_factor = max_z - min_z;
 
 	scale_factor = scale_factor;
-	_model.scaleBy(Matrix(	Vector(2 / scale_factor, 0, 0, -(max_x / scale_factor + min_x / scale_factor)),
+	_model.transformInObjectSpace(Matrix(	Vector(2 / scale_factor, 0, 0, -(max_x / scale_factor + min_x / scale_factor)),
 							Vector(0, 2 / scale_factor, 0, -(max_y / scale_factor + min_y / scale_factor)),
 							Vector(0, 0, 2 / scale_factor, 0),
 							Vector(0, 0, 0, 1)));
@@ -128,13 +128,39 @@ void Scene::setModelColor(Model &_model)
 
  void Scene::highlightModel(COLORREF _color, int modelIndex)
 {
+	 COLORREF hilightedColor = getFaddedModelColor(modelIndex);
+
 	 if (hilightedModelIndex != -1)
 	 {
 		 unHighlightModel();
 	 }
+
 	 hilightedModelIndex = modelIndex;
 	 originalColorOfHighlitedModel = model_list[modelIndex].getModelColor();
-	 model_list[modelIndex].setColor(modelsColor);
+	 model_list[modelIndex].setColor(hilightedColor);
+}
+
+COLORREF Scene::getFaddedModelColor(int modelIndex)
+{
+	COLORREF originalColor;
+	if (isModelColorSet)
+	{
+		originalColor = getModelColor();
+	}
+	else
+	{
+		originalColor = model_list[modelIndex].getModelColor();
+	}
+	double alpha = 0.3;
+	COLORREF hilightedColor = RGB(alpha * GetRValue(originalColor) + (1 - alpha) * 255,
+		alpha * GetGValue(originalColor) + (1 - alpha) * 255,
+		alpha * GetBValue(originalColor) + (1 - alpha) * 255);
+	return hilightedColor;
+}
+
+COLORREF Scene::getModelColor()
+{
+	return modelsColor;
 }
 
 void Scene::unHighlightModel()
@@ -521,18 +547,20 @@ void Scene::setD(double _d)
 
 Matrix Scene::getTransformationMatrix(Model tmp_model, int camera_number, CRect r)
 {
-	Matrix tmp_camera_trans = camera_list[camera_number].getTransformation();
+	//Matrix tmp_camera_trans = camera_list[camera_number].getTransformation();
 	Matrix tmp_model_trans = tmp_model.getTransformationMatrix();
 
 	Matrix all_trans;
 	if (isPerspective)
 	{
 		Matrix perspectiveTransformation = Transformations::prespective(alpha, d);
-		all_trans = tmp_camera_trans * tmp_model_trans * perspectiveTransformation * strechToScreenSize(r);
+		//all_trans = tmp_camera_trans * tmp_model_trans * perspectiveTransformation * strechToScreenSize(r);
+		all_trans = tmp_model_trans * perspectiveTransformation * strechToScreenSize(r);
 	}
 	else
 	{
-		all_trans = tmp_camera_trans * tmp_model_trans * strechToScreenSize(r);
+		//all_trans = tmp_camera_trans * tmp_model_trans * strechToScreenSize(r);
+		all_trans = tmp_model_trans * strechToScreenSize(r);
 	}
 	return all_trans;
 }

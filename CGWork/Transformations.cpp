@@ -135,5 +135,7 @@ Matrix Transformations::prespective(double alpha, double d)
 		Vector(0, 1, 0, 0),
 		Vector(0, 0, -1, 0),
 		Vector(0, 0, -0, 1));
-	return mirorZ * shift * perspectiveMatrix * shift_back * mirorZ;
+	//return mirorZ * shift * perspectiveMatrix * shift_back * mirorZ;
+	return shift * perspectiveMatrix * shift_back;
+
 }

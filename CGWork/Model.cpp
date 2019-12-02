@@ -79,12 +79,6 @@ Matrix Model::getTransformationMatrix()
 	return objectSpaceTransformation * sceenSpaceTransformation;
 }
 
-void Model::scaleBy(Matrix scale_matrix)
-{
-	objectSpaceTransformation = objectSpaceTransformation * scale_matrix;
-	//rotationTransformation.printMatrix();
-}
-
 void Model::transformInObjectSpace(Matrix _transformationnMatrix)
 {
 	objectSpaceTransformation = objectSpaceTransformation * _transformationnMatrix;

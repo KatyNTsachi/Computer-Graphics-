@@ -25,7 +25,6 @@ public:
 	COLORREF getBoundingBoxColor();
 	COLORREF getModelColor();
 	Matrix getTransformationMatrix();
-	void scaleBy(Matrix scale_matrix);
 	void transformInObjectSpace(Matrix transformationMatrix);
 	void transformInViewSpace(Matrix _transformationnMatrix);
 	void setMinMaxValues(double min_x, double max_x, double min_y, double max_y, double min_z, double max_z);

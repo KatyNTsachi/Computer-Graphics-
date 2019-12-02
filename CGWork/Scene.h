@@ -38,6 +38,8 @@ public:
 	void updateTransformationViewSpaceMatricesOfObjectAtIndex(Matrix _transformationMatrix, int _index);
 	void updateTransformationObjectSpaceMatricesOfObjectAtIndex(Matrix _transformationMatrix, int _index);
 	void highlightModel(COLORREF _color, int modelIndex);
+	COLORREF getModelColor();
+	COLORREF getFaddedModelColor(int modelIndex);
 	void Scene::unHighlightModel();
 
 private:

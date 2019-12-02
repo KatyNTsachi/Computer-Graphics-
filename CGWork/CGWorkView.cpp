@@ -236,6 +236,10 @@ void CCGWorkView::OnModelColerPicker() {
 	CColorDialog colorDialog;
 	if (colorDialog.DoModal() == IDOK) {
 		scene.setColorOfAllModels(colorDialog.GetColor());
+		if (isOneModelMode)
+		{
+			scene.highlightModel(RGB(0, 255, 255), chosenModelCircularIndex);
+		}
 		RedrawWindow();
 	}
 }
@@ -427,6 +431,7 @@ void CCGWorkView::OnIsSingleMode()
 	else
 	{
 		scene.unHighlightModel();
+		chosenModelCircularIndex = -1;
 	}
 	RedrawWindow();
 }
@@ -569,78 +574,6 @@ void CCGWorkView::OnTimer(UINT_PTR nIDEvent)
 	//if (nIDEvent == 1)
 }
 
-void CCGWorkView::updateTransformationMatrices(double mouseDraggingDistance)
-{
-	Matrix transformationMatrix;
-
-	// Rotation
-	if (m_nAction == ID_ACTION_ROTATE)
-	{
-		transformationMatrix = Transformations::rotation(M_PI * (mouseDraggingDistance / m_WindowWidth), m_nAxis);
-	}
-	
-	// Translation
-	else if (m_nAction == ID_ACTION_TRANSLATE)
-	{
-		transformationMatrix = Transformations::translation(	(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_X),
-																(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
-																(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
-	}	
-
-	// Scale
-	else if (m_nAction == ID_ACTION_SCALE)
-	{
-		double factor;
-		if (mouseDraggingDistance > 0)
-			factor = 1 / ((m_WindowWidth - mouseDraggingDistance) / m_WindowWidth);
-		else
-			factor = ((m_WindowWidth + mouseDraggingDistance) / m_WindowWidth);
-		
-		double x = 1;
-		double y = 1;
-		double z = 1;
-		if (m_nAxis == ID_AXIS_X)
-			x = factor;
-		else if (m_nAxis == ID_AXIS_Y)
-			y = factor;
-		else if (m_nAxis == ID_AXIS_Z)
-			z = factor;
-
-		transformationMatrix = Transformations::scale(x, y, z);
-	}
-
-	// Uniform scale
-	else if (m_nAction == ID_ACTION_SCALE_ALL)
-	{
-		double factor;
-
-		if (mouseDraggingDistance > 0)
-			factor = 1 / ((m_WindowWidth - mouseDraggingDistance) / m_WindowWidth);
-		else
-			factor = ((m_WindowWidth + mouseDraggingDistance) / m_WindowWidth);
-
-		transformationMatrix = Transformations::scale(	factor, factor, factor);
-	}
-	if (isOneModelMode)
-	{
-		int size = scene.getNumberOfModels();
-		chosenModelCircularIndex = chosenModelCircularIndex % size;
-
-		if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL)			
-			scene.updateTransformationObjectSpaceMatricesOfObjectAtIndex(transformationMatrix, chosenModelCircularIndex);
-		else
-			scene.updateTransformationViewSpaceMatricesOfObjectAtIndex(transformationMatrix, chosenModelCircularIndex);
-	}
-	else
-	{
-		if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL)
-			scene.updateTransformationObjectSpaceMatricesOfAllObjects(transformationMatrix);
-		else
-			scene.updateTransformationViewSpaceMatricesOfAllObjects(transformationMatrix);
-	}
-
-}
-
 BOOL CCGWorkView::PreTranslateMessage(MSG * pMsg)
 {
 	int X = (int)pMsg->wParam;
@@ -696,6 +629,95 @@ BOOL CCGWorkView::PreTranslateMessage(MSG * pMsg)
 	return TRUE;
 }
 
+void CCGWorkView::updateTransformationMatrices(double mouseDraggingDistance)
+{
+	Matrix transformationMatrix = getTransformationMatarix(mouseDraggingDistance);
+
+	if (isOneModelMode)
+	{
+		int size = scene.getNumberOfModels();
+		chosenModelCircularIndex = chosenModelCircularIndex % size;
+
+		if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL)
+			scene.updateTransformationObjectSpaceMatricesOfObjectAtIndex(transformationMatrix, chosenModelCircularIndex);
+		else
+			scene.updateTransformationViewSpaceMatricesOfObjectAtIndex(transformationMatrix, chosenModelCircularIndex);
+	}
+	else
+	{
+		if (m_translations_object == ID_ACTION_TRANSITIONS_MODEL)
+			scene.updateTransformationObjectSpaceMatricesOfAllObjects(transformationMatrix);
+		else
+			scene.updateTransformationViewSpaceMatricesOfAllObjects(transformationMatrix);
+	}
+}
+
+Matrix CCGWorkView::getTransformationMatarix(double mouseDraggingDistance)
+{
+	Matrix transformationMatrix;
+	// Rotation
+	if (m_nAction == ID_ACTION_ROTATE)
+	{
+		transformationMatrix = getRotationMatrix(mouseDraggingDistance);
+	}
+	// Translation
+	else if (m_nAction == ID_ACTION_TRANSLATE)
+	{
+		transformationMatrix = getTranslationMatrix(mouseDraggingDistance);
+	}
+	// Scale
+	else if (m_nAction == ID_ACTION_SCALE)
+	{
+		transformationMatrix = getScaleMatrix(mouseDraggingDistance);
+	}
+	// Uniform scale
+	else if (m_nAction == ID_ACTION_SCALE_ALL)
+	{
+		transformationMatrix = getUniformScaleMatrix(mouseDraggingDistance);
+	}
+	return transformationMatrix;
+}
+
+Matrix CCGWorkView::getRotationMatrix(double mouseDraggingDistance)
+{
+	return Transformations::rotation(M_PI * (mouseDraggingDistance / m_WindowWidth), m_nAxis);
+}
+Matrix CCGWorkView::getTranslationMatrix(double mouseDraggingDistance)
+{
+	return Transformations::translation((mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_X),
+		(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Y),
+		(mouseDraggingDistance / m_WindowWidth) * (m_nAxis == ID_AXIS_Z));
+}
+Matrix CCGWorkView::getScaleMatrix(double mouseDraggingDistance)
+{
+	double factor;
+	if (mouseDraggingDistance > 0)
+		factor = 1 / ((m_WindowWidth - mouseDraggingDistance) / m_WindowWidth);
+	else
+		factor = ((m_WindowWidth + mouseDraggingDistance) / m_WindowWidth);
+
+	double x = 1;
+	double y = 1;
+	double z = 1;
+	if (m_nAxis == ID_AXIS_X)
+		x = factor;
+	else if (m_nAxis == ID_AXIS_Y)
+		y = factor;
+	else if (m_nAxis == ID_AXIS_Z)
+		z = factor;
+
+	return Transformations::scale(x, y, z);
+}
+Matrix CCGWorkView::getUniformScaleMatrix(double mouseDraggingDistance)
+{
+	double factor;
+	if (mouseDraggingDistance > 0)
+		factor = 1 / ((m_WindowWidth - mouseDraggingDistance) / m_WindowWidth);
+	else
+		factor = ((m_WindowWidth + mouseDraggingDistance) / m_WindowWidth);
+	return Transformations::scale(factor, factor, factor);
+}
+
 void CCGWorkView::OnModelTranslations()
 {
 	m_translations_object = ID_ACTION_TRANSITIONS_MODEL;
@@ -718,7 +740,6 @@ void CCGWorkView::OnUpdateOnCameraTranslations(CCmdUI* pCmdUI)
 
 void CCGWorkView::OnAppMouseSensitivity()
 {
-	MouseSensitivity mouse_sensitivity;
 	mouse_sensitivity.DoModal();
 	
 	sensitivity_scalar = mouse_sensitivity.getSensitivityScalar();
