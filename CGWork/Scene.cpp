@@ -265,7 +265,7 @@ void Scene::drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix 
 	}
 }
 
-Matrix Scene::strechToScreenSize( CRect r)
+Matrix Scene::strechToScreenSize(CRect r)
 {
 	width = abs(r.right - r.left);
 	height = abs(r.bottom - r.top);
@@ -559,8 +559,8 @@ Matrix Scene::getTransformationMatrix(Model tmp_model, int camera_number, CRect 
 	}
 	else
 	{
-		//all_trans = tmp_camera_trans * tmp_model_trans * strechToScreenSize(r);
 		all_trans = tmp_model_trans * strechToScreenSize(r);
+
 	}
 	return all_trans;
 }

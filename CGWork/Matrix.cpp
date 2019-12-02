@@ -85,10 +85,10 @@ Point Matrix::getTranformation(Point p)
 {
 	Point new_point;
 	// columns of other.
-	new_point.setX( columns[0][0] * p.getX() + columns[0][1] * p.getY() + columns[0][2] * p.getZ() + columns[0][3] + columns[0][4]);
-	new_point.setY( columns[1][0] * p.getX() + columns[1][1] * p.getY() + columns[1][2] * p.getZ() + columns[1][3] + columns[1][4]);
-	new_point.setZ( columns[2][0] * p.getX() + columns[2][1] * p.getY() + columns[2][2] * p.getZ() + columns[2][3] + columns[2][4]);
-	double w = (columns[3][0] * p.getX() + columns[3][1] * p.getY() + columns[3][2] * p.getZ() + columns[3][3] + columns[3][4]);
+	new_point.setX( columns[0][0] * p.getX() + columns[0][1] * p.getY() + columns[0][2] * p.getZ() + columns[0][3] );
+	new_point.setY( columns[1][0] * p.getX() + columns[1][1] * p.getY() + columns[1][2] * p.getZ() + columns[1][3] );
+	new_point.setZ( columns[2][0] * p.getX() + columns[2][1] * p.getY() + columns[2][2] * p.getZ() + columns[2][3] );
+	double w = (columns[3][0] * p.getX() + columns[3][1] * p.getY() + columns[3][2] * p.getZ() + columns[3][3]);
 	new_point.setX(new_point.getX() / w);
 	new_point.setY(new_point.getY() / w);
 	new_point.setZ(new_point.getZ() / w);
