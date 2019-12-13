@@ -1,10 +1,5 @@
 #include "stdafx.h"
 #include "iritSkel.h"
-#include "MyPolygon.h"
-#include <iostream> 
-#include <unordered_map>
-Model model;
-
 /*****************************************************************************
 * Skeleton for an interface to a parser to read IRIT data files.			 *
 ******************************************************************************
@@ -48,7 +43,7 @@ IPFreeformConvStateStruct CGSkelFFCState = {
 * RETURN VALUE:                                                              *
 *   bool:		false - fail, true - success.                                *
 *****************************************************************************/
-bool CGSkelProcessIritDataFiles(CString &FileNames, int NumFiles, int _number_of_polygons)
+bool CGSkelProcessIritDataFiles(CString &FileNames, int NumFiles)
 {
 	IPObjectStruct *PObjects;
 	IrtHmgnMatType CrntViewMat;
@@ -66,7 +61,7 @@ bool CGSkelProcessIritDataFiles(CString &FileNames, int NumFiles, int _number_of
 		IRIT_GEN_COPY(CrntViewMat, IPViewMat, sizeof(IrtHmgnMatType));
 
 	/* Here some useful parameters to play with in tesselating freeforms: */
-	CGSkelFFCState.FineNess = _number_of_polygons;   /* Res. of tesselation, larger is finer. */
+	CGSkelFFCState.FineNess = 20;   /* Res. of tesselation, larger is finer. */
 	CGSkelFFCState.ComputeUV = TRUE;   /* Wants UV coordinates for textures. */
 	CGSkelFFCState.FourPerFlat = TRUE;/* 4 poly per ~flat patch, 2 otherwise.*/
 	CGSkelFFCState.LinearOnePolyFlag = TRUE;    /* Linear srf gen. one poly. */
@@ -104,21 +99,7 @@ void CGSkelDumpOneTraversedObject(IPObjectStruct *PObj,
 	for (PObj = PObjs; PObj != NULL; PObj = PObj -> Pnext)
 		if (!CGSkelStoreData(PObj)) 
 			exit(1);
-
-
 }
-
-struct KeyHasher
-{
-	std::size_t operator()(const Point& k) const
-	{
-		using std::size_t;
-		using std::hash;
-		using std::string;
-		double tmp = k.getX() + k.getY() + k.getZ();
-		return std::hash<double>() (tmp);
-	}
-};
 
 /*****************************************************************************
 * DESCRIPTION:                                                               *
@@ -138,9 +119,6 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 	double RGB[3], Transp;
 	IPPolygonStruct *PPolygon;
 	IPVertexStruct *PVertex;
-	IPVertexStruct *PVertex1;
-	IPVertexStruct *PVertex2;
-
 	const IPAttributeStruct *Attrs =
         AttrTraceAttributes(PObj -> Attr, PObj -> Attr);
 
@@ -154,11 +132,19 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 
 	if (CGSkelGetObjectColor(PObj, RGB))
 	{
-		int tmp_RGB[3];
-		tmp_RGB[0] = RGB[0] * 255;
-		tmp_RGB[1] = RGB[1] * 255;
-		tmp_RGB[2] = RGB[2] * 255;
-		model.setColor(tmp_RGB);
+		/* color code */
+	}
+	if (CGSkelGetObjectTransp(PObj, &Transp))
+	{
+		/* transparency code */
+	}
+	if ((Str = CGSkelGetObjectTexture(PObj)) != NULL)
+	{
+		/* volumetric texture code */
+	}
+	if ((Str = CGSkelGetObjectPTexture(PObj)) != NULL)
+	{
+		/* parametric texture code */
 	}
 	if (Attrs != NULL) 
 	{
@@ -168,13 +154,6 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 			Attrs = AttrTraceAttributes(Attrs, NULL);
 		}
 	}
-
-
-	//////////////////////////////////////////////////////// create hash table//////////////////////////////////////////////////////////////////////
-	unordered_map<Point, vector<Vector>, KeyHasher> original_point_hush_table;
-	unordered_map<Point, vector<Vector>, KeyHasher> calculated_point_hush_table;
-
-	bool first = true;
 	for (PPolygon = PObj -> U.Pl; PPolygon != NULL;	PPolygon = PPolygon -> Pnext) 
 	{
 			if (PPolygon -> PVertex == NULL) {
@@ -182,131 +161,30 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 				return false;
 			}
 
-
-			MyPolygon polygon;
-			Vector polygon_original_normal;
-			Vector polygon_calculated_normal = calculatorPlaneNormal(PPolygon);
-
-			if (IP_HAS_PLANE_POLY(PPolygon)) 
-			{
-				polygon_original_normal[0] = PPolygon->Plane[0];
-				polygon_original_normal[1] = PPolygon->Plane[1];
-				polygon_original_normal[2] = PPolygon->Plane[2];
-			}
-			else
-			{
-				polygon_original_normal = polygon_calculated_normal;
-			}
-			
-			//set the polygon normals
-			polygon.setOriginalNormal(polygon_original_normal);
-			polygon.setCalculatedNormal(polygon_calculated_normal);
-
-			//addin all points to polygon
-			PVertex = PPolygon->PVertex;
-			Point p1, p2, center;
-
-			p1.setX(PVertex->Coord[0]);
-			p1.setY(PVertex->Coord[1]);
-			p1.setZ(PVertex->Coord[2]);
-
-			
-			int vertexCount = 1;
-			center = p1;
-
-			//add all the vertex to our polygon
-			for (PVertex = PPolygon->PVertex->Pnext ; PVertex != NULL ; PVertex = PVertex->Pnext)
-			{
-
-				//set the new point to p2
-				p2.setX(PVertex->Coord[0]);
-				p2.setY(PVertex->Coord[1]);
-				p2.setZ(PVertex->Coord[2]);
-
-				//calc center of polygon
-				center.setX(center.getX() + p2.getX());
-				center.setY(center.getY() + p2.getY());
-				center.setZ(center.getZ() + p2.getZ());
-				vertexCount++;
-
-				//add normal
-				if (IP_HAS_NORMAL_VRTX(PVertex))
+			/* Count number of vertices. */
+			for (PVertex = PPolygon -> PVertex -> Pnext, i = 1;
+				PVertex != PPolygon -> PVertex && PVertex != NULL;
+				PVertex = PVertex -> Pnext, i++);
+			/* use if(IP_HAS_PLANE_POLY(PPolygon)) to know whether a normal is defined for the polygon
+			   access the normal by the first 3 components of PPolygon->Plane */
+			PVertex = PPolygon -> PVertex;
+			do {			     /* Assume at least one edge in polygon! */
+				/* code handeling all vertex/normal/texture coords */
+				if(IP_HAS_NORMAL_VRTX(PVertex)) 
 				{
-					p1.setOriginalNormal(Vector(PVertex->Normal[0], PVertex->Normal[1], PVertex->Normal[2], 0));
+				    int x = 0;
+				    ++x;
 				}
 
-				polygon.addLine(Line(p1, p2));
 
-				//add vertex to hash
-
-				original_point_hush_table[p1].push_back(polygon_original_normal);
-				calculated_point_hush_table[p1].push_back(polygon_calculated_normal);
-
-				p1 = p2;
-
-				if (PVertex == PPolygon->PVertex)
-					break;
+				PVertex = PVertex -> Pnext;
 			}
-
-			//set center of polygon
-			polygon.setCenter(Point(center.getX() / vertexCount, center.getY() / vertexCount, center.getZ() / vertexCount));
-
-			model.addPolygon(polygon);
+			while (PVertex != PPolygon -> PVertex && PVertex != NULL);
+			/* Close the polygon. */
 	}
-	//////////////////////////////////////////////////////// create hash table//////////////////////////////////////////////////////////////////////
-
-
-	//////////////////////////////////////////////////////// add vertex normals///////////////////////////////////////////////////////////////////////
-	vector<MyPolygon> list_of_poligons = model.getModelPolygons();
-
-	for (vector<MyPolygon>::iterator tmp_polygon = list_of_poligons.begin() ; tmp_polygon != list_of_poligons.end(); tmp_polygon++)
-	{
-
-		vector<Line> list_of_lines = tmp_polygon->getLines();
-		
-		for (auto tmp_line = list_of_lines.begin(); tmp_line != list_of_lines.end(); tmp_line++)
-		{
-
-			//for the calculated normals
-			Point p1 = tmp_line->getP1();
-			double x =0, y=0 , z = 0;
-			int tmp_counter = 0;
-			for (auto tmp_normal = calculated_point_hush_table[p1].begin(); tmp_normal != calculated_point_hush_table[p1].end(); tmp_normal++)
-			{
-				x = x + (*tmp_normal)[0];
-				y = y + (*tmp_normal)[1];
-				z = z + (*tmp_normal)[2];
-				tmp_counter = tmp_counter + 1;
-			}
-			if(tmp_counter != 0)
-				p1.setCalculatedNormal(Vector(x / tmp_counter, y / tmp_counter, z / tmp_counter, 0));
-
-			//for the original normals
-			if (p1.getOriginalNormal() == Vector(0, 0, 0, 0))
-			{
-				double x=0, y=0, z = 0;
-				int tmp_counter = 0;
-				for (auto tmp_normal = original_point_hush_table[p1].begin(); tmp_normal != original_point_hush_table[p1].end(); tmp_normal++)
-				{
-					x = x + (*tmp_normal)[0];
-					y = y + (*tmp_normal)[1];
-					z = z + (*tmp_normal)[2];
-					tmp_counter = tmp_counter + 1;
-				}
-				if (tmp_counter != 0)
-					p1.setOriginalNormal( Vector(x / tmp_counter, y / tmp_counter, z / tmp_counter, 0) );
-			}
-
-			tmp_line->setP1(p1);
-		}
-		tmp_polygon->setListOfLines(list_of_lines);
-	}
-
-	model.setListOfPolygons(list_of_poligons);
+	/* Close the object. */
 	return true;
 }
-
-
 
 /*****************************************************************************
 * DESCRIPTION:                                                               *
@@ -419,19 +297,21 @@ int CGSkelGetObjectTransp(IPObjectStruct *PObj, double *Transp)
 	return !IP_ATTR_IS_BAD_REAL(*Transp);
 }
 
-Vector calculatorPlaneNormal(IPPolygonStruct* PPolygon)
-{
-	IPVertexStruct* v0 = PPolygon->PVertex;
-	IPVertexStruct* v1 = PPolygon->PVertex->Pnext;
-	IPVertexStruct* v2 = PPolygon->PVertex->Pnext->Pnext;
-
-
-	Vector vector1(v2->Coord[0] - v1->Coord[0], v2->Coord[1] - v1->Coord[1], v2->Coord[2] - v1->Coord[2], 0);
-	Vector vector2(v0->Coord[0] - v1->Coord[0], v0->Coord[1] - v1->Coord[1], v0->Coord[2] - v1->Coord[2], 0);
-
-	Vector res(	vector1[1] * vector2[2] - vector1[2] * vector2[1],
-				-(vector1[0] * vector2[2] - vector1[2] * vector2[0]),
-				vector1[0] * vector2[1] - vector1[1] * vector2[0], 0);
-
-	return res;
+/*****************************************************************************
+* DESCRIPTION:                                                               *
+*   Computes the INVERSE of a given matrix M.								 *
+*	The matrix M is is not modified.										 *
+*   The matrix M is assumed to be 4 by 4 (a transformation matrix).			 *
+*   Return TRUE if the inverted matrix (InvM) exists.						 *
+*                                                                            *
+* PARAMETERS:                                                                *
+*   M:          Original matrix to invert.                                   *
+*   InvM:       Inverted matrix will be placed here.						 *
+*                                                                            *
+* RETURN VALUE:                                                              *
+*   int:        TRUE if inverse exists, FALSE otherwise.                     *
+*****************************************************************************/
+int CGSkelInverseMatrix(double M[4][4], double InvM[4][4])
+{	
+	return MatInverseMatrix(M, InvM);
 }
