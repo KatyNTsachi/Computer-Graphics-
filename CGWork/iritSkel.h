@@ -14,8 +14,11 @@
 #include "allocate.h"
 #include "ip_cnvrt.h"
 #include "symb_lib.h"
+#include "Model.h"
 
-bool CGSkelProcessIritDataFiles(CString &FileNames, int NumFiles);
+extern Model model;
+
+bool CGSkelProcessIritDataFiles(CString &FileNames, int NumFiles, int _number_of_polygons);
 void CGSkelDumpOneTraversedObject(IPObjectStruct *PObj, IrtHmgnMatType Mat, void *Data);
 int CGSkelGetObjectColor(IPObjectStruct *PObj, double RGB[3]);
 const char *CGSkelGetObjectTexture(IPObjectStruct *PObj);
@@ -24,5 +27,6 @@ int CGSkelGetObjectTransp(IPObjectStruct *PObj, double *Transp);
 int CGSkelInverseMatrix(double M[4][4], double InvM[4][4]);
 
 bool CGSkelStoreData(IPObjectStruct *PObj);
+Vector calculatorPlaneNormal(IPPolygonStruct* PPolygon);
 
 #endif // IRIT_SKEL_H
