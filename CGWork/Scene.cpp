@@ -194,7 +194,7 @@ void Scene::AddCamera(Camera _camera)
 	camera_list.push_back(_camera);
 }
 
-void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[]) {
+void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[]) {
 
 	//error messege
 	if (camera_number > camera_list.size() - 1)
@@ -220,47 +220,177 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[]) {
 		Matrix all_trans = getTransformationMatrix(*tmp_model, camera_number, r);
 
 		vector<MyPolygon> model_polygon_list = tmp_model->getModelPolygons();
-		drawPoligons(model_polygon_list, tmp_model->getModelColor(), all_trans, pDC, view_mat);
+		drawPoligons(model_polygon_list, tmp_model->getModelColor(), all_trans, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
 		if (tmp_model->getShouldBoundingBox() )
 		{
 			vector<MyPolygon> bounding_box_polygon_list = tmp_model->getBoundingBoxPolygons();
-			drawPoligons(bounding_box_polygon_list, tmp_model->getBoundingBoxColor(), all_trans, pDC, view_mat);
+			drawPoligons(bounding_box_polygon_list, tmp_model->getBoundingBoxColor(), all_trans, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
 		}
 		if (paint_vertex_normals) {
 			if(show_original_normals)
-				drawLines(pDC, tmp_model->getOriginalVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat);
+				drawLines(pDC, tmp_model->getOriginalVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
 			else
-				drawLines(pDC, tmp_model->getCalculatedVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat);
+				drawLines(pDC, tmp_model->getCalculatedVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
 		}
 		if (paint_polygon_normals) {
 			if (show_original_normals)
-				drawLines(pDC, tmp_model->getOriginalPoligonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat);
+				drawLines(pDC, tmp_model->getOriginalPoligonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
 			else
-				drawLines(pDC, tmp_model->getCalculatedPoligonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat);
+				drawLines(pDC, tmp_model->getCalculatedPoligonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
 
 		}
 	}
 	//pDC->GetCurrentBitmap()->SetBitmapBits(view_width * view_height * 4, viewMatrix);
 }
-void Scene::drawLines(CDC* pDC, vector<Line> lines, COLORREF _color, Matrix _transformation, int view_mat[])
+void Scene::drawLines(CDC* pDC, vector<Line> lines, COLORREF _color, Matrix _transformation, int view_mat[], double tmp_drawing_view_mat[])
 {
 	for (auto line = lines.begin(); line != lines.end(); line++)
 	{
 		Line transformed_line = tranformLine(*line, _transformation);
-		drawLine(pDC, transformed_line, _color, view_mat);
+		drawLine(pDC, transformed_line, _color, view_mat, tmp_drawing_view_mat);
 	}
 }
 
-void Scene::drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[])
+int Scene::getMinXOfPolygon(Matrix transformation, MyPolygon &polygon)
 {
+	int min_x = INT_MAX;
+	vector<Line> line_list = polygon.getLines();
+	for (auto line = line_list.begin(); line != line_list.end(); line++)
+	{
+		Line transformed_line = tranformLine(*line, transformation);
+		Point point = transformed_line.getP1();
+		if (point.getX() < min_x)
+		{
+			min_x = point.getX();
+		}
+	}
+	return min_x;
+}
+
+int Scene::getMaxXOfPolygon(Matrix transformation, MyPolygon &polygon)
+{
+	int max_x = INT_MIN;
+	vector<Line> line_list = polygon.getLines();
+	for (auto line = line_list.begin(); line != line_list.end(); line++)
+	{
+		Line transformed_line = tranformLine(*line, transformation);
+		Point point = transformed_line.getP1();
+		if (point.getX() > max_x)
+		{
+			max_x = point.getX();
+		}
+	}
+	return max_x;
+}
+
+int Scene::getMinYOfPolygon(Matrix transformation, MyPolygon &polygon)
+{
+	int min_y = INT_MAX;
+	vector<Line> line_list = polygon.getLines();
+	for (auto line = line_list.begin(); line != line_list.end(); line++)
+	{
+		Line transformed_line = tranformLine(*line, transformation);
+		Point point = transformed_line.getP1();
+		if (point.getY() < min_y)
+		{
+			min_y = point.getY();
+		}
+	}
+	return min_y;
+}
+int Scene::getMaxYOfPolygon(Matrix transformation, MyPolygon &polygon)
+{
+	int max_y = INT_MIN;
+	vector<Line> line_list = polygon.getLines();
+	for (auto line = line_list.begin(); line != line_list.end(); line++)
+	{
+		Line transformed_line = tranformLine(*line, transformation);
+		Point point = transformed_line.getP1();
+		if (point.getY() > max_y)
+		{
+			max_y = point.getY();
+		}
+	}
+	return max_y;
+}
+
+void Scene::drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[])
+{
+	int count = 0;
 	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
 	{
+		count++;
+		int min_x = getMinXOfPolygon(transformation, *polygon);
+		int min_y = getMinYOfPolygon(transformation, *polygon);
+		int max_x = getMaxXOfPolygon(transformation, *polygon);
+		int max_y = getMaxYOfPolygon(transformation, *polygon);
+			
+		// draw edges of polygon
 		vector<Line> line_list = polygon->getLines();
-		for (auto line = line_list.begin(); line != line_list.end(); line++)
-		{
-			Line transformed_line = tranformLine(*line, transformation);
+		if (count>-1) {
+			for (auto line = line_list.begin(); line != line_list.end(); line++)
+			{
+				Line transformed_line = tranformLine(*line, transformation);
+				if (abs(transformed_line.getP1().getY() - transformed_line.getP2().getY()) >= 1)
+				{
+					this->drawLineForScanConversion(pDC, transformed_line, tmp_drawing_view_mat);
+				}
+				this->drawLine(pDC, transformed_line, RGB(255, 0, 0), view_mat, tmp_drawing_view_mat);
+			}
+		}
+		// fill shape of polygon
+		if (count != -1 )
+			fillPolygon(*polygon, color, transformation, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
 
-			this->drawLine(pDC, transformed_line, color, view_mat);
+		// clear last polygon
+		for (int i = max(min_x - 2, 0); i < min(max_x + 2, width); i++)
+		{
+			for (int j = max(min_y - 2, 0); j < min(max_y + 2, height); j++)
+			{
+				tmp_drawing_view_mat[j*width + i] = 0;
+			}
+		}
+	}
+}
+
+void Scene::fillPolygon(MyPolygon polygon, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[])
+{
+	int min_x = getMinXOfPolygon(transformation, polygon);
+	int min_y = getMinYOfPolygon(transformation, polygon);
+	int max_x = getMaxXOfPolygon(transformation, polygon);
+	int max_y = getMaxYOfPolygon(transformation, polygon);
+	bool justChanged = false;
+	bool isInside = false;
+	int lineThickness = 0;
+
+
+	for (int y = max(min_y-2, 0); y <= min(max_y+2, height-1); y++)
+	{
+		int max_x_for_this_y = max_x;
+		while (max_x_for_this_y > min_x && tmp_drawing_view_mat[y * width + max_x_for_this_y] == 0)
+			max_x_for_this_y--;
+
+		lineThickness = 0;
+		justChanged = false;
+		isInside = false;
+		for (int x = max(min_x - 2, 0); x <= min(max_x_for_this_y + 2, width-1); x++)
+		{
+
+			
+			bool isLine = tmp_drawing_view_mat[y * width + x] > 0;
+
+			if (isLine)
+			{
+				lineThickness++;
+			}
+			else if (lineThickness > 0) {
+				isInside = !isInside;
+				lineThickness = 0;
+			}
+			if (isInside || isLine)
+			{
+				view_mat[y * width + x] = RGB(255, 0, 0);
+			}
 		}
 	}
 }
@@ -284,16 +414,54 @@ Matrix Scene::strechToScreenSize(CRect r)
 
 }
 
+void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[]) 
+{
+	Point p1 = line.getP1();
+	Point p2 = line.getP2();
+	double dy, dx, slope;
+	int x, y;
+	int n = 0;
 
-void Scene::drawLine(CDC* pDC, Line line, COLORREF _color, int view_mat[]) {
+	// p2.y should be bigger the p1.y
+	if (p1.getY() > p2.getY())
+	{
+		Point tmp_p = p1;
+		p1 = p2;
+		p2 = tmp_p;
+	}
+
+	//set dx and dy
+	dy = (p2.getY() - p1.getY());
+	dx = (p2.getX() - p1.getX());
+	slope = dx / dy;
+
+	//init x and y
+	x = p1.getX();
+	y = p1.getY();
+
+	while (y < int(p2.getY()))
+	{
+		
+		if (y >= 0 && y < height && x >= 0 && x + int(n * slope) < width)
+		{
+			depth_mat[int(y * width + x + n * slope)] = 1;
+		}
+		y = y + 1;
+		n++;
+		//x = x + slope;
+	}
+
+}
+
+void Scene::drawLine(CDC* pDC, Line line, COLORREF _color, int view_mat[], double depth_mat[]) {
 	
 	COLORREF color = _color;
 	Point p1 = line.getP1();
 	Point p2 = line.getP2();
 	Point tmp_p;
-	double dy, dx, d, d_e, d_ne;
-	int x, y;
-	int tmp_x, tmp_y;
+	double dy, dx, dz, d, d_e, d_ne;
+	int x, y, z;
+	int tmp_x, tmp_y, tmp_z;
 
 	int opposite = 1;
 	bool slope_too_big = false;
@@ -303,6 +471,7 @@ void Scene::drawLine(CDC* pDC, Line line, COLORREF _color, int view_mat[]) {
 	//set dx and dy
 	dy = (p2.getY() - p1.getY());
 	dx = (p2.getX() - p1.getX());
+	dz = (p2.getZ() - p1.getZ());
 
 	//is the slope bigger then 1?
 	if (abs(dy) > abs(dx))
@@ -321,6 +490,7 @@ void Scene::drawLine(CDC* pDC, Line line, COLORREF _color, int view_mat[]) {
 		//corrent dx and dy
 		dx = (p2.getX() - p1.getX());
 		dy = (p2.getY() - p1.getY());
+		dz = (p2.getZ() - p1.getZ());
 
 
 		//set flag
@@ -337,6 +507,7 @@ void Scene::drawLine(CDC* pDC, Line line, COLORREF _color, int view_mat[]) {
 		//set dx and dy
 		dy = (p2.getY() - p1.getY());
 		dx = (p2.getX() - p1.getX());
+		dz = (p2.getZ() - p1.getZ());
 	}
 
 
@@ -361,14 +532,15 @@ void Scene::drawLine(CDC* pDC, Line line, COLORREF _color, int view_mat[]) {
 	//init x and y
 	x = p1.getX();
 	y = p1.getY();
+	z = p1.getZ();
 
 	while (x < int(p2.getX()))
 	{
-		
+
 		//decide which way to go
 		if (d < 0)
 		{
-			d = d + d_e;	
+			d = d + d_e;
 			x = x + 1;
 		}
 
@@ -384,13 +556,14 @@ void Scene::drawLine(CDC* pDC, Line line, COLORREF _color, int view_mat[]) {
 		//negative slope 
 		tmp_x = x;
 		tmp_y = y;
+		tmp_z = z;
 
-		if( slope_negative == true )
+		if (slope_negative == true)
 		{
 			tmp_y = int(2 * p1.getY() - tmp_y);
 		}
 
-		
+
 		//slope is too big
 		/*
 		if( slope_too_big == false )
@@ -403,20 +576,23 @@ void Scene::drawLine(CDC* pDC, Line line, COLORREF _color, int view_mat[]) {
 
 		if (slope_too_big == false)
 		{
-			
+
 			if ((tmp_y >= 0) && (tmp_y < height) && (tmp_x >= 0) && (tmp_x < width))
 			{
 				//view_mat[tmp_x * width + tmp_y] = tmp_color;
 				view_mat[tmp_y * width + tmp_x] = tmp_color;
+				//depth_mat[tmp_y * width + tmp_x] = 1; // tmp_z;
 			}
 		}
-		
-		else
+
+		else {
 			if ((tmp_y >= 0) && (tmp_y < width) && (tmp_x >= 0) && (tmp_x < height))
 			{
 				//view_mat[tmp_y * width + tmp_x] = tmp_color;
 				view_mat[tmp_x * width + tmp_y] = tmp_color;
+				//depth_mat[tmp_x * width + tmp_y] = 1; // tmp_z;
 			}
+		}
 			
 	}		
 

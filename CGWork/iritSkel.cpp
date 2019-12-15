@@ -220,15 +220,21 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 
 			int vertexCount = 1;
 			center = p1;
-
+			bool LastLine = false;
 			//add all the vertex to our polygon
-			for (PVertex = PPolygon->PVertex->Pnext; PVertex != NULL; PVertex = PVertex->Pnext)
+			for (PVertex = PPolygon->PVertex->Pnext; true; PVertex = PVertex->Pnext)
 			{
-
+				if (PVertex == NULL)
+				{
+					PVertex = PPolygon->PVertex;
+					LastLine = true;
+				}
 				//set the new point to p2
 				p2.setX(PVertex->Coord[0]);
 				p2.setY(PVertex->Coord[1]);
 				p2.setZ(PVertex->Coord[2]);
+
+
 
 				//calc center of polygon
 				center.setX(center.getX() + p2.getX());
@@ -251,8 +257,9 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 
 				p1 = p2;
 
-				if (PVertex == PPolygon->PVertex)
+				if (LastLine)
 					break;
+
 			}
 
 			//set center of polygon

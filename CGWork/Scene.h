@@ -15,8 +15,8 @@ public:
 	~Scene();
 	void addModel(Model _model);
 	void AddCamera(Camera _camera);
-	void Draw(CDC* pDC, int camera_number, CRect r, int view_mat[]);
-	void drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[]);
+	void Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[]);
+	void drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[]);
 	Matrix strechToScreenSize( CRect r);
 	Line tranformLine(Line line, Matrix transformationMatrix);
 	Point tranformPoint(Point p, Matrix transformationMatrix);
@@ -45,8 +45,8 @@ public:
 private:
 	std::vector<Model> model_list;
 	std::vector<Camera> camera_list;
-	void drawLine(CDC* pDC, Line line, COLORREF _color, int view_mat[]);
-	void drawLines(CDC* pDC, vector<Line> line, COLORREF _color, Matrix _transformation, int view_mat[]);
+	void Scene::drawLine(CDC* pDC, Line line, COLORREF _color, int view_mat[], double depth_mat[]);
+	void drawLines(CDC* pDC, vector<Line> line, COLORREF _color, Matrix _transformation, int view_mat[], double tmp_drawing_view_mat[]);
 	bool paint_bounding_box;
 	COLORREF modelsColor;
 	bool isModelColorSet = false;
@@ -56,6 +56,16 @@ private:
 	void addBoundingBox(Model &_model);
 	void normalizeTheModel(Model &_model);
 	void setModelColor(Model &_model);
+
+	// scane conversion
+	int getMinXOfPolygon(Matrix transformation, MyPolygon &polygon);
+	int getMaxXOfPolygon(Matrix transformation, MyPolygon &polygon);
+	int getMinYOfPolygon(Matrix transformation, MyPolygon &polygon);
+	int getMaxYOfPolygon(Matrix transformation, MyPolygon &polygon);
+
+	void fillPolygon(MyPolygon polygon, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[]);
+	void drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[]);
+
 	COLORREF originalColorOfHighlitedModel;
 	int hilightedModelIndex = -1;
 	int height, width;
@@ -66,5 +76,4 @@ private:
 												Vector(0, 0, -1, 0));
 	double d, alpha;
 	bool isPerspective = false;
-
 };
