@@ -6,6 +6,7 @@
 #include <vector>
 #include "stdafx.h"
 #include "MyPolygon.h"
+#include "lightCoefficient.h"
 
 using namespace std;
 
@@ -34,10 +35,14 @@ public:
 	void addNormals();
 	std::vector<Line> getOriginalVertexNormalList();
 	std::vector<Line> getCalculatedVertexNormalList();
-	std::vector<Line> getOriginalPoligonNormalList();
-	std::vector<Line> getCalculatedPoligonNormalList();
+	std::vector<Line> getOriginalPolygonNormalList();
+	std::vector<Line> getCalculatedPolygonNormalList();
 	void setListOfPolygons(std::vector<MyPolygon> _list_of_polygons);
 	COLORREF getNormalsColor();
+
+	LightCoefficient k_d = LightCoefficient(1, 1, 1);
+	LightCoefficient k_s = LightCoefficient(1, 1, 1);
+	int specularityExponent = 1;
 
 private:
 	std::vector<MyPolygon> polygon_list;

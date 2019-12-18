@@ -271,9 +271,9 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 
 
 	//////////////////////////////////////////////////////// add vertex normals///////////////////////////////////////////////////////////////////////
-	vector<MyPolygon> list_of_poligons = model.getModelPolygons();
+	vector<MyPolygon> list_of_polygons = model.getModelPolygons();
 
-	for (vector<MyPolygon>::iterator tmp_polygon = list_of_poligons.begin(); tmp_polygon != list_of_poligons.end(); tmp_polygon++)
+	for (vector<MyPolygon>::iterator tmp_polygon = list_of_polygons.begin(); tmp_polygon != list_of_polygons.end(); tmp_polygon++)
 	{
 
 		vector<Line> list_of_lines = tmp_polygon->getLines();
@@ -316,7 +316,7 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 		tmp_polygon->setListOfLines(list_of_lines);
 	}
 
-	model.setListOfPolygons(list_of_poligons);
+	model.setListOfPolygons(list_of_polygons);
 	return true;
 }
 

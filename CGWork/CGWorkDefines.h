@@ -1,0 +1,3 @@
+#pragma once
+#define EMPTY_Z_BUFFER_PIXEL DBL_MAX
+#define EMPTY_TMP_DRAWING_VIEW_MAT_PIXEL 0

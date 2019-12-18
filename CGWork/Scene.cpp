@@ -1,11 +1,17 @@
 #include "Scene.h"
 #include "MyPolygon.h"
 #include "Transformations.h"
+#include "ParallelLightSource.h"
+#include "CGWorkDefines.h"
+
 
 Scene::Scene()
 {
 	paint_bounding_box = false;
 	show_original_normals = true;
+	shadingType = FLAT_SHADING;
+	ParallelLightSource *parallelLightSource = new ParallelLightSource(Vector(1, 0, 0, 0));
+	lightSources[0] = (parallelLightSource);
 }
 
 Scene::~Scene()
@@ -220,11 +226,11 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_
 		Matrix all_trans = getTransformationMatrix(*tmp_model, camera_number, r);
 
 		vector<MyPolygon> model_polygon_list = tmp_model->getModelPolygons();
-		drawPoligons(model_polygon_list, tmp_model->getModelColor(), all_trans, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
+		drawPolygons(*tmp_model, model_polygon_list, tmp_model->getModelColor(), all_trans, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
 		if (tmp_model->getShouldBoundingBox() )
 		{
 			vector<MyPolygon> bounding_box_polygon_list = tmp_model->getBoundingBoxPolygons();
-			drawPoligons(bounding_box_polygon_list, tmp_model->getBoundingBoxColor(), all_trans, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
+			drawPolygons(*tmp_model, bounding_box_polygon_list, tmp_model->getBoundingBoxColor(), all_trans, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
 		}
 		if (paint_vertex_normals) {
 			if(show_original_normals)
@@ -234,9 +240,9 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_
 		}
 		if (paint_polygon_normals) {
 			if (show_original_normals)
-				drawLines(pDC, tmp_model->getOriginalPoligonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+				drawLines(pDC, tmp_model->getOriginalPolygonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
 			else
-				drawLines(pDC, tmp_model->getCalculatedPoligonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+				drawLines(pDC, tmp_model->getCalculatedPolygonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
 
 		}
 	}
@@ -314,7 +320,7 @@ int Scene::getMaxYOfPolygon(Matrix transformation, MyPolygon &polygon)
 	return max_y;
 }
 
-void Scene::drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[])
+void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[])
 {
 	int count = 0;
 	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
@@ -335,14 +341,15 @@ void Scene::drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix 
 				{
 					this->drawLineForScanConversion(pDC, transformed_line, tmp_drawing_view_mat);
 				}
-				this->drawLine(pDC, transformed_line, RGB(255, 0, 0), view_mat, tmp_drawing_view_mat);
+				//this->drawLine(pDC, transformed_line, RGB(255, 0, 0), view_mat, tmp_drawing_view_mat);
 			}
 		}
 		// fill shape of polygon
-		if (count != -1 )
-			fillPolygon(*polygon, color, transformation, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
+		//if (count > 20 && count < 30 )
+		if (count != -1)
+			fillPolygon(model, *polygon, color, transformation, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
 
-		// clear last polygon
+		// clear last polygon from tmp drawing matrix
 		for (int i = max(min_x - 2, 0); i < min(max_x + 2, width); i++)
 		{
 			for (int j = max(min_y - 2, 0); j < min(max_y + 2, height); j++)
@@ -353,31 +360,42 @@ void Scene::drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix 
 	}
 }
 
-void Scene::fillPolygon(MyPolygon polygon, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[])
+void Scene::fillPolygon(Model &model, MyPolygon polygon, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[])
 {
 	int min_x = getMinXOfPolygon(transformation, polygon);
 	int min_y = getMinYOfPolygon(transformation, polygon);
 	int max_x = getMaxXOfPolygon(transformation, polygon);
 	int max_y = getMaxYOfPolygon(transformation, polygon);
-	bool justChanged = false;
 	bool isInside = false;
 	int lineThickness = 0;
 
-
 	for (int y = max(min_y-2, 0); y <= min(max_y+2, height-1); y++)
 	{
+		// get the max x for this y
 		int max_x_for_this_y = max_x;
-		while (max_x_for_this_y > min_x && tmp_drawing_view_mat[y * width + max_x_for_this_y] == 0)
+		while (max_x_for_this_y > min_x && tmp_drawing_view_mat[y * width + max_x_for_this_y] == EMPTY_TMP_DRAWING_VIEW_MAT_PIXEL)
+		{
 			max_x_for_this_y--;
+		}
+		// get the min x for this y
+		int min_x_for_this_y = min_x;
+		while (min_x_for_this_y < max_x && tmp_drawing_view_mat[y * width + min_x_for_this_y] == EMPTY_TMP_DRAWING_VIEW_MAT_PIXEL)
+		{
+			min_x_for_this_y++;
+		}
+		// set borders of z for interpulation
+		double max_z = tmp_drawing_view_mat[y * width + max_x_for_this_y];
+		double min_z = tmp_drawing_view_mat[y * width + min_x_for_this_y];
+		double dz = max_z - min_z;
+		int dx = max_x_for_this_y - min_x_for_this_y;
+		double slope = (dx == 0) ? 0 : (dz / dx);
 
 		lineThickness = 0;
-		justChanged = false;
 		isInside = false;
+		double z = min_z;
 		for (int x = max(min_x - 2, 0); x <= min(max_x_for_this_y + 2, width-1); x++)
-		{
-
-			
-			bool isLine = tmp_drawing_view_mat[y * width + x] > 0;
+		{			
+			bool isLine = tmp_drawing_view_mat[y * width + x] != EMPTY_TMP_DRAWING_VIEW_MAT_PIXEL;
 
 			if (isLine)
 			{
@@ -389,10 +407,69 @@ void Scene::fillPolygon(MyPolygon polygon, COLORREF color, Matrix transformation
 			}
 			if (isInside || isLine)
 			{
-				view_mat[y * width + x] = RGB(255, 0, 0);
+				//view_mat[y * width + x] = RGB(255, 0, 0);
+				///*
+				if (z_buffer[y * width + x] > z)
+				{
+					view_mat[y * width + x] = getColorAt(model, polygon, x, y, z);
+					z_buffer[y * width + x] = z;
+				}
+				z += slope;
+				//*/
+				//view_mat[y * width + x] = getColorAt(model, polygon, x, y, z);
+				//z += slope;
 			}
 		}
 	}
+}
+
+COLORREF Scene::getColorAt(Model &model, MyPolygon polygon, int x, int y, double z)
+{
+	if (shadingType == FLAT_SHADING)
+	{
+		return getFlatColorAt(model, polygon, x, y);
+	}
+	else if (shadingType == GOURAUD_SHADING)
+	{
+		return getGouraudColorAt(model, polygon, x, y);
+	}
+	else if (shadingType == PHONG_SHADING)
+	{
+		return getPhongColorAt(model, polygon, x, y);
+	}
+}
+
+COLORREF Scene::getFlatColorAt(Model &model, MyPolygon polygon, int x, int y)
+{
+	Point objectLocation = Point(x, y, 1);
+	LightCoefficient k_d = LightCoefficient(1, 1, 1);
+	COLORREF color = k_a * I_a;
+	for (int i = 0; i < MAX_COUNT_OF_LIGHTSOURCES; i++)
+	{
+		if (lightSources[i] == NULL)
+		{
+			continue;
+		}
+		Vector L = lightSources[i]->getNormal(objectLocation);
+		LightCoefficient I_p = lightSources[i]->getI_p(objectLocation);
+		Vector N = polygon.getOriginalNormal();
+		double normalSize = sqrt(pow(N[0], 2) + pow(N[1], 2) + pow(N[2], 2));
+		N[0] = N[0] / normalSize;
+		N[1] = N[1] / normalSize;
+		N[2] = N[2] / normalSize;
+		color += I_p * k_d * (L * N);	
+	}
+	return color;
+}
+
+COLORREF Scene::getGouraudColorAt(Model &model, MyPolygon polygon, int x, int y)
+{
+	return k_a * I_a;
+}
+
+COLORREF Scene::getPhongColorAt(Model &model, MyPolygon polygon, int x, int y)
+{
+	return k_a * I_a;
 }
 
 Matrix Scene::strechToScreenSize(CRect r)
@@ -418,8 +495,9 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[])
 {
 	Point p1 = line.getP1();
 	Point p2 = line.getP2();
-	double dy, dx, slope;
+	double dy, dx, dz, slope, zSlope;
 	int x, y;
+	double z;
 	int n = 0;
 
 	// p2.y should be bigger the p1.y
@@ -433,24 +511,25 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[])
 	//set dx and dy
 	dy = (p2.getY() - p1.getY());
 	dx = (p2.getX() - p1.getX());
+	dz = (p2.getZ() - p1.getZ());
 	slope = dx / dy;
+	zSlope = dz / dy;
 
 	//init x and y
 	x = p1.getX();
 	y = p1.getY();
+	z = p1.getZ();
 
 	while (y < int(p2.getY()))
-	{
-		
+	{		
 		if (y >= 0 && y < height && x >= 0 && x + int(n * slope) < width)
 		{
-			depth_mat[int(y * width + x + n * slope)] = 1;
+			depth_mat[int(y * width + x + n * slope)] = z;
 		}
 		y = y + 1;
+		z += zSlope;
 		n++;
-		//x = x + slope;
 	}
-
 }
 
 void Scene::drawLine(CDC* pDC, Line line, COLORREF _color, int view_mat[], double depth_mat[]) {

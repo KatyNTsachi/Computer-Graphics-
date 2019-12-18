@@ -162,12 +162,12 @@ void Model::addNormals()
 }
 
 
-std::vector<Line> Model::getOriginalPoligonNormalList()
+std::vector<Line> Model::getOriginalPolygonNormalList()
 {
 	return polygon_original_normal_list;
 }
 
-std::vector<Line> Model::getCalculatedPoligonNormalList()
+std::vector<Line> Model::getCalculatedPolygonNormalList()
 {
 	return polygon_calculated_normal_list;
 }

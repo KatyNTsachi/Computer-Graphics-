@@ -4,6 +4,8 @@
 
 #include"Model.h"
 #include"Camera.h"
+#include "lightCoefficient.h"
+#include "lightSource.h"
 
 //for the CDC
 #include "stdafx.h"
@@ -16,7 +18,7 @@ public:
 	void addModel(Model _model);
 	void AddCamera(Camera _camera);
 	void Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[]);
-	void drawPoligons(vector<MyPolygon> polygon_list, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[]);
+	void drawPolygons(Model model, vector<MyPolygon> polygon_list, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[]);
 	Matrix strechToScreenSize( CRect r);
 	Line tranformLine(Line line, Matrix transformationMatrix);
 	Point tranformPoint(Point p, Matrix transformationMatrix);
@@ -63,8 +65,22 @@ private:
 	int getMinYOfPolygon(Matrix transformation, MyPolygon &polygon);
 	int getMaxYOfPolygon(Matrix transformation, MyPolygon &polygon);
 
-	void fillPolygon(MyPolygon polygon, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[]);
+	void fillPolygon(Model &model, MyPolygon polygon, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[]);
 	void drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[]);
+
+	// light
+	enum shadingTypes { FLAT_SHADING, GOURAUD_SHADING, PHONG_SHADING };
+	COLORREF getColorAt(Model &model, MyPolygon polygon, int x, int y, double z);
+	COLORREF getFlatColorAt(Model &model, MyPolygon polygon, int x, int y);
+	COLORREF getGouraudColorAt(Model &model, MyPolygon polygon, int x, int y);
+	COLORREF getPhongColorAt(Model &model, MyPolygon polygon, int x, int y);
+	shadingTypes shadingType;
+	LightCoefficient k_a = LightCoefficient(0.1, 0.5, 0.5);
+	LightCoefficient I_a = LightCoefficient(255, 255, 255);
+	#define MAX_COUNT_OF_LIGHTSOURCES 7
+	//std::vector<LightSource*> lightSources;
+	LightSource* lightSources[MAX_COUNT_OF_LIGHTSOURCES] = { NULL };
+
 
 	COLORREF originalColorOfHighlitedModel;
 	int hilightedModelIndex = -1;

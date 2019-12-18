@@ -33,6 +33,7 @@ static char THIS_FILE[] = __FILE__;
 
 // For Status Bar access
 #include "MainFrm.h"
+#include "CGWorkDefines.h"
 
 // Use this macro to display text messages in the status bar.
 #define STATUS_BAR_TEXT(str) (((CMainFrame*)GetParentFrame())->getStatusBar().SetWindowText(str))
@@ -321,8 +322,8 @@ void CCGWorkView::OnDraw(CDC* pDC)
 	for (int i = 0; i < height*width; i++)
 	{
 		view_mat[i] = (GetBValue(background_color)) + (GetRValue(background_color) << 16) + (GetGValue(background_color) << 8);
-		z_buffer[i] = 0.0;
-		tmp_drawing_view_mat[i] = 0;
+		z_buffer[i] = EMPTY_Z_BUFFER_PIXEL;
+		tmp_drawing_view_mat[i] = EMPTY_TMP_DRAWING_VIEW_MAT_PIXEL;
 	}
 
 	scene.Draw(pDC, 0, r, view_mat, z_buffer, tmp_drawing_view_mat);

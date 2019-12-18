@@ -193,7 +193,9 @@
     </ClCompile>
     <ClCompile Include="InputParametersDialogBar.cpp" />
     <ClCompile Include="iritSkel.cpp" />
+    <ClCompile Include="LightCoefficient.cpp" />
     <ClCompile Include="LightDialog.cpp" />
+    <ClCompile Include="LightSource.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="MainFrm.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
@@ -209,9 +211,11 @@
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="MouseSensitivity.cpp" />
+    <ClCompile Include="ParallelLightSource.cpp" />
     <ClCompile Include="PngWrapper.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="MyPolygon.cpp" />
+    <ClCompile Include="PointLightSource.cpp" />
     <ClCompile Include="PrespectiveParametersDialog.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StdAfx.cpp">
@@ -235,21 +239,26 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CGWork.h" />
+    <ClInclude Include="CGWorkDefines.h" />
     <ClInclude Include="CGWorkDoc.h" />
     <ClInclude Include="CGWorkView.h" />
     <ClInclude Include="InputParametersDialogBar.h" />
     <ClInclude Include="iritSkel.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="LightCoefficient.h" />
     <ClInclude Include="LightDialog.h" />
+    <ClInclude Include="LightSource.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MaterialDlg.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="MouseSensitivity.h" />
+    <ClInclude Include="ParallelLightSource.h" />
     <ClInclude Include="PngWrapper.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="MyPolygon.h" />
+    <ClInclude Include="PointLightSource.h" />
     <ClInclude Include="PrespectiveParametersDialog.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
