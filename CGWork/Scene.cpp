@@ -519,6 +519,7 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[])
 	Point p2 = line.getP2();
 	double dy, dx, dz, slope, zSlope;
 	int x, y;
+	int clipedX, clipedY;
 	double z;
 	int n = 0;
 
@@ -543,10 +544,14 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[])
 	z = p1.getZ();
 
 	while (y < int(p2.getY()))
-	{		
-		if (y >= 0 && y < height && x >= 0 && x + int(n * slope) < width)
+	{
+		clipedY = (y < 0 && p2.getY() > 0) ? 0 : y;
+		clipedY = (clipedY >= height && p2.getY() < height) ? height - 1 : clipedY;
+		clipedX = (x + int(n * slope) < 0 && p2.getX() > 0) ? 0 : (x + int(n * slope));
+		clipedX = (clipedX >= width && p2.getX() < width) ? width - 1 : clipedX;
+		if (clipedY >= 0 && clipedY < height && clipedX >= 0 && clipedX < width)
 		{
-			depth_mat[int(y * width + x + n * slope)] = z;
+			depth_mat[int(clipedY * width + clipedX)] = z;
 		}
 		y = y + 1;
 		z += zSlope;
