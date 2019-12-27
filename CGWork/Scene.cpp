@@ -346,6 +346,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, COLORREF c
 		}
 		// fill shape of polygon
 		//if (count > 20 && count < 30 )
+		//if (count != -1)
 		if (count != -1)
 			fillPolygon(model, *polygon, color, transformation, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
 
@@ -441,6 +442,7 @@ COLORREF Scene::getColorAt(Model &model, MyPolygon polygon, int x, int y, double
 
 COLORREF Scene::getFlatColorAt(Model &model, MyPolygon polygon, int x, int y)
 {
+
 	Point objectLocation = Point(x, y, 1);
 	LightCoefficient k_d = LightCoefficient(1, 1, 1);
 	COLORREF color = k_a * I_a;
@@ -451,13 +453,23 @@ COLORREF Scene::getFlatColorAt(Model &model, MyPolygon polygon, int x, int y)
 			continue;
 		}
 		Vector L = lightSources[i]->getNormal(objectLocation);
+
+
 		LightCoefficient I_p = lightSources[i]->getI_p(objectLocation);
 		Vector N = polygon.getOriginalNormal();
-		double normalSize = sqrt(pow(N[0], 2) + pow(N[1], 2) + pow(N[2], 2));
-		N[0] = N[0] / normalSize;
-		N[1] = N[1] / normalSize;
-		N[2] = N[2] / normalSize;
-		color += I_p * k_d * (L * N);	
+		Point tmp_N = tranformPoint(Point(N[0], N[1], N[2]), model.getTransformationMatrix());
+		N[0] = tmp_N.getX();
+		N[1] = tmp_N.getY();
+		N[2] = tmp_N.getZ();
+
+		if (N * L > 0)
+		{
+			double normalSize = sqrt(pow(N[0], 2) + pow(N[1], 2) + pow(N[2], 2));
+			N[0] = N[0] / normalSize;
+			N[1] = N[1] / normalSize;
+			N[2] = N[2] / normalSize;
+			color += I_p * k_d * (L * N);
+		}
 	}
 	return color;
 }
