@@ -240,7 +240,9 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_
 		}
 		if (paint_polygon_normals) {
 			if (show_original_normals)
+			{
 				drawLines(pDC, tmp_model->getOriginalPolygonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+			}
 			else
 				drawLines(pDC, tmp_model->getCalculatedPolygonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
 
@@ -465,10 +467,10 @@ COLORREF Scene::getFlatColorAt(Model &model, MyPolygon polygon, int x, int y)
 
 		LightCoefficient I_p = lightSources[i]->getI_p(objectLocation);
 		Vector N = polygon.getOriginalNormal();
-		Point tmp_N = tranformPoint(Point(N[0], N[1], N[2]), model.getTransformationMatrix());
-		N[0] = tmp_N.getX();
-		N[1] = tmp_N.getY();
-		N[2] = tmp_N.getZ();
+		Line tmp_Line = tranformLine(Line(Point(0,0,0), Point(N[0], N[1], N[2])), model.getTransformationMatrix());
+		N[0] = tmp_Line.getP2().getX() - tmp_Line.getP1().getX();
+		N[1] = tmp_Line.getP2().getY() - tmp_Line.getP1().getY();
+		N[2] = tmp_Line.getP2().getZ() - tmp_Line.getP1().getZ();
 
 		if (N * L > 0)
 		{
