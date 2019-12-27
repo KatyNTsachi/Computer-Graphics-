@@ -102,6 +102,8 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	//}}AFX_MSG_MAP
 	ON_WM_TIMER()
 	ON_COMMAND(ID_OPTIONS_PRESPECTIVEPARAMETERS, &CCGWorkView::OnOptionsPrespectiveParameters)
+	ON_COMMAND(ID_VIEW_WIREFRAME, &CCGWorkView::OnViewWireframe)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_WIREFRAME, &CCGWorkView::OnUpdateViewWireframe)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -913,4 +915,18 @@ void CCGWorkView::OnOptionsPrespectiveParameters()
 		scene.setD(d);
 		RedrawWindow();
 	}
+}
+
+
+void CCGWorkView::OnViewWireframe()
+{
+	m_wireFrame = !m_wireFrame;
+	scene.drawWireFrame(m_wireFrame);
+	RedrawWindow();
+}
+
+
+void CCGWorkView::OnUpdateViewWireframe(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_wireFrame);
 }

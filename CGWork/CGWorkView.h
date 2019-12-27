@@ -44,6 +44,7 @@ private:
 	int m_show_normals;
 	int m_show_vertex_normals;
 	int m_show_polygon_normals;
+	bool m_wireFrame = true;
 
 	CString m_strItdFileName;		// file name of IRIT data
 
@@ -175,6 +176,8 @@ protected:
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnOptionsPrespectiveParameters();
+	afx_msg void OnViewWireframe();
+	afx_msg void OnUpdateViewWireframe(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp

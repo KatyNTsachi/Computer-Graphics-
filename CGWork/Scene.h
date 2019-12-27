@@ -43,6 +43,7 @@ public:
 	COLORREF getModelColor();
 	COLORREF getFaddedModelColor(int modelIndex);
 	void Scene::unHighlightModel();
+	void Scene::drawWireFrame(bool _draw_wireFrame);
 
 private:
 	std::vector<Model> model_list;
@@ -86,6 +87,7 @@ private:
 	int hilightedModelIndex = -1;
 	int height, width;
 	bool show_original_normals;
+	bool draw_wireFrame;
 	Matrix perspectiveTransformation = Matrix(	Vector(1, 0, 0, 0),
 												Vector(1, 0, 0, 0),
 												Vector(0, 0, 2, 1),

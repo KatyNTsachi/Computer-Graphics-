@@ -87,6 +87,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Orthographic",               ID_VIEW_ORTHOGRAPHIC
         MENUITEM "&Perspective",                ID_VIEW_PERSPECTIVE
+        MENUITEM "Wireframe",                   ID_VIEW_WIREFRAME
     END
     POPUP "A&ction"
     BEGIN

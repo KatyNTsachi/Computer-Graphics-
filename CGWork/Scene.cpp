@@ -337,25 +337,33 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, COLORREF c
 			for (auto line = line_list.begin(); line != line_list.end(); line++)
 			{
 				Line transformed_line = tranformLine(*line, transformation);
-				if (abs(transformed_line.getP1().getY() - transformed_line.getP2().getY()) >= 1)
+				if (!draw_wireFrame)
 				{
-					this->drawLineForScanConversion(pDC, transformed_line, tmp_drawing_view_mat);
+					if (abs(transformed_line.getP1().getY() - transformed_line.getP2().getY()) >= 1)
+					{
+						this->drawLineForScanConversion(pDC, transformed_line, tmp_drawing_view_mat);
+					}
 				}
-				//this->drawLine(pDC, transformed_line, RGB(255, 0, 0), view_mat, tmp_drawing_view_mat);
+				else
+				{
+					this->drawLine(pDC, transformed_line, RGB(255, 0, 0), view_mat, tmp_drawing_view_mat);
+				}
 			}
 		}
 		// fill shape of polygon
 		//if (count > 20 && count < 30 )
-		//if (count != -1)
-		if (count != -1)
+		if (count != -1 && !draw_wireFrame)
 			fillPolygon(model, *polygon, color, transformation, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
 
 		// clear last polygon from tmp drawing matrix
-		for (int i = max(min_x - 2, 0); i < min(max_x + 2, width); i++)
+		if (!draw_wireFrame)
 		{
-			for (int j = max(min_y - 2, 0); j < min(max_y + 2, height); j++)
+			for (int i = max(min_x - 2, 0); i < min(max_x + 2, width); i++)
 			{
-				tmp_drawing_view_mat[j*width + i] = 0;
+				for (int j = max(min_y - 2, 0); j < min(max_y + 2, height); j++)
+				{
+					tmp_drawing_view_mat[j*width + i] = 0;
+				}
 			}
 		}
 	}
@@ -796,6 +804,12 @@ void Scene::showOriginalNormals(bool _show_original_normals)
 {
 	show_original_normals = _show_original_normals;
 }
+
+void Scene::drawWireFrame(bool _draw_wireFrame)
+{
+	draw_wireFrame = _draw_wireFrame;
+}
+
 
 void Scene::setIsPerspective(bool _isPerspective)
 {
