@@ -15,7 +15,7 @@ public:
 	int getG();
 	int getB();
 	void setActive(bool _active);
-	bool isAvtive();
+	bool isActive();
 
 private:
 	double entries[3];

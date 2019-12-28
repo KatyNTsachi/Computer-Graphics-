@@ -12,10 +12,12 @@ public:
 	Matrix();
 	~Matrix();
 	Matrix operator * (Matrix const &matrix2);
+//	Vector operator * (Vector const &vec);
 	Matrix operator + (Matrix const &matrix2);
 	Matrix operator - (Matrix const &matrix2);
 	Matrix Transpose();
 	Point getTranformation(Point p);
+	Vector getTranformation(Vector const &vec);
 	void printMatrix();
 
 	Vector columns[NUM_OF_VECTORS];

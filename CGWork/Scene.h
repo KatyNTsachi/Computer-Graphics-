@@ -73,7 +73,6 @@ private:
 	enum shadingTypes { FLAT_SHADING, GOURAUD_SHADING, PHONG_SHADING };
 	LightCoefficient getColorAtPoint(Model &model, MyPolygon polygon, int x, int y, double z, Vector N);
 	LightCoefficient getColorAt(Model &model, MyPolygon polygon, int x, int y, double z);
-	LightCoefficient getFlatColorAt(Model &model, MyPolygon polygon, int x, int y);
 	LightCoefficient getGouraudColorAt(Model &model, MyPolygon polygon, int x, int y, double z);
 	COLORREF getPhongColorAt(Model &model, MyPolygon polygon, int x, int y);
 	shadingTypes shadingType;

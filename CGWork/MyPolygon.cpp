@@ -64,13 +64,25 @@ MyPolygon MyPolygon::tranformPolygon(Matrix tranformation_matrix)
 	MyPolygon new_poly;
 
 	//calculate normal
-	Vector N;
-	Line tmp_Line = Line(Point(0, 0, 0), Point(N[0], N[1], N[2])).tranformLine(tranformation_matrix);
-	N[0] = tmp_Line.getP2().getX() - tmp_Line.getP1().getX();
-	N[1] = tmp_Line.getP2().getY() - tmp_Line.getP1().getY();
-	N[2] = tmp_Line.getP2().getZ() - tmp_Line.getP1().getZ();
-	new_poly.calculated_normal = N;
+	//Vector NCalculated = tranformation_matrix.getTranformation(calculated_normal);
+	
+	
+	//Vector NVertexCalculated, NVertexOriginal;
+	Vector NCalculated = calculated_normal;
+	Line tmp_Line = Line(Point(0, 0, 0), Point(NCalculated[0], NCalculated[1], NCalculated[2])).tranformLine(tranformation_matrix);
+	NCalculated[0] = tmp_Line.getP2().getX() - tmp_Line.getP1().getX();
+	NCalculated[1] = tmp_Line.getP2().getY() - tmp_Line.getP1().getY();
+	NCalculated[2] = tmp_Line.getP2().getZ() - tmp_Line.getP1().getZ();
+	
+	new_poly.calculated_normal = NCalculated * (1 / sqrt( pow(NCalculated[0],2) + pow(NCalculated[1], 2) + pow(NCalculated[2], 2) )) ;
 
+	std::vector<Line> Transformedlines;
+
+	for (auto line = lines.begin(); line != lines.end(); line++)
+	{
+		Transformedlines.push_back(line->tranformLine(tranformation_matrix));
+	}
+	new_poly.setListOfLines(Transformedlines);
 	new_poly.center_of_polygon = tranformation_matrix.getTranformation(this->center_of_polygon); // this->center_of_polygon * tranformation_matrix;
 
 	return new_poly;

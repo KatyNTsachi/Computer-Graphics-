@@ -345,21 +345,22 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 		}
 			
 		// draw edges of polygon
-		vector<Line> line_list = polygon->getLines();
+		MyPolygon transformedPolygon = polygon->tranformPolygon(transformation);
+		vector<Line> line_list = transformedPolygon.getLines();
 		if (count != -1) {
-			for (auto line = line_list.begin(); line != line_list.end(); line++)
+			for (auto transformed_line = line_list.begin(); transformed_line != line_list.end(); transformed_line++)
 			{
-				Line transformed_line = tranformLine(*line, transformation);
+				//Line transformed_line = tranformLine(*line, transformation);
 				if (!draw_wireFrame)
 				{
-					if (abs(transformed_line.getP1().getY() - transformed_line.getP2().getY()) >= 1)
+					if (abs(transformed_line->getP1().getY() - transformed_line->getP2().getY()) >= 1)
 					{
-						this->drawLineForScanConversion(pDC, transformed_line, tmp_drawing_view_mat, view_mat, normal_mat, color_mat, model, polygon->tranformPolygon(model.getTransformationMatrix()) );
+						this->drawLineForScanConversion(pDC, *transformed_line, tmp_drawing_view_mat, view_mat, normal_mat, color_mat, model, transformedPolygon);
 					}
 				}
 				else
 				{
-					this->drawLine(pDC, transformed_line, RGB(255, 0, 0), view_mat, tmp_drawing_view_mat);
+					this->drawLine(pDC, *transformed_line, RGB(255, 0, 0), view_mat, tmp_drawing_view_mat);
 				}
 			}
 		}
@@ -391,7 +392,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 		for (int i = 0; i < height*width; i++)
 		{	
 			int tmp_max = 0;
-			if(tmp_view_mat[i].isAvtive())
+			if(tmp_view_mat[i].isActive())
 			{
 				tmp_max = max(max(tmp_view_mat[i].getR(), tmp_view_mat[i].getG()), tmp_view_mat[i].getB());
 				if (tmp_max > max)
@@ -403,7 +404,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 		//normalize + fill view_mat
 		for (int i = 0; i < height*width; i++)
 		{
-			if (tmp_view_mat[i].isAvtive())
+			if (tmp_view_mat[i].isActive())
 			{
 				COLORREF tmp_color = RGB(tmp_view_mat[i].getR() * normalize_factor, tmp_view_mat[i].getG() * normalize_factor, tmp_view_mat[i].getB() * normalize_factor);
 				view_mat[i] = ((GetBValue(tmp_color)) + (GetRValue(tmp_color) << 16) + (GetGValue(tmp_color) << 8));
@@ -501,6 +502,7 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 						tmp_color = getColorAtPoint(model,polygon, x, y, z, tmp_N);
 					}
 
+					tmp_color.setActive(true);
 					view_mat[y * width + x] = tmp_color;
 					z_buffer[y * width + x] = z;
 				}
@@ -513,6 +515,7 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 
 LightCoefficient Scene::getColorAt(Model &model, MyPolygon polygon, int x, int y, double z)
 {
+	/*&
 	if (shadingType == FLAT_SHADING)
 	{
 		return getFlatColorAt(model, polygon, x, y);
@@ -525,43 +528,9 @@ LightCoefficient Scene::getColorAt(Model &model, MyPolygon polygon, int x, int y
 	{
 		//return getPhongColorAt(model, polygon, x, y);
 	}
-}
-
-LightCoefficient Scene::getFlatColorAt(Model &model, MyPolygon polygon, int x, int y)
-{
-
-	Point objectLocation = Point(x, y, 1);
-	LightCoefficient k_d = LightCoefficient(GetRValue(model.getModelColor()), GetGValue(model.getModelColor()), GetBValue(model.getModelColor()));
-	k_a = k_d;
-	LightCoefficient color = k_a * I_a;
-	for (int i = 0; i < MAX_COUNT_OF_LIGHTSOURCES; i++)
-	{
-		if (lightSources[i] == NULL)
-		{
-			continue;
-		}
-		Vector L = lightSources[i]->getNormal(objectLocation);
-
-
-		LightCoefficient I_p = lightSources[i]->getI_p(objectLocation);
-		Vector N = polygon.getOriginalNormal();
-		Line tmp_Line = tranformLine(Line(Point(0,0,0), Point(N[0], N[1], N[2])), model.getTransformationMatrix());
-		N[0] = tmp_Line.getP2().getX() - tmp_Line.getP1().getX();
-		N[1] = tmp_Line.getP2().getY() - tmp_Line.getP1().getY();
-		N[2] = tmp_Line.getP2().getZ() - tmp_Line.getP1().getZ();
-
-		if (N * L < 0)
-		{
-			double normalSize = sqrt(pow(N[0], 2) + pow(N[1], 2) + pow(N[2], 2));
-			N[0] = N[0] / normalSize;
-			N[1] = N[1] / normalSize;
-			N[2] = N[2] / normalSize;
-			color = color + (I_p * k_d * (abs(L * N)));
-		}
-		color.setActive(true);
-
-	}
-	return color;
+	*/
+	LightCoefficient a;
+	return a;
 }
 
 
@@ -583,17 +552,8 @@ LightCoefficient Scene::getColorAtPoint(Model &model, MyPolygon polygon, int x, 
 
 		LightCoefficient I_p = lightSources[i]->getI_p(objectLocation);
 
-		Line tmp_Line = tranformLine(Line(Point(0, 0, 0), Point(N[0], N[1], N[2])), model.getTransformationMatrix());
-		N[0] = tmp_Line.getP2().getX() - tmp_Line.getP1().getX();
-		N[1] = tmp_Line.getP2().getY() - tmp_Line.getP1().getY();
-		N[2] = tmp_Line.getP2().getZ() - tmp_Line.getP1().getZ();
-
-		if (N * L < 0)
+		if (N * L > 0)
 		{
-			double normalSize = sqrt(pow(N[0], 2) + pow(N[1], 2) + pow(N[2], 2));
-			N[0] = N[0] / normalSize;
-			N[1] = N[1] / normalSize;
-			N[2] = N[2] / normalSize;
 			color = color + (I_p * k_d * (abs(L * N)));
 		}
 		color.setActive(true);
@@ -662,8 +622,9 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 	dz = (p2.getZ() - p1.getZ());
 
 	dnormal = (p2.getCalculatedNormal() - p1.getCalculatedNormal());
-	dcolor = (getColorAtPoint(model, polygon, p2.getX(), p2.getY(), p2.getZ(), p2.getCalculatedNormal()) + 
-			  getColorAtPoint(model, polygon, p1.getX(), p1.getY(), p1.getZ(), p1.getCalculatedNormal())) * (-1);
+
+	//dcolor = (getColorAtPoint(model, polygon, p2.getX(), p2.getY(), p2.getZ(), p2.getCalculatedNormal()) + 
+	//		  getColorAtPoint(model, polygon, p1.getX(), p1.getY(), p1.getZ(), p1.getCalculatedNormal())) * (-1);
 
 	slope = dx / dy;
 	zSlope = dz / dy;
@@ -673,7 +634,7 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 	x = p1.getX();
 	y = p1.getY();
 	z = p1.getZ();
-	color = getColorAtPoint(model, polygon, p1.getX(), p1.getY(), p1.getZ(), p1.getCalculatedNormal());
+	//color = getColorAtPoint(model, polygon, p1.getX(), p1.getY(), p1.getZ(), p1.getCalculatedNormal());
 	
 
 	int n = 0;
@@ -863,6 +824,7 @@ Line Scene::tranformLine(Line line, Matrix transformationMatrix)
 	new_p1 = tranformPoint(line.getP1(), transformationMatrix);
 	new_p2 = tranformPoint(line.getP2(), transformationMatrix);
 	Line tranformed_line(new_p1, new_p2);
+	
 	   
 	return tranformed_line;
 }

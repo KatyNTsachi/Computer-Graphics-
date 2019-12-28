@@ -72,7 +72,7 @@ void LightCoefficient::setActive(bool _active)
 	active = _active;
 }
 
-bool LightCoefficient::isAvtive()
+bool LightCoefficient::isActive()
 {
 	return active;
 }

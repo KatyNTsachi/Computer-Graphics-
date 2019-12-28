@@ -95,6 +95,18 @@ Point Matrix::getTranformation(Point p)
 	return new_point;
 }
 
+Vector Matrix::getTranformation(Vector const &vec)
+{
+	Vector new_vector;
+	// columns of other.
+	new_vector[0] = (columns[0][0] * vec[0] + columns[0][1] * vec[1] + columns[0][2] * vec[2] + columns[0][3] * vec[3]);
+	new_vector[1] = (columns[1][0] * vec[0] + columns[1][1] * vec[1] + columns[1][2] * vec[2] + columns[1][3] * vec[3]);
+	new_vector[2] = (columns[2][0] * vec[0] + columns[2][1] * vec[1] + columns[2][2] * vec[2] + columns[2][3] * vec[3]);
+	new_vector[3] = (columns[3][0] * vec[0] + columns[3][1] * vec[1] + columns[3][2] * vec[2] + columns[3][3] * vec[3]);
+
+	return new_vector;
+}
+
 void Matrix::printMatrix()
 {
 	string s;
