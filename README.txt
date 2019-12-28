@@ -1,7 +1,5 @@
 INSTRUCTIONS:
- * reset your local branch to commit NEW HW and then pull the changes from the remote
-   repository. this is nessessery because I force pushed some commits. use git to look
-   at the changes instead of reading the entire code.
+
 * fix the lights: light calculation is implemented in getColorAt which calls 
   getFlatColorAt, getGouraudColorAt, getPhongColorAt.
 . getFlatColorAt is already implemented but it dosn't work well, I think it is because
@@ -10,7 +8,7 @@ INSTRUCTIONS:
   because the dot produt becomes negative and the collors are interpreted as unsigned.
 * implement getGouraudColorAt and getPhongColorAt
 
-
+* we need to normalize the light for all of the image
 
 TASKS
 		

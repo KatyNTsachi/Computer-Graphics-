@@ -66,17 +66,17 @@ private:
 	int getMinYOfPolygon(Matrix transformation, MyPolygon &polygon);
 	int getMaxYOfPolygon(Matrix transformation, MyPolygon &polygon);
 
-	void fillPolygon(Model &model, MyPolygon polygon, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[]);
-	void drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[]);
+	void fillPolygon(Model &model, MyPolygon polygon, COLORREF color, Matrix transformation, CDC* pDC, LightCoefficient view_mat[], double z_buffer[], double tmp_drawing_view_mat[]);
+	void drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], int draw_mat[]);
 
 	// light
 	enum shadingTypes { FLAT_SHADING, GOURAUD_SHADING, PHONG_SHADING };
-	COLORREF getColorAt(Model &model, MyPolygon polygon, int x, int y, double z);
-	COLORREF getFlatColorAt(Model &model, MyPolygon polygon, int x, int y);
+	LightCoefficient getColorAt(Model &model, MyPolygon polygon, int x, int y, double z);
+	LightCoefficient getFlatColorAt(Model &model, MyPolygon polygon, int x, int y);
 	COLORREF getGouraudColorAt(Model &model, MyPolygon polygon, int x, int y);
 	COLORREF getPhongColorAt(Model &model, MyPolygon polygon, int x, int y);
 	shadingTypes shadingType;
-	LightCoefficient k_a = LightCoefficient(0.1, 0.5, 0.5);
+	LightCoefficient k_a = LightCoefficient(0.2, 0.2, 0.2);
 	LightCoefficient I_a = LightCoefficient(255, 255, 255);
 	#define MAX_COUNT_OF_LIGHTSOURCES 7
 	//std::vector<LightSource*> lightSources;
