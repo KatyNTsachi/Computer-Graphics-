@@ -354,7 +354,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 				{
 					if (abs(transformed_line.getP1().getY() - transformed_line.getP2().getY()) >= 1)
 					{
-						this->drawLineForScanConversion(pDC, transformed_line, tmp_drawing_view_mat, view_mat, normal_mat, color_mat);
+						this->drawLineForScanConversion(pDC, transformed_line, tmp_drawing_view_mat, view_mat, normal_mat, color_mat, model, *polygon);
 					}
 				}
 				else
@@ -632,13 +632,15 @@ Matrix Scene::strechToScreenSize(CRect r)
 
 }
 
-void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], int draw_mat[], Vector* normal_mat, LightCoefficient* color_mat)
+void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], int draw_mat[], Vector* normal_mat, LightCoefficient* color_mat, Model &model, MyPolygon &polygon)
 {
 	Point p1 = line.getP1();
 	Point p2 = line.getP2();
 	double dy, dx, dz, slope, zSlope;
-	Vector dColor, dNormal;
-	Vector colorSlope, normalSlope;
+
+	LightCoefficient dcolor, colorSlope;
+	Vector dnormal, normalSlope;
+	
 	int y;
 	int x;
 	int clipedX, clipedY;
@@ -657,6 +659,10 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 	dx = (int(p2.getX()) - int(p1.getX()));
 	dz = (p2.getZ() - p1.getZ());
 
+	dnormal = (p2.getCalculatedNormal() - p1.getCalculatedNormal());
+	dcolor = (getColorAtPoint(model, polygon, p2.getX(), p2.getY(), p2.getZ(), p2.getCalculatedNormal()) + 
+			  getColorAtPoint(model, polygon, p1.getX(), p1.getY(), p1.getZ(), p1.getCalculatedNormal())) * (-1);
+
 	slope = dx / dy;
 	zSlope = dz / dy;
 
@@ -672,6 +678,7 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 		//keep y in screen
 		clipedY = y < 0 ? 0 : y;
 		clipedY = clipedY >= height ? height - 1 : clipedY;
+		LightCoefficient polygonColor = getColorAtPoint(model, polygon, polygon.getCenter().getX(), polygon.getCenter().getY(), polygon.getCenter().getZ(), polygon.getCalculatedNormal());
 
 		//keep x in screen
 		clipedX = x + round(n * slope);
@@ -685,7 +692,10 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 		}*/
 		depth_mat[int(clipedY * width + clipedX)] = z;
 		draw_mat[int(clipedY * width + clipedX)] = 1;
-
+		if (shadingType == FLAT_SHADING)
+		{
+			color_mat[int(clipedY * width + clipedX)] = polygonColor;
+		}
 		y = y + 1;
 		z += zSlope;
 		n++;

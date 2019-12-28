@@ -67,7 +67,7 @@ private:
 	int getMaxYOfPolygon(Matrix transformation, MyPolygon &polygon);
 
 	void fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, CDC* pDC, LightCoefficient view_mat[], double z_buffer[], double tmp_drawing_view_mat[], Vector* normal_mat, LightCoefficient* color_mat);
-	void drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], int draw_mat[], Vector* normal_mat, LightCoefficient* color_mat);
+	void drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], int draw_mat[], Vector* normal_mat, LightCoefficient* color_mat, Model &model, MyPolygon &polygon);
 
 	// light
 	enum shadingTypes { FLAT_SHADING, GOURAUD_SHADING, PHONG_SHADING };
