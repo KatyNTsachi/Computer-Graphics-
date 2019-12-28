@@ -672,13 +672,13 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 	z = p1.getZ();
 
 	int n = 0;
+	LightCoefficient polygonColor = getColorAtPoint(model, polygon, polygon.getCenter().getX(), polygon.getCenter().getY(), polygon.getCenter().getZ(), polygon.getCalculatedNormal());
 
 	while (y <= int(p2.getY()))
 	{
 		//keep y in screen
 		clipedY = y < 0 ? 0 : y;
 		clipedY = clipedY >= height ? height - 1 : clipedY;
-		LightCoefficient polygonColor = getColorAtPoint(model, polygon, polygon.getCenter().getX(), polygon.getCenter().getY(), polygon.getCenter().getZ(), polygon.getCalculatedNormal());
 
 		//keep x in screen
 		clipedX = x + round(n * slope);

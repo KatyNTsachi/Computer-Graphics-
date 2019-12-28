@@ -80,6 +80,8 @@ Vector Vector::operator * (double const _value)
 	tmp_vector[1] = entries[1] * _value;
 	tmp_vector[2] = entries[2] * _value;
 	tmp_vector[3] = entries[3] * _value;
+
+	return tmp_vector;
 }
 
 
