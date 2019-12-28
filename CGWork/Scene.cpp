@@ -228,11 +228,11 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_
 		Matrix all_trans = getTransformationMatrix(*tmp_model, camera_number, r);
 
 		vector<MyPolygon> model_polygon_list = tmp_model->getModelPolygons();
-		drawPolygons(*tmp_model, model_polygon_list, tmp_model->getModelColor(), all_trans, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
+		drawPolygons(*tmp_model, model_polygon_list, all_trans, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
 		if (tmp_model->getShouldBoundingBox() )
 		{
 			vector<MyPolygon> bounding_box_polygon_list = tmp_model->getBoundingBoxPolygons();
-			drawPolygons(*tmp_model, bounding_box_polygon_list, tmp_model->getBoundingBoxColor(), all_trans, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
+			drawPolygons(*tmp_model, bounding_box_polygon_list, all_trans, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
 		}
 		if (paint_vertex_normals) {
 			if(show_original_normals)
@@ -324,9 +324,11 @@ int Scene::getMaxYOfPolygon(Matrix transformation, MyPolygon &polygon)
 	return max_y;
 }
 
-void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, COLORREF color, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[])
+void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[])
 {
 	LightCoefficient* tmp_view_mat = new LightCoefficient[height*width];
+	LightCoefficient* color_mat = new LightCoefficient[height*width];
+	Vector* normal_mat = new Vector[height*width];   
 	int count = 0;
 	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
 	{
@@ -352,7 +354,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, COLORREF c
 				{
 					if (abs(transformed_line.getP1().getY() - transformed_line.getP2().getY()) >= 1)
 					{
-						this->drawLineForScanConversion(pDC, transformed_line, tmp_drawing_view_mat, view_mat);
+						this->drawLineForScanConversion(pDC, transformed_line, tmp_drawing_view_mat, view_mat, normal_mat, color_mat);
 					}
 				}
 				else
@@ -361,10 +363,12 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, COLORREF c
 				}
 			}
 		}
+
+
 		// fill shape of polygon
 		//if (count > 20 && count < 30 )
 		if (count != -1 && !draw_wireFrame)
-			fillPolygon(model, *polygon, color, transformation, pDC, tmp_view_mat, z_buffer, tmp_drawing_view_mat);
+			fillPolygon(model, *polygon, transformation, pDC, tmp_view_mat, z_buffer, tmp_drawing_view_mat, normal_mat, color_mat);
 
 		// clear last polygon from tmp drawing matrix
 		if (!draw_wireFrame)
@@ -412,7 +416,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, COLORREF c
 	delete[] tmp_view_mat;
 }
 
-void Scene::fillPolygon(Model &model, MyPolygon polygon, COLORREF color, Matrix transformation, CDC* pDC, LightCoefficient view_mat[], double z_buffer[], double tmp_drawing_view_mat[])
+void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, CDC* pDC, LightCoefficient view_mat[], double z_buffer[], double tmp_drawing_view_mat[], Vector* normal_mat, LightCoefficient* color_mat)
 {   
 	int min_x = getMinXOfPolygon(transformation, polygon);
 	int min_y = getMinYOfPolygon(transformation, polygon);
@@ -458,6 +462,9 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, COLORREF color, Matrix 
 		lineThickness = 0;
 		isInside = false;
 		double z = min_z;
+
+
+
 		for (int x = max(min_x_for_this_y - 2, 0); x <= min(max_x_for_this_y + 2, width-1); x++)
 		{			
 			bool isLine = tmp_drawing_view_mat[y * width + x] != EMPTY_TMP_DRAWING_VIEW_MAT_PIXEL;
@@ -472,8 +479,7 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, COLORREF color, Matrix 
 			}
 			if (isInside || isLine)
 			{
-				//view_mat[y * width + x] = RGB(255, 0, 0);
-				///*
+
 				if (z_buffer[y * width + x] > z)
 				{
 					LightCoefficient tmp_color = getColorAt(model, polygon, x, y, z);
@@ -481,9 +487,7 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, COLORREF color, Matrix 
 					z_buffer[y * width + x] = z;
 				}
 				z += slope;
-				//*/
-				//view_mat[y * width + x] = getColorAt(model, polygon, x, y, z);
-				//z += slope;
+	
 			}
 		}
 	}
@@ -497,7 +501,7 @@ LightCoefficient Scene::getColorAt(Model &model, MyPolygon polygon, int x, int y
 	}
 	else if (shadingType == GOURAUD_SHADING)
 	{
-		//return getGouraudColorAt(model, polygon, x, y);
+		return getGouraudColorAt(model, polygon, x, y, z);
 	}
 	else if (shadingType == PHONG_SHADING)
 	{
@@ -542,9 +546,48 @@ LightCoefficient Scene::getFlatColorAt(Model &model, MyPolygon polygon, int x, i
 	return color;
 }
 
-COLORREF Scene::getGouraudColorAt(Model &model, MyPolygon polygon, int x, int y)
+
+LightCoefficient Scene::getColorAtPoint(Model &model, MyPolygon polygon, int x, int y, double z, Vector N)
 {
-	return (k_a * I_a).LightCoefficientToRGB();
+
+	Point objectLocation = Point(x, y, z);
+	LightCoefficient k_d = LightCoefficient(GetRValue(model.getModelColor()), GetGValue(model.getModelColor()), GetBValue(model.getModelColor()));
+	k_a = k_d;
+	LightCoefficient color = k_a * I_a;
+	for (int i = 0; i < MAX_COUNT_OF_LIGHTSOURCES; i++)
+	{
+		if (lightSources[i] == NULL)
+		{
+			continue;
+		}
+		Vector L = lightSources[i]->getNormal(objectLocation);
+
+
+		LightCoefficient I_p = lightSources[i]->getI_p(objectLocation);
+
+		Line tmp_Line = tranformLine(Line(Point(0, 0, 0), Point(N[0], N[1], N[2])), model.getTransformationMatrix());
+		N[0] = tmp_Line.getP2().getX() - tmp_Line.getP1().getX();
+		N[1] = tmp_Line.getP2().getY() - tmp_Line.getP1().getY();
+		N[2] = tmp_Line.getP2().getZ() - tmp_Line.getP1().getZ();
+
+		if (N * L < 0)
+		{
+			double normalSize = sqrt(pow(N[0], 2) + pow(N[1], 2) + pow(N[2], 2));
+			N[0] = N[0] / normalSize;
+			N[1] = N[1] / normalSize;
+			N[2] = N[2] / normalSize;
+			color = color + (I_p * k_d * (abs(L * N)));
+		}
+		color.setActive(true);
+	}
+
+	return color;
+}
+
+
+LightCoefficient Scene::getGouraudColorAt(Model &model, MyPolygon polygon, int x, int y, double z)
+{
+	return (k_a * I_a);
 }
 
 COLORREF Scene::getPhongColorAt(Model &model, MyPolygon polygon, int x, int y)
@@ -571,11 +614,13 @@ Matrix Scene::strechToScreenSize(CRect r)
 
 }
 
-void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], int draw_mat[])
+void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], int draw_mat[], Vector* normal_mat, LightCoefficient* color_mat)
 {
 	Point p1 = line.getP1();
 	Point p2 = line.getP2();
 	double dy, dx, dz, slope, zSlope;
+	Vector dColor, dNormal;
+	Vector colorSlope, normalSlope;
 	int y;
 	int x;
 	int clipedX, clipedY;
@@ -593,6 +638,7 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 	dy = (int(p2.getY()) - int(p1.getY()));
 	dx = (int(p2.getX()) - int(p1.getX()));
 	dz = (p2.getZ() - p1.getZ());
+
 	slope = dx / dy;
 	zSlope = dz / dy;
 
