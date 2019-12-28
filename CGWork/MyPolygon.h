@@ -21,7 +21,7 @@ public:
 	Vector getOriginalNormal();
 	Vector getCalculatedNormal();
 	void setListOfLines(std::vector<Line> _list_of_lines);
-	MyPolygon tranformPolygon(Matrix model.getTransformationMatrix());
+	MyPolygon tranformPolygon(Matrix transformationMatrix);
 private:
 	std::vector<Line> lines;
 	Vector original_normal;

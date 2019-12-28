@@ -1,6 +1,7 @@
 #pragma once
 
 #include"Point.h"
+#include"Matrix.h"
 
 class Line
 {
@@ -12,6 +13,7 @@ public:
 	Point getP1();
 	Point getP2();
 	void setP1(Point _p);
+	Line tranformLine(Matrix tranformation_matrix);
 
 private:
 	Point p1, p2;

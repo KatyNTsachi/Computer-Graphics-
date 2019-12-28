@@ -14,6 +14,17 @@ Line::Line(double _x1, double _y1, double _z1, double _x2, double _y2, double _z
 	p2 = Point(_x2, _y2, _z2);
 }
 
+Line Line::tranformLine(Matrix tranformation_matrix)
+{
+	Point new_p1, new_p2;
+	new_p1 = tranformation_matrix.getTranformation(p1);
+	new_p2 = tranformation_matrix.getTranformation(p2);
+	Line tranformed_line(new_p1, new_p2);
+
+	return tranformed_line;
+}
+
+
 Line::~Line()
 {
 }
