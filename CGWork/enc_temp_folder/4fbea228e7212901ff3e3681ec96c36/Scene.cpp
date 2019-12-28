@@ -354,7 +354,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 				{
 					if (abs(transformed_line.getP1().getY() - transformed_line.getP2().getY()) >= 1)
 					{
-						this->drawLineForScanConversion(pDC, transformed_line, tmp_drawing_view_mat, view_mat, normal_mat, color_mat, model, polygon->tranformPolygon(model.getTransformationMatrix()) );
+						this->drawLineForScanConversion(pDC, transformed_line, tmp_drawing_view_mat, view_mat, normal_mat, color_mat, model, *polygon);
 					}
 				}
 				else
@@ -645,7 +645,6 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 	int x;
 	int clipedX, clipedY;
 	double z;
-	LightCoefficient color;
 	
 
 	// p2.y should be bigger the p1.y
@@ -673,7 +672,6 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 	x = p1.getX();
 	y = p1.getY();
 	z = p1.getZ();
-	color = getColorAtPoint(model, polygon, p1.getX(), p1.getY(), p1.getZ(), p1.getCalculatedNormal());
 	
 
 	int n = 0;
@@ -700,11 +698,6 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 		if (shadingType == FLAT_SHADING)
 		{
 			color_mat[int(clipedY * width + clipedX)] = polygonColor;
-		}
-		else if (shadingType == FLAT_SHADING)
-		{
-			color_mat[int(clipedY * width + clipedX)] = color;
-			color = color + colorSlope;
 		}
 		y = y + 1;
 		z += zSlope;
