@@ -74,7 +74,18 @@ MyPolygon MyPolygon::tranformPolygon(Matrix tranformation_matrix)
 	NCalculated[1] = tmp_Line.getP2().getY() - tmp_Line.getP1().getY();
 	NCalculated[2] = tmp_Line.getP2().getZ() - tmp_Line.getP1().getZ();
 	
-	new_poly.calculated_normal = NCalculated * (1 / sqrt( pow(NCalculated[0],2) + pow(NCalculated[1], 2) + pow(NCalculated[2], 2) )) ;
+	new_poly.calculated_normal = NCalculated * (1 / sqrt( pow(NCalculated[0],2) + pow(NCalculated[1], 2) + pow(NCalculated[2], 2) ));
+
+
+	//Vector NVertexCalculated, NVertexOriginal;
+	Vector NOriginal = original_normal;
+	tmp_Line = Line(Point(0, 0, 0), Point(NOriginal[0], NOriginal[1], NOriginal[2])).tranformLine(tranformation_matrix);
+	NOriginal[0] = tmp_Line.getP2().getX() - tmp_Line.getP1().getX();
+	NOriginal[1] = tmp_Line.getP2().getY() - tmp_Line.getP1().getY();
+	NOriginal[2] = tmp_Line.getP2().getZ() - tmp_Line.getP1().getZ();
+
+	new_poly.original_normal = NOriginal * (1 / sqrt(pow(NOriginal[0], 2) + pow(NOriginal[1], 2) + pow(NOriginal[2], 2)));
+
 
 	std::vector<Line> Transformedlines;
 

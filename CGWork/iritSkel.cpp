@@ -217,6 +217,11 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 			p1.setY(PVertex->Coord[1]);
 			p1.setZ(PVertex->Coord[2]);
 
+			if (IP_HAS_NORMAL_VRTX(PVertex))
+			{
+				p1.setOriginalNormal(Vector(PVertex->Normal[0], PVertex->Normal[1], PVertex->Normal[2], 0));
+			}
+
 
 			int vertexCount = 1;
 			center = p1;
@@ -245,7 +250,7 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 				//add normal
 				if (IP_HAS_NORMAL_VRTX(PVertex))
 				{
-					p1.setOriginalNormal(Vector(PVertex->Normal[0], PVertex->Normal[1], PVertex->Normal[2], 0));
+					p2.setOriginalNormal(Vector(PVertex->Normal[0], PVertex->Normal[1], PVertex->Normal[2], 0));
 				}
 
 				polygon.addLine(Line(p1, p2));
@@ -312,6 +317,40 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 			}
 
 			tmp_line->setP1(p1);
+
+			////////////////////// p2 ////////////////////////////////
+
+			Point p2 = tmp_line->getP2();
+			x = 0, y = 0, z = 0;
+			tmp_counter = 0;
+			for (auto tmp_normal = calculated_point_hush_table[p2].begin(); tmp_normal != calculated_point_hush_table[p2].end(); tmp_normal++)
+			{
+				x = x + (*tmp_normal)[0];
+				y = y + (*tmp_normal)[1];
+				z = z + (*tmp_normal)[2];
+				tmp_counter = tmp_counter + 1;
+			}
+			if (tmp_counter != 0)
+				p2.setCalculatedNormal(Vector(x / tmp_counter, y / tmp_counter, z / tmp_counter, 0));
+
+			//for the original normals
+			if (p2.getOriginalNormal() == Vector(0, 0, 0, 0))
+			{
+				double x = 0, y = 0, z = 0;
+				int tmp_counter = 0;
+				for (auto tmp_normal = original_point_hush_table[p2].begin(); tmp_normal != original_point_hush_table[p2].end(); tmp_normal++)
+				{
+					x = x + (*tmp_normal)[0];
+					y = y + (*tmp_normal)[1];
+					z = z + (*tmp_normal)[2];
+					tmp_counter = tmp_counter + 1;
+				}
+				if (tmp_counter != 0)
+					p2.setOriginalNormal(Vector(x / tmp_counter, y / tmp_counter, z / tmp_counter, 0));
+			}
+
+			tmp_line->setP2(p2);
+
 		}
 		tmp_polygon->setListOfLines(list_of_lines);
 	}

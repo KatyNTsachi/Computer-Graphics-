@@ -10,8 +10,8 @@ Scene::Scene()
 {
 	paint_bounding_box = false;
 	show_original_normals = true;
-	shadingType = FLAT_SHADING;
-	ParallelLightSource *parallelLightSource = new ParallelLightSource(Vector(1, 0, 0, 0), LightCoefficient(255, 255, 255));
+	shadingType = GOURAUD_SHADING;
+	ParallelLightSource *parallelLightSource = new ParallelLightSource(Vector(1, 0, 0, 0), LightCoefficient(1, 1, 1));
 	//PointLightSource *parallelLightSource = new PointLightSource(Point(1, 0, 0), LightCoefficient(255, 255, 255));
 	lightSources[0] = (parallelLightSource);
 }
@@ -347,6 +347,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 		// draw edges of polygon
 		MyPolygon transformedPolygon = polygon->tranformPolygon(transformation);
 		vector<Line> line_list = transformedPolygon.getLines();
+		//if ((count == 50 || count == 51)) {
 		if (count != -1) {
 			for (auto transformed_line = line_list.begin(); transformed_line != line_list.end(); transformed_line++)
 			{
@@ -368,6 +369,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 
 		// fill shape of polygon
 		//if (count > 20 && count < 30 )
+		//if ((count == 50 ||count == 51) && !draw_wireFrame)
 		if (count != -1 && !draw_wireFrame)
 			fillPolygon(model, *polygon, transformation, pDC, tmp_view_mat, z_buffer, tmp_drawing_view_mat, normal_mat, color_mat);
 
@@ -382,7 +384,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 				}
 			}
 		}
-		//if (count == 1)
+		//if (count == 2)
 		//	break;
 	}
 	if (!draw_wireFrame)
@@ -413,8 +415,9 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 
 	}
 
-
 	delete[] tmp_view_mat;
+	delete[] color_mat;
+	delete[] normal_mat;
 }
 
 void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, CDC* pDC, LightCoefficient view_mat[], double z_buffer[], double tmp_drawing_view_mat[], Vector* normal_mat, LightCoefficient* color_mat)
@@ -621,24 +624,25 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 	dx = (int(p2.getX()) - int(p1.getX()));
 	dz = (p2.getZ() - p1.getZ());
 
-	dnormal = (p2.getCalculatedNormal() - p1.getCalculatedNormal());
+	dnormal = (p2.getOriginalNormal() - p1.getOriginalNormal());
 
-	//dcolor = (getColorAtPoint(model, polygon, p2.getX(), p2.getY(), p2.getZ(), p2.getCalculatedNormal()) + 
-	//		  getColorAtPoint(model, polygon, p1.getX(), p1.getY(), p1.getZ(), p1.getCalculatedNormal())) * (-1);
+	LightCoefficient c1 = getColorAtPoint(model, polygon, p2.getX(), p2.getY(), p2.getZ(), p2.getOriginalNormal());
+	LightCoefficient c2 = getColorAtPoint(model, polygon, p1.getX(), p1.getY(), p1.getZ(), p1.getOriginalNormal());
+	dcolor = (c1 + c2 * (-1));
 
 	slope = dx / dy;
 	zSlope = dz / dy;
-	colorSlope = dcolor * (1 / dy);
+	colorSlope = dcolor * (1 / ((double)dy));
 
 	//init x and y
 	x = p1.getX();
 	y = p1.getY();
 	z = p1.getZ();
-	//color = getColorAtPoint(model, polygon, p1.getX(), p1.getY(), p1.getZ(), p1.getCalculatedNormal());
+	color = getColorAtPoint(model, polygon, p1.getX(), p1.getY(), p1.getZ(), p1.getOriginalNormal());
 	
 
 	int n = 0;
-	LightCoefficient polygonColor = getColorAtPoint(model, polygon, polygon.getCenter().getX(), polygon.getCenter().getY(), polygon.getCenter().getZ(), polygon.getCalculatedNormal());
+	LightCoefficient polygonColor = getColorAtPoint(model, polygon, polygon.getCenter().getX(), polygon.getCenter().getY(), polygon.getCenter().getZ(), polygon.getOriginalNormal());
 
 	while (y <= int(p2.getY()))
 	{
@@ -662,7 +666,7 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 		{
 			color_mat[int(clipedY * width + clipedX)] = polygonColor;
 		}
-		else if (shadingType == FLAT_SHADING)
+		else if (shadingType == GOURAUD_SHADING)
 		{
 			color_mat[int(clipedY * width + clipedX)] = color;
 			color = color + colorSlope;

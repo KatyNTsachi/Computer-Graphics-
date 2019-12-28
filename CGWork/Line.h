@@ -13,6 +13,7 @@ public:
 	Point getP1();
 	Point getP2();
 	void setP1(Point _p);
+	void setP2(Point _p);
 	Line tranformLine(Matrix tranformation_matrix);
 
 private:

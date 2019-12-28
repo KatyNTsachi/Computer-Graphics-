@@ -20,7 +20,6 @@ Line Line::tranformLine(Matrix tranformation_matrix)
 	new_p1 = tranformation_matrix.getTranformation(p1);
 	new_p2 = tranformation_matrix.getTranformation(p2);
 	Line tranformed_line(new_p1, new_p2);
-
 	return tranformed_line;
 }
 
@@ -42,4 +41,9 @@ Point Line::getP2()
 void Line::setP1(Point _p)
 {
 	p1 = _p;
+}
+
+void Line::setP2(Point _p)
+{
+	p2 = _p;
 }

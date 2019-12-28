@@ -76,8 +76,8 @@ private:
 	LightCoefficient getGouraudColorAt(Model &model, MyPolygon polygon, int x, int y, double z);
 	COLORREF getPhongColorAt(Model &model, MyPolygon polygon, int x, int y);
 	shadingTypes shadingType;
-	LightCoefficient k_a = LightCoefficient(0.2, 0.2, 0.2);
-	LightCoefficient I_a = LightCoefficient(255, 255, 255);
+	LightCoefficient k_a = LightCoefficient(255, 255, 255);
+	LightCoefficient I_a = LightCoefficient(0.2, 0.2, 0.2);
 	#define MAX_COUNT_OF_LIGHTSOURCES 7
 	//std::vector<LightSource*> lightSources;
 	LightSource* lightSources[MAX_COUNT_OF_LIGHTSOURCES] = { NULL };
