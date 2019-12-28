@@ -73,3 +73,14 @@ bool const Vector::operator== (Vector const _vector)
 	return (entries[0] == _vector.entries[0] && entries[1] == _vector.entries[1] && entries[2] == _vector.entries[2] && entries[3] == _vector.entries[3]);
 }
 
+Vector Vector::operator * (double const _value)
+{
+	Vector tmp_vector;
+	tmp_vector[0] = entries[0] * _value;
+	tmp_vector[1] = entries[1] * _value;
+	tmp_vector[2] = entries[2] * _value;
+	tmp_vector[3] = entries[3] * _value;
+}
+
+
+

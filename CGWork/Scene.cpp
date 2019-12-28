@@ -418,6 +418,12 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 
 void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, CDC* pDC, LightCoefficient view_mat[], double z_buffer[], double tmp_drawing_view_mat[], Vector* normal_mat, LightCoefficient* color_mat)
 {   
+	bool color_from_edge = false;
+	if (shadingType == FLAT_SHADING || shadingType == GOURAUD_SHADING)
+	{
+		color_from_edge = true;
+	}
+
 	int min_x = getMinXOfPolygon(transformation, polygon);
 	int min_y = getMinYOfPolygon(transformation, polygon);
 	int max_x = getMaxXOfPolygon(transformation, polygon);
@@ -464,7 +470,6 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 		double z = min_z;
 
 
-
 		for (int x = max(min_x_for_this_y - 2, 0); x <= min(max_x_for_this_y + 2, width-1); x++)
 		{			
 			bool isLine = tmp_drawing_view_mat[y * width + x] != EMPTY_TMP_DRAWING_VIEW_MAT_PIXEL;
@@ -482,7 +487,20 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 
 				if (z_buffer[y * width + x] > z)
 				{
-					LightCoefficient tmp_color = getColorAt(model, polygon, x, y, z);
+					double min_factor = ((double)(max_x_for_this_y - x)) / (max_x_for_this_y - min_x_for_this_y);
+					double max_factor = 1 - min_factor;
+
+					LightCoefficient tmp_color;
+					if (color_from_edge == true)
+					{
+						tmp_color = color_mat[y * width + min_x_for_this_y] * min_factor + color_mat[y * width + max_x_for_this_y] * max_factor;
+					}
+					else
+					{
+						Vector tmp_N = normal_mat[y * width + min_x_for_this_y] * min_factor + normal_mat[y * width + max_x_for_this_y] * max_factor;
+						tmp_color = getColorAtPoint(model,polygon, x, y, z, tmp_N);
+					}
+
 					view_mat[y * width + x] = tmp_color;
 					z_buffer[y * width + x] = z;
 				}

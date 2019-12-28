@@ -5,6 +5,7 @@ public:
 	Vector();
 	Vector(double x, double y, double z, double w);
 	double operator * (Vector const &vector2);
+	Vector operator * (double const _value);
 	Vector operator + (Vector const &vector2);
 	Vector operator - (Vector const &vector2);
 	double &operator [] (int index);
