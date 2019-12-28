@@ -9,7 +9,7 @@ class ParallelLightSource :
 {
 public:
 	ParallelLightSource();
-	ParallelLightSource(Vector _normal);
+	ParallelLightSource(Vector _normal, LightCoefficient _I_p);
 	Vector getNormal(Point objectLocation);
 	void setNormal(Vector _normal);
 	LightCoefficient getI_p(Point objectLocation);

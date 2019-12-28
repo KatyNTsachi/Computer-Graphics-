@@ -4,9 +4,10 @@ ParallelLightSource::ParallelLightSource()
 {
 }
 
-ParallelLightSource::ParallelLightSource(Vector _normal)
+ParallelLightSource::ParallelLightSource(Vector _normal, LightCoefficient _I_p)
 {
 	normal = _normal;
+	I_p = _I_p;
 }
 
 
