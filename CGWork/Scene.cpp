@@ -2,6 +2,7 @@
 #include "MyPolygon.h"
 #include "Transformations.h"
 #include "ParallelLightSource.h"
+#include "PointLightSource.h"
 #include "CGWorkDefines.h"
 
 
@@ -10,7 +11,8 @@ Scene::Scene()
 	paint_bounding_box = false;
 	show_original_normals = true;
 	shadingType = FLAT_SHADING;
-	ParallelLightSource *parallelLightSource = new ParallelLightSource(Vector(1, 0, 0, 0));
+	ParallelLightSource *parallelLightSource = new ParallelLightSource(Vector(1, 0, 0, 0), LightCoefficient(255, 255, 255));
+	//PointLightSource *parallelLightSource = new PointLightSource(Point(1, 0, 0), LightCoefficient(255, 255, 255));
 	lightSources[0] = (parallelLightSource);
 }
 
@@ -376,7 +378,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, COLORREF c
 			}
 		}
 		//if (count == 1)
-			//break;
+		//	break;
 	}
 	if (!draw_wireFrame)
 	{
@@ -387,22 +389,22 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, COLORREF c
 			int tmp_max = 0;
 			if(tmp_view_mat[i].isAvtive())
 			{
-				tmp_max = max(max(tmp_view_mat[i].getB(), tmp_view_mat[i].getG()), tmp_view_mat[i].getR());
+				tmp_max = max(max(tmp_view_mat[i].getR(), tmp_view_mat[i].getG()), tmp_view_mat[i].getB());
 				if (tmp_max > max)
 					max = tmp_max;
 			}
 		}
 
-		double normalize_factor = 255 / double(max);
+		double normalize_factor = (max > 255 ) ? (255 / double(max)) : 1;
 		//normalize + fill view_mat
 		for (int i = 0; i < height*width; i++)
 		{
 			if (tmp_view_mat[i].isAvtive())
 			{
-				view_mat[i] = RGB(tmp_view_mat[i].getR() * normalize_factor, tmp_view_mat[i].getG() * normalize_factor, tmp_view_mat[i].getB() * normalize_factor);
+				COLORREF tmp_color = RGB(tmp_view_mat[i].getR() * normalize_factor, tmp_view_mat[i].getG() * normalize_factor, tmp_view_mat[i].getB() * normalize_factor);
+				view_mat[i] = ((GetBValue(tmp_color)) + (GetRValue(tmp_color) << 16) + (GetGValue(tmp_color) << 8));
 			}
 		}
-
 
 	}
 
@@ -425,14 +427,14 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, COLORREF color, Matrix 
 
 	//limit the max to the screen
 	min_x = max(min_x - 2, 0);
-	min_y = max(min_y, 0);
+	min_y = max(min_y - 2, 0);
 	max_x = min(max_x + 2, width - 1);
-	max_y = min(max_y, height - 1);
+	max_y = min(max_y + 2, height - 1);
 
 	bool isInside = false;
 	int lineThickness = 0;
 
-	for (int y = max(min_y-2, 0); y <= min(max_y+2, height-1); y++)
+	for (int y = max(min_y, 0); y <= min(max_y, height-1); y++)
 	{
 		// get the max x for this y
 		int max_x_for_this_y = max_x;
@@ -507,7 +509,8 @@ LightCoefficient Scene::getFlatColorAt(Model &model, MyPolygon polygon, int x, i
 {
 
 	Point objectLocation = Point(x, y, 1);
-	LightCoefficient k_d = LightCoefficient(1, 1, 1);
+	LightCoefficient k_d = LightCoefficient(GetRValue(model.getModelColor()), GetGValue(model.getModelColor()), GetBValue(model.getModelColor()));
+	k_a = k_d;
 	LightCoefficient color = k_a * I_a;
 	for (int i = 0; i < MAX_COUNT_OF_LIGHTSOURCES; i++)
 	{
@@ -525,13 +528,13 @@ LightCoefficient Scene::getFlatColorAt(Model &model, MyPolygon polygon, int x, i
 		N[1] = tmp_Line.getP2().getY() - tmp_Line.getP1().getY();
 		N[2] = tmp_Line.getP2().getZ() - tmp_Line.getP1().getZ();
 
-		if (N * L > 0)
+		if (N * L < 0)
 		{
 			double normalSize = sqrt(pow(N[0], 2) + pow(N[1], 2) + pow(N[2], 2));
 			N[0] = N[0] / normalSize;
 			N[1] = N[1] / normalSize;
 			N[2] = N[2] / normalSize;
-			color = color + (I_p * k_d * (L * N));
+			color = color + (I_p * k_d * (abs(L * N)));
 		}
 		color.setActive(true);
 
@@ -573,7 +576,8 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 	Point p1 = line.getP1();
 	Point p2 = line.getP2();
 	double dy, dx, dz, slope, zSlope;
-	int x, y;
+	int y;
+	int x;
 	int clipedX, clipedY;
 	double z;
 
@@ -586,8 +590,8 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 	}
 
 	//set dx and dy
-	dy = (p2.getY() - p1.getY());
-	dx = (p2.getX() - p1.getX());
+	dy = (int(p2.getY()) - int(p1.getY()));
+	dx = (int(p2.getX()) - int(p1.getX()));
 	dz = (p2.getZ() - p1.getZ());
 	slope = dx / dy;
 	zSlope = dz / dy;
@@ -606,7 +610,7 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 		clipedY = clipedY >= height ? height - 1 : clipedY;
 
 		//keep x in screen
-		clipedX = x + int(n * slope);
+		clipedX = x + round(n * slope);
 		clipedX = clipedX < 0 ? 0 : clipedX;
 		clipedX = clipedX >= width ? width - 1 : clipedX;
 		/*
@@ -616,7 +620,7 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 			draw_mat[int(clipedY * width + clipedX)] = 1;
 		}*/
 		depth_mat[int(clipedY * width + clipedX)] = z;
-		//draw_mat[int(clipedY * width + clipedX)] = 1;
+		draw_mat[int(clipedY * width + clipedX)] = 1;
 
 		y = y + 1;
 		z += zSlope;

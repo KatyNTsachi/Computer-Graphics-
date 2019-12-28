@@ -9,7 +9,7 @@ class PointLightSource:
 {
 public:
 	PointLightSource();
-	PointLightSource(Point location);
+	PointLightSource(Point location, LightCoefficient _I_p);
 	Vector getNormal(Point Objectlocation);
 	LightCoefficient getI_p(Point objectLocation);
 private:
