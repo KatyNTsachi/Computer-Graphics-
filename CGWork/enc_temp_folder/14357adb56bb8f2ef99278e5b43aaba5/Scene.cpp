@@ -354,7 +354,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 				{
 					if (abs(transformed_line.getP1().getY() - transformed_line.getP2().getY()) >= 1)
 					{
-						this->drawLineForScanConversion(pDC, transformed_line, tmp_drawing_view_mat, view_mat, normal_mat, color_mat, model, polygon->tranformPolygon(model.getTransformationMatrix()) );
+						this->drawLineForScanConversion(pDC, transformed_line, tmp_drawing_view_mat, view_mat, normal_mat, color_mat, model, *polygon);
 					}
 				}
 				else
