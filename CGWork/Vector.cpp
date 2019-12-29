@@ -1,4 +1,6 @@
 #include "Vector.h"
+#include <iostream>
+
 
 Vector::Vector() 
 {
@@ -86,3 +88,29 @@ Vector Vector::operator * (double const _value)
 
 
 
+
+Vector Vector::cross(Vector V2)
+{
+	Vector vec;
+	vec.entries[0] = this->entries[1] * V2.entries[2] - this->entries[2] * V2.entries[1];
+	vec.entries[1] = -(this->entries[0] * V2.entries[2] - this->entries[2] * V2.entries[0]);
+	vec.entries[2] = this->entries[0] * V2.entries[1] - this->entries[1] * V2.entries[0];
+
+	vec = vec * (1 / vec.abs());
+
+	return vec;
+}
+
+
+double Vector::abs()
+{
+	return sqrt( pow(this->entries[0] ,2) + pow(this->entries[1], 2) + pow(this->entries[2], 2) );
+}
+
+void Vector::Normalize()
+{
+	double normal = this->abs();
+	entries[0] = entries[0] / normal;
+	entries[1] = entries[1] / normal;
+	entries[2] = entries[2] / normal;
+}

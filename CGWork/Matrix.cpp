@@ -43,6 +43,7 @@ Matrix Matrix::operator * (Matrix const &matrix2)
 	return result;
 }
 
+
 Matrix  Matrix::Transpose() 
 {
 	Matrix result;
@@ -134,3 +135,4 @@ void Matrix::printMatrix()
 	const wchar_t *c = widestr.c_str();
 	AfxMessageBox(c, MB_OK);
 }
+

@@ -7,6 +7,7 @@
 #include "lightCoefficient.h"
 #include "lightSource.h"
 #include "Light.h"
+#include "Vector.h"
 
 //for the CDC
 #include "stdafx.h"

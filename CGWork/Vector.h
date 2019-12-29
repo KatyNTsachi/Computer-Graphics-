@@ -1,4 +1,6 @@
 #pragma once
+#include "Resource.h"
+
 class Vector
 {
 public:
@@ -12,6 +14,11 @@ public:
 	const double &operator [] (int index) const;
     bool const operator== (Vector const _vector);
 	~Vector();
+	Vector cross(Vector V2);
+	double abs();
+	void Normalize();
+
+
 private:
 	double entries[4];
 };

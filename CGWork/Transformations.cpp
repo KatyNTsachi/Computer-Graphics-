@@ -2,6 +2,8 @@
 #include "Vector.h"
 #include "stdafx.h"
 #include "Resource.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 
 Transformations::Transformations()
@@ -138,4 +140,59 @@ Matrix Transformations::prespective(double alpha, double d)
 	//return mirorZ * shift * perspectiveMatrix * shift_back * mirorZ;
 	return shift * perspectiveMatrix * shift_back;
 
+}
+
+Vector Transformations::getNormalInTheMiddle(Vector N1, Vector N2, int steps, int i)
+{
+
+	//if there are no steps
+	if (steps == 0)
+		return N1;
+
+	//
+	Vector res_vec;
+
+	//get the cross product
+	Vector cross = N1.cross(N2);
+
+	double dot_prod = N1 * N2;
+	double cos_angle = std::abs(dot_prod) / (N1.abs() * N2.abs());
+	double angle = acos(cos_angle);
+	double rotate_angle = angle * ( ((double)i) / steps);
+
+	Vector tmp_vec;
+
+	// x axis
+	tmp_vec[0] = cross[0];
+	tmp_vec[1] = 0;
+	tmp_vec[2] = cross[2];
+	tmp_vec.Normalize();
+	double alpha = acos(tmp_vec[0]);
+
+	// y axis
+	tmp_vec[0] = 0;
+	tmp_vec[1] = cross[1];
+	tmp_vec[2] = cross[2];
+	tmp_vec.Normalize();
+	double beta = acos(tmp_vec[1]);
+
+	//correct angles 
+	alpha = M_PI / 2 - alpha;
+	beta = M_PI / 2 - beta;
+	Matrix x_trans = Transformations::rotation(alpha, ID_AXIS_Y);
+	Matrix y_trans = Transformations::rotation(beta, ID_AXIS_X);
+
+	Matrix i_x_trans = Transformations::rotation(-alpha, ID_AXIS_X);
+	Matrix i_y_trans = Transformations::rotation(-beta, ID_AXIS_Y);
+
+	Matrix all_trans = x_trans * y_trans ;
+	Matrix all_trans_inv = i_y_trans * i_x_trans;
+
+	Matrix my_rotation = Transformations::rotation(-rotate_angle, ID_AXIS_Z);
+
+	all_trans = all_trans * my_rotation;
+	res_vec = all_trans.getTranformation(N1);
+	res_vec = all_trans_inv.getTranformation(res_vec);
+
+	return res_vec;
 }

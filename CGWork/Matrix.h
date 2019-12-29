@@ -12,7 +12,6 @@ public:
 	Matrix();
 	~Matrix();
 	Matrix operator * (Matrix const &matrix2);
-//	Vector operator * (Vector const &vec);
 	Matrix operator + (Matrix const &matrix2);
 	Matrix operator - (Matrix const &matrix2);
 	Matrix Transpose();
