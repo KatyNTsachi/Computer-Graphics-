@@ -10,7 +10,6 @@ Scene::Scene()
 {
 	paint_bounding_box = false;
 	show_original_normals = true;
-	shadingType = PHONG_SHADING;
 	//ParallelLightSource *parallelLightSource = new ParallelLightSource(Vector(1, 0, 0, 0), LightCoefficient(1, 1, 1));
 	//PointLightSource *parallelLightSource = new PointLightSource(Point(1, 0, 0), LightCoefficient(255, 255, 255));
 	//lightSources[0] = (parallelLightSource);
@@ -248,6 +247,9 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_
 			else
 				drawLines(pDC, tmp_model->getCalculatedPolygonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
 
+		}
+		if (drawSilhouette) {
+			drawLines(pDC, tmp_model->getSilhouetteLinesList(all_trans), silhouetteColor, all_trans, view_mat, tmp_drawing_view_mat);
 		}
 	}
 	//pDC->GetCurrentBitmap()->SetBitmapBits(view_width * view_height * 4, viewMatrix);
@@ -917,6 +919,21 @@ void Scene::setNormalsColor(COLORREF color)
 	}
 }
 
+void Scene::setSilhouetteColor(COLORREF color)
+{
+	silhouetteColor = color;
+}
+
+bool Scene::getDrawSilhouette()
+{
+	return drawSilhouette;
+}
+
+void Scene::setDrawSilhouette(bool _drawSilhouette)
+{
+	drawSilhouette = _drawSilhouette;
+}
+
 void Scene::setSouldShowBoundingBox(bool _show_bounding_box)
 {
 	paint_bounding_box = _show_bounding_box;
@@ -1006,4 +1023,9 @@ void Scene::setLightSourceWithParams(int idx, LightParams lightParams)
 	{
 		lightSources[idx] = NULL;
 	}
+}
+
+void Scene::setShadingType(shadingTypes _shadingType)
+{
+	shadingType = _shadingType;
 }

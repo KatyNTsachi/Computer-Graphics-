@@ -178,6 +178,11 @@ public:
 	afx_msg void OnOptionsPrespectiveParameters();
 	afx_msg void OnViewWireframe();
 	afx_msg void OnUpdateViewWireframe(CCmdUI *pCmdUI);
+	afx_msg void OnShadingPhong();
+	afx_msg void OnUpdateShadingPhong(CCmdUI *pCmdUI);
+	afx_msg void OnColorSilhouettecolor();
+	afx_msg void OnOptionsDrawsilhouette();
+	afx_msg void OnUpdateOptionsDrawsilhouette(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp

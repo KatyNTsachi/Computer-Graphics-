@@ -8,6 +8,7 @@
 #include "lightSource.h"
 #include "Light.h"
 #include "Vector.h"
+#include "CGWorkDefines.h"
 
 //for the CDC
 #include "stdafx.h"
@@ -48,6 +49,10 @@ public:
 	void Scene::drawWireFrame(bool _draw_wireFrame);
 	void Scene::setLightSourceWithParams(int idx, LightParams lightParams);
 	void Scene::setAmbientLight(LightParams m_ambientLight);
+	void Scene::setShadingType(shadingTypes _shadingType);
+	void setSilhouetteColor(COLORREF color);
+	bool getDrawSilhouette();
+	void setDrawSilhouette(bool _drawSilhouette);
 
 private:
 	std::vector<Model> model_list;
@@ -74,7 +79,6 @@ private:
 	void drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], int draw_mat[], Vector* normal_mat, LightCoefficient* color_mat, Model &model, MyPolygon &polygon);
 
 	// light
-	enum shadingTypes { FLAT_SHADING, GOURAUD_SHADING, PHONG_SHADING };
 	LightCoefficient getColorAtPoint(Model &model, MyPolygon polygon, int x, int y, double z, Vector N);
 	LightCoefficient getColorAt(Model &model, MyPolygon polygon, int x, int y, double z);
 	LightCoefficient getGouraudColorAt(Model &model, MyPolygon polygon, int x, int y, double z);
@@ -92,6 +96,8 @@ private:
 	int height, width;
 	bool show_original_normals;
 	bool draw_wireFrame;
+	bool drawSilhouette = true;
+	COLORREF silhouetteColor = RGB(255, 0, 0);
 	Matrix perspectiveTransformation = Matrix(	Vector(1, 0, 0, 0),
 												Vector(1, 0, 0, 0),
 												Vector(0, 0, 2, 1),

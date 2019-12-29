@@ -104,6 +104,11 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_COMMAND(ID_OPTIONS_PRESPECTIVEPARAMETERS, &CCGWorkView::OnOptionsPrespectiveParameters)
 	ON_COMMAND(ID_VIEW_WIREFRAME, &CCGWorkView::OnViewWireframe)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_WIREFRAME, &CCGWorkView::OnUpdateViewWireframe)
+	ON_COMMAND(ID_SHADING_PHONG, &CCGWorkView::OnShadingPhong)
+	ON_UPDATE_COMMAND_UI(ID_SHADING_PHONG, &CCGWorkView::OnUpdateShadingPhong)
+	ON_COMMAND(ID_COLOR_SILHOUETTECOLOR, &CCGWorkView::OnColorSilhouettecolor)
+	ON_COMMAND(ID_OPTIONS_DRAWSILHOUETTE, &CCGWorkView::OnOptionsDrawsilhouette)
+	ON_UPDATE_COMMAND_UI(ID_OPTIONS_DRAWSILHOUETTE, &CCGWorkView::OnUpdateOptionsDrawsilhouette)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -534,7 +539,11 @@ void CCGWorkView::OnUpdateAxisZ(CCmdUI* pCmdUI)
 
 void CCGWorkView::OnLightShadingFlat() 
 {
+	if (m_nLightShading == ID_LIGHT_SHADING_FLAT)
+		return;
 	m_nLightShading = ID_LIGHT_SHADING_FLAT;
+	scene.setShadingType(FLAT_SHADING);
+	RedrawWindow();
 }
 
 void CCGWorkView::OnUpdateLightShadingFlat(CCmdUI* pCmdUI) 
@@ -545,12 +554,31 @@ void CCGWorkView::OnUpdateLightShadingFlat(CCmdUI* pCmdUI)
 
 void CCGWorkView::OnLightShadingGouraud() 
 {
+	if (m_nLightShading == ID_LIGHT_SHADING_GOURAUD)
+		return;
 	m_nLightShading = ID_LIGHT_SHADING_GOURAUD;
+	scene.setShadingType(GOURAUD_SHADING);
+	RedrawWindow();
 }
 
 void CCGWorkView::OnUpdateLightShadingGouraud(CCmdUI* pCmdUI) 
 {
 	pCmdUI->SetCheck(m_nLightShading == ID_LIGHT_SHADING_GOURAUD);
+}
+
+void CCGWorkView::OnShadingPhong()
+{
+	if (m_nLightShading == ID_SHADING_PHONG)
+		return;
+	m_nLightShading = ID_SHADING_PHONG;
+	scene.setShadingType(PHONG_SHADING);
+	RedrawWindow();
+}
+
+
+void CCGWorkView::OnUpdateShadingPhong(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(m_nLightShading == ID_SHADING_PHONG);
 }
 
 // LIGHT SETUP HANDLER ///////////////////////////////////////////
@@ -931,4 +959,29 @@ void CCGWorkView::OnViewWireframe()
 void CCGWorkView::OnUpdateViewWireframe(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(m_wireFrame);
+}
+
+
+void CCGWorkView::OnColorSilhouettecolor()
+{
+	CColorDialog colorDialog;
+	if (colorDialog.DoModal() == IDOK) {
+		scene.setSilhouetteColor(colorDialog.GetColor());
+		if (scene.getDrawSilhouette()) {
+			RedrawWindow();
+		}
+	}
+}
+
+
+void CCGWorkView::OnOptionsDrawsilhouette()
+{
+	scene.setDrawSilhouette(!scene.getDrawSilhouette());
+	RedrawWindow();
+}
+
+
+void CCGWorkView::OnUpdateOptionsDrawsilhouette(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(scene.getDrawSilhouette());
 }

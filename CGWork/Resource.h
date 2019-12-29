@@ -81,13 +81,16 @@
 #define ID_OPTIONS_PRESPECTIVEPARAMETERS 32816
 #define ID_IS_SINGLE_MODE               32817
 #define ID_VIEW_WIREFRAME               32818
+#define ID_SHADING_PHONG                32819
+#define ID_COLOR_SILHOUETTECOLOR        32820
+#define ID_OPTIONS_DRAWSILHOUETTE       32821
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        155
-#define _APS_NEXT_COMMAND_VALUE         32819
+#define _APS_NEXT_COMMAND_VALUE         32822
 #define _APS_NEXT_CONTROL_VALUE         1049
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

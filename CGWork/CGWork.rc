@@ -111,6 +111,7 @@ BEGIN
             MENUITEM "Bounding Box Color...",       ID_COLOR_BOUNDINGBOXCOLOR
             MENUITEM "Normals Color...",            ID_COLOR_NORMALSCOLOR
             MENUITEM "Backgound Color",             ID_COLOR_BACKGOUNDCOLOR
+            MENUITEM "Silhouette Color",            ID_COLOR_SILHOUETTECOLOR
         END
         MENUITEM "Show Vertex Normals",         ID_OPTIONS_SHOWVERTEXNORMALS
         MENUITEM "Show Polygon Normals",        ID_OPTIONS_SHOWPOLYGONNORMALS
@@ -118,6 +119,7 @@ BEGIN
         MENUITEM "Show Calculated Normals",     ID_OPTIONS_SHOWCALCULATEDNORMALS
         MENUITEM "Number Of Polygons",          ID_OPTIONS_NUMBEROFPOLYGONS
         MENUITEM "Prespective Parameters",      ID_OPTIONS_PRESPECTIVEPARAMETERS
+        MENUITEM "Draw Silhouette",             ID_OPTIONS_DRAWSILHOUETTE
     END
     POPUP "&Light"
     BEGIN
@@ -125,6 +127,7 @@ BEGIN
         BEGIN
             MENUITEM "&Flat",                       ID_LIGHT_SHADING_FLAT
             MENUITEM "&Gouraud",                    ID_LIGHT_SHADING_GOURAUD
+            MENUITEM "Phong",                       ID_SHADING_PHONG
         END
         MENUITEM "&Parameters...",              ID_LIGHT_CONSTANTS
     END

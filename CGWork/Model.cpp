@@ -191,3 +191,44 @@ void Model::setListOfPolygons(std::vector<MyPolygon> _list_of_polygons)
 {
 	polygon_list = _list_of_polygons;
 }
+
+struct KeyHasher
+{
+	std::size_t operator()(const Line& k) const
+	{
+		using std::size_t;
+		using std::hash;
+		using std::string;
+		double tmp = k.getP1().getX() + k.getP2().getX() + k.getP1().getY() + k.getP2().getY() + k.getP1().getZ() + k.getP2().getZ();
+		return std::hash<double>() (tmp);
+	}
+};
+
+std::vector<Line> Model::getSilhouetteLinesList(Matrix transformation)
+{
+	Vector tmp_N;
+	std::vector<Line> polygonLines;
+	std::vector<Line> SilhouetteLines;
+	unordered_map<Line, vector<Vector>, KeyHasher> lines_hush_table;
+	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
+	{
+		tmp_N = transformation.getTranformation(polygon->getOriginalNormal());
+		polygonLines = polygon->getLines();
+		for (auto line = polygonLines.begin(); line != polygonLines.end(); line++)
+		{
+			if (lines_hush_table[*line].size() > 0)
+			{
+				double tmp1 = lines_hush_table[*line][0] * Vector(0, 0, 1, 0);
+				double tmp2 = tmp_N * Vector(0, 0, 1, 0);
+				if ((tmp1 * tmp2) < 0)
+				{
+					SilhouetteLines.push_back(*line);
+				}
+			}
+			else {
+				lines_hush_table[*line].push_back(tmp_N);
+			}
+		}
+	}
+	return SilhouetteLines;
+}

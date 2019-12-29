@@ -8,6 +8,8 @@
 #include "MyPolygon.h"
 #include "lightCoefficient.h"
 
+#include <unordered_map>
+
 using namespace std;
 
 class Model
@@ -37,6 +39,7 @@ public:
 	std::vector<Line> getCalculatedVertexNormalList();
 	std::vector<Line> getOriginalPolygonNormalList();
 	std::vector<Line> getCalculatedPolygonNormalList();
+	std::vector<Line> getSilhouetteLinesList(Matrix transformation);
 	void setListOfPolygons(std::vector<MyPolygon> _list_of_polygons);
 	COLORREF getNormalsColor();
 

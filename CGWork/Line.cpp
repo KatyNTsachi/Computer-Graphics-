@@ -28,12 +28,12 @@ Line::~Line()
 {
 }
 
-Point Line::getP1()
+Point Line::getP1() const
 {
 	return p1;
 }
 
-Point Line::getP2()
+Point Line::getP2() const
 {
 	return p2;
 }
@@ -46,4 +46,23 @@ void Line::setP1(Point _p)
 void Line::setP2(Point _p)
 {
 	p2 = _p;
+}
+
+bool Line::operator==(const Line &other) const
+{
+	bool result;
+	result = 
+		((p1.getX() == other.p1.getX()
+		&& p1.getY() == other.p1.getY()
+		&& p1.getZ() == other.p1.getZ()) &&
+		(p2.getX() == other.p2.getX()
+		&& p2.getY() == other.p2.getY()
+		&& p2.getZ() == other.p2.getZ())) ||
+		((p1.getX() == other.p2.getX()
+		&& p1.getY() == other.p2.getY()
+		&& p1.getZ() == other.p2.getZ()) &&
+		(p2.getX() == other.p1.getX()
+		&& p2.getY() == other.p1.getY()
+		&& p2.getZ() == other.p1.getZ()));
+	return result;
 }
