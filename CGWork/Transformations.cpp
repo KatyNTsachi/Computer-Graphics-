@@ -175,15 +175,18 @@ Vector Transformations::getNormalInTheMiddle(Vector N1, Vector N2, int steps, in
 	tmp_vec[2] = cross[2];
 	tmp_vec.Normalize();
 	double beta = acos(tmp_vec[1]);
-
+	Vector t;
 	//correct angles 
 	alpha = M_PI / 2 - alpha;
 	beta = M_PI / 2 - beta;
 	Matrix x_trans = Transformations::rotation(alpha, ID_AXIS_Y);
-	Matrix y_trans = Transformations::rotation(beta, ID_AXIS_X);
+	t = x_trans.getTranformation(cross);
+	
+	Matrix y_trans = Transformations::rotation(-beta, ID_AXIS_X);
+	t = y_trans.getTranformation(cross);
 
-	Matrix i_x_trans = Transformations::rotation(-alpha, ID_AXIS_X);
-	Matrix i_y_trans = Transformations::rotation(-beta, ID_AXIS_Y);
+	Matrix i_x_trans = Transformations::rotation(-alpha, ID_AXIS_Y);
+	Matrix i_y_trans = Transformations::rotation(beta, ID_AXIS_X);
 
 	Matrix all_trans = x_trans * y_trans ;
 	Matrix all_trans_inv = i_y_trans * i_x_trans;

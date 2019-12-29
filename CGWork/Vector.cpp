@@ -98,7 +98,7 @@ Vector Vector::cross(Vector V2)
 
 	vec = vec * (1 / vec.abs());
 
-	return vec;
+	return vec ;
 }
 
 

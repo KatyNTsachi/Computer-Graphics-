@@ -614,8 +614,8 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 	dx = (int(p2.getX()) - int(p1.getX()));
 	dz = (p2.getZ() - p1.getZ());
 
-	Vector N1 = p1.getCalculatedNormal();
-	Vector N2 = p2.getCalculatedNormal();
+	Vector N1 = p1.getOriginalNormal();
+	Vector N2 = p2.getOriginalNormal();
 
 	dnormal = (N2 - N1);
 
@@ -666,8 +666,8 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 		}
 		else
 		{
-			//N1 = Vector(1, 0, -1, 0);
-			//N2 = Vector(0, 1, -1, 0);
+			//N1 = Vector(1, -1, -1, 0);
+			//N2 = Vector(1, 1, -1, 0);
 			Vector normal_vec = Transformations::getNormalInTheMiddle(N1, N2, dy, n);
 			normal_mat[int(clipedY * width + clipedX)] = normal_vec;
 		}
