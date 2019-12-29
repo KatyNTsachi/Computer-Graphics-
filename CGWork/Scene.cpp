@@ -494,7 +494,7 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 					double min_factor = 0.5;
 					if ((max_x_for_this_y - min_x_for_this_y) > 0)
 					{
-						double min_factor = ((double)(max_x_for_this_y - x)) / (max_x_for_this_y - min_x_for_this_y);
+						min_factor = ((double)(max_x_for_this_y - x)) / (max_x_for_this_y - min_x_for_this_y);
 					}
 					double max_factor = 1 - min_factor;
 
@@ -508,9 +508,7 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 						Vector tmp_N = normal_mat[y * width + min_x_for_this_y] * min_factor + normal_mat[y * width + max_x_for_this_y] * max_factor;
 						tmp_color = getColorAtPoint(model,polygon, x, y, z, tmp_N);
 					}
-					//tmp_color = LightCoefficient(255.0, 0.0, 0.0);
-					//tmp_color = color_mat[y * width + min_x_for_this_y];
-					//tmp_color = color_mat[y * width + max_x_for_this_y];
+
 					tmp_color.setActive(true);
 					view_mat[y * width + x] = tmp_color;
 					z_buffer[y * width + x] = z;
