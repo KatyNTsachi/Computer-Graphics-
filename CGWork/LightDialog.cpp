@@ -75,11 +75,14 @@ BEGIN_MESSAGE_MAP(CLightDialog, CDialog)
 END_MESSAGE_MAP()
 
 void CLightDialog::SetDialogData( LightID id,const LightParams& light )
-{    
-    if (id<=LIGHT_ID_AMBIENT)
-	m_ambiant = light;
-    else
-	m_lights[id]=light;
+{
+	LightParams modifiable_light = light;
+	if (id <= LIGHT_ID_AMBIENT) {
+		m_ambiant = light;
+	}
+	else {
+		m_lights[id] = modifiable_light;
+	}
 }
 
 LightParams CLightDialog::GetDialogData( LightID id )

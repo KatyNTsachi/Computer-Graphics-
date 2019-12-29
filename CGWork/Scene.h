@@ -6,6 +6,7 @@
 #include"Camera.h"
 #include "lightCoefficient.h"
 #include "lightSource.h"
+#include "Light.h"
 
 //for the CDC
 #include "stdafx.h"
@@ -44,6 +45,8 @@ public:
 	COLORREF getFaddedModelColor(int modelIndex);
 	void Scene::unHighlightModel();
 	void Scene::drawWireFrame(bool _draw_wireFrame);
+	void Scene::setLightSourceWithParams(int idx, LightParams lightParams);
+	void Scene::setAmbientLight(LightParams m_ambientLight);
 
 private:
 	std::vector<Model> model_list;

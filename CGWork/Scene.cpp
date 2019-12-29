@@ -11,9 +11,9 @@ Scene::Scene()
 	paint_bounding_box = false;
 	show_original_normals = true;
 	shadingType = GOURAUD_SHADING;
-	ParallelLightSource *parallelLightSource = new ParallelLightSource(Vector(1, 0, 0, 0), LightCoefficient(1, 1, 1));
+	//ParallelLightSource *parallelLightSource = new ParallelLightSource(Vector(1, 0, 0, 0), LightCoefficient(1, 1, 1));
 	//PointLightSource *parallelLightSource = new PointLightSource(Point(1, 0, 0), LightCoefficient(255, 255, 255));
-	lightSources[0] = (parallelLightSource);
+	//lightSources[0] = (parallelLightSource);
 }
 
 Scene::~Scene()
@@ -491,7 +491,11 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 
 				if (z_buffer[y * width + x] > z)
 				{
-					double min_factor = ((double)(max_x_for_this_y - x)) / (max_x_for_this_y - min_x_for_this_y);
+					double min_factor = 0.5;
+					if ((max_x_for_this_y - min_x_for_this_y) > 0)
+					{
+						double min_factor = ((double)(max_x_for_this_y - x)) / (max_x_for_this_y - min_x_for_this_y);
+					}
 					double max_factor = 1 - min_factor;
 
 					LightCoefficient tmp_color;
@@ -504,7 +508,9 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 						Vector tmp_N = normal_mat[y * width + min_x_for_this_y] * min_factor + normal_mat[y * width + max_x_for_this_y] * max_factor;
 						tmp_color = getColorAtPoint(model,polygon, x, y, z, tmp_N);
 					}
-
+					//tmp_color = LightCoefficient(255.0, 0.0, 0.0);
+					//tmp_color = color_mat[y * width + min_x_for_this_y];
+					//tmp_color = color_mat[y * width + max_x_for_this_y];
 					tmp_color.setActive(true);
 					view_mat[y * width + x] = tmp_color;
 					z_buffer[y * width + x] = z;
@@ -661,7 +667,7 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 			draw_mat[int(clipedY * width + clipedX)] = 1;
 		}*/
 		depth_mat[int(clipedY * width + clipedX)] = z;
-		draw_mat[int(clipedY * width + clipedX)] = 1;
+		//draw_mat[int(clipedY * width + clipedX)] = 1;
 		if (shadingType == FLAT_SHADING)
 		{
 			color_mat[int(clipedY * width + clipedX)] = polygonColor;
@@ -975,4 +981,35 @@ Matrix Scene::getTransformationMatrix(Model tmp_model, int camera_number, CRect 
 int Scene::getNumberOfModels()
 {
 	return model_list.size();
+}
+
+void Scene::setAmbientLight(LightParams m_ambientLight)
+{
+	I_a = LightCoefficient(m_ambientLight.colorR/255.0, m_ambientLight.colorG/255.0, m_ambientLight.colorB/255.0);
+}
+
+void Scene::setLightSourceWithParams(int idx, LightParams lightParams)
+{
+	if (lightSources[idx] != NULL) {
+		delete lightSources[idx];
+	}
+	if (lightParams.enabled)
+	{
+		if (lightParams.type == LIGHT_TYPE_DIRECTIONAL)
+		{
+			Vector direction(lightParams.dirX, lightParams.dirY, lightParams.dirZ, 0);
+			LightCoefficient I_p(lightParams.colorR, lightParams.colorG, lightParams.colorB);
+			lightSources[idx] = new ParallelLightSource(direction, I_p);
+		}
+		else
+		{
+			Point position(lightParams.posX, lightParams.posY, lightParams.posZ);
+			LightCoefficient I_p(lightParams.colorR, lightParams.colorG, lightParams.colorB);
+			lightSources[idx] = new PointLightSource(position, I_p);
+		}
+	}
+	else
+	{
+		lightSources[idx] = NULL;
+	}
 }

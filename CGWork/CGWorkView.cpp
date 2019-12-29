@@ -567,11 +567,13 @@ void CCGWorkView::OnLightConstants()
 
 	if (dlg.DoModal() == IDOK) 
 	{
-	    for (int id=LIGHT_ID_1;id<MAX_LIGHT;id++)
+	    for (int id=LIGHT_ID_1;id< LIGHT_ID_8;id++)
 	    {
 		m_lights[id] = dlg.GetDialogData((LightID)id);
+		scene.setLightSourceWithParams(id, m_lights[id]);
 	    }
 	    m_ambientLight = dlg.GetDialogData(LIGHT_ID_AMBIENT);
+		scene.setAmbientLight(m_ambientLight);
 	}	
 	RedrawWindow();
 }
