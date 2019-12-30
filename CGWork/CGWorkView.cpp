@@ -1062,6 +1062,7 @@ void CCGWorkView::OnUpdateFileLoadbackgroungimage(CCmdUI *pCmdUI)
 void CCGWorkView::OnFileTilebackgroundimage()
 {
 	scene.setTileBackgroundImage(!scene.getTileBackgroundImage());
+	RedrawWindow();
 }
 
 

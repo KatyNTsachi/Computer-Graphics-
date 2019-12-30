@@ -9,7 +9,7 @@
 Scene::Scene()
 {
 	show_background = false;
-	tile_background = false;
+	tile_background = true;
 	show_regular_normals = true;
 	paint_bounding_box = false;
 	show_original_normals = true;
@@ -1076,19 +1076,19 @@ void Scene::setRegularNormals(bool _show_regular_normals)
 
 bool Scene::getUseBackgroundImage()
 {
-	return useBackgroundImage;
+	return show_background;
 }
 void Scene::setUseBackgroundImage(bool _useBackGroundImage)
 {
-	useBackgroundImage = _useBackGroundImage;
+	show_background = _useBackGroundImage;
 }
 
 bool Scene::getTileBackgroundImage()
 {
-	return tileBackgroundImage;
+	return tile_background;
 }
 void Scene::setTileBackgroundImage(bool _tileBackGroungImage) {
-	tileBackgroundImage = _tileBackGroungImage;
+	tile_background = _tileBackGroungImage;
 }
 
 
@@ -1105,32 +1105,15 @@ void Scene::setBackgroundImage(vector<COLORREF> _image)
 	background_image = _image;
 }
 
-bool Scene::getUseBackgroundImage()
-{
-	return show_background;
-}
-void Scene::setUseBackgroundImage(bool _show_background)
-{
-	show_background = _show_background;
-}
-bool Scene::getTileBackgroundImage()
-{
-	return tile_background;
-}
-void Scene::setTileBackgroundImage(bool _tile_background)
-{
-	tile_background = _tile_background;
-}
 
 
-void Scene::setTileBackgroundImage(bool _tile_background)
-{
 
-}
+
+
 
 void Scene::drawBackground(int view_mat[])
 {
-	drawBackgroundTile(view_mat);
+
 	if (tile_background)
 		drawBackgroundTile(view_mat);
 	else
@@ -1143,7 +1126,7 @@ void Scene::drawBackgroundTile(int view_mat[])
 	{
 		for (int j = 0; j < width; j++)
 		{
-			int tmp_i = i % background_image_width;
+			int tmp_i = i % background_image_height;
 			int tmp_j = j % background_image_width;
 			COLORREF background_color = background_image[tmp_i * background_image_width + tmp_j];
 			view_mat[i * width + j] = background_color;
