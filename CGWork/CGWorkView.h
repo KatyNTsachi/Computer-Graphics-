@@ -192,7 +192,7 @@ public:
 	afx_msg void OnFileTilebackgroundimage();
 	afx_msg void OnUpdateFileTilebackgroundimage(CCmdUI *pCmdUI);
 	afx_msg void OnFileStrechbackgroungimage();
-	afx_msg void OnUpdateFileStrechbackgroungimage(CCmdUI *pCmdUI);
+	afx_msg void onUpdateStrechBackgroundImage(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp

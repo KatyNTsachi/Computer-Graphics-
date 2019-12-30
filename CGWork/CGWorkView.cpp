@@ -118,7 +118,7 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_COMMAND(ID_FILE_TILEBACKGROUNDIMAGE, &CCGWorkView::OnFileTilebackgroundimage)
 	ON_UPDATE_COMMAND_UI(ID_FILE_TILEBACKGROUNDIMAGE, &CCGWorkView::OnUpdateFileTilebackgroundimage)
 	ON_COMMAND(ID_FILE_STRECHBACKGROUNGIMAGE, &CCGWorkView::OnFileStrechbackgroungimage)
-	ON_UPDATE_COMMAND_UI(ID_FILE_STRECHBACKGROUNGIMAGE, &CCGWorkView::OnUpdateFileStrechbackgroungimage)
+	ON_UPDATE_COMMAND_UI(ID_FILE_STRECHBACKGROUNGIMAGE, &CCGWorkView::onUpdateStrechBackgroundImage)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -1013,6 +1013,7 @@ void CCGWorkView::OnUpdateOptionsInvertnormals(CCmdUI *pCmdUI)
 void CCGWorkView::OnFileUsebackgroungimage()
 {
 	scene.setUseBackgroundImage(!scene.getUseBackgroundImage());
+	RedrawWindow();
 }
 
 
@@ -1075,10 +1076,11 @@ void CCGWorkView::OnUpdateFileTilebackgroundimage(CCmdUI *pCmdUI)
 void CCGWorkView::OnFileStrechbackgroungimage()
 {
 	scene.setTileBackgroundImage(!scene.getTileBackgroundImage());
+	RedrawWindow();
 }
 
 
-void CCGWorkView::OnUpdateFileStrechbackgroungimage(CCmdUI *pCmdUI)
+void CCGWorkView::onUpdateStrechBackgroundImage(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(!scene.getTileBackgroundImage());
 }
