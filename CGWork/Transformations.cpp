@@ -279,13 +279,13 @@ double Transformations::getAlpha(Vector L, Vector N, Vector V)
 	Vector res_vec;
 
 	//get the cross product
-	Vector cross = N1.cross(N2);
+	Vector cross = L.cross(N);
 
-	double dot_prod = N1 * N2;
-	double cos_angle = std::abs(dot_prod) / (N1.abs() * N2.abs());
+	double dot_prod = L * N;
+	double cos_angle = std::abs(dot_prod) / (L.abs() * N.abs());
 	double angle = acos(cos_angle);
 
-	double rotate_angle = angle * (((double)i) / steps);
+	double rotate_angle = 2 * angle;
 	int sign;
 	Vector tmp_vec;
 	Vector t1, t2, t3, t4, t5, t6;
@@ -310,11 +310,8 @@ double Transformations::getAlpha(Vector L, Vector N, Vector V)
 	Matrix y_trans = Transformations::rotation(-beta, ID_AXIS_X);
 	t2 = y_trans.getTranformation(cross);
 
-	Matrix i_x_trans = Transformations::rotation(-alpha, ID_AXIS_Y);
-	Matrix i_y_trans = Transformations::rotation(beta, ID_AXIS_X);
-
 	Matrix all_trans = x_trans * y_trans;
-	t3 = all_trans.getTranformation(N1);
+	t3 = all_trans.getTranformation(L);
 	// z axis
 	tmp_vec[0] = t3[0];
 	tmp_vec[1] = t3[1];
@@ -326,22 +323,17 @@ double Transformations::getAlpha(Vector L, Vector N, Vector V)
 
 	all_trans = all_trans * z_trans;
 	t4 = all_trans.getTranformation(cross);
-	t5 = all_trans.getTranformation(N1);
-	t6 = all_trans.getTranformation(N2);
-
-	Matrix i_z_trans = Transformations::rotation(-gamma, ID_AXIS_Z);
-
-	Matrix all_trans_inv = i_z_trans * i_y_trans * i_x_trans;
+	t6 = all_trans.getTranformation(N);
 
 	rotate_angle = t6[1] > 0 ? rotate_angle : -rotate_angle;
 	Matrix my_rotation = Transformations::rotation(-rotate_angle, ID_AXIS_Z);
 
 	all_trans = all_trans * my_rotation;
 
-	t3 = all_trans.getTranformation(cross);
+	t3 = all_trans.getTranformation(L);
+	
+	double dot_res;
+	dot_res = abs(t3 * V);
 
-	res_vec = all_trans.getTranformation(N1);
-	res_vec = all_trans_inv.getTranformation(res_vec);
-
-	return res_vec;
+	return dot_res;
 }
