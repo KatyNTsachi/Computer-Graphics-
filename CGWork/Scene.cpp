@@ -1139,18 +1139,21 @@ void Scene::drawBackgroundTile(int view_mat[])
 void Scene::drawBackgroundStretch(int view_mat[])
 {
 	double d_i = 0, d_j = 0;
-	double d_i_friction = background_image_height / height;
-	double d_j_friction = background_image_width / width;
+	double d_i_friction = double(background_image_height) / height;
+	double d_j_friction = double(background_image_width) / width;
 
 	for (int i = 0; i < height; i++)
 	{
+		d_j = 0;
 		for (int j = 0; j < width; j++)
 		{
 			int tmp_i = i % background_image_height;
 			int tmp_j = j % background_image_width;
-			COLORREF background_color = background_image[tmp_i * background_image_width + tmp_j];
+			COLORREF background_color = background_image[int(d_i) * background_image_width + int(d_j)];
 			view_mat[i * width + j] = background_color;
+			d_j = d_j + d_j_friction;
 		}
+		d_i = d_i + d_i_friction;
 	}
 
 
