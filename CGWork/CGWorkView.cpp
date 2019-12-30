@@ -111,6 +111,13 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_DRAWSILHOUETTE, &CCGWorkView::OnUpdateOptionsDrawsilhouette)
 	ON_COMMAND(ID_OPTIONS_INVERTNORMALS, &CCGWorkView::OnOptionsInvertnormals)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_INVERTNORMALS, &CCGWorkView::OnUpdateOptionsInvertnormals)
+	ON_COMMAND(ID_FILE_USEBACKGROUNGIMAGE, &CCGWorkView::OnFileUsebackgroungimage)
+	ON_UPDATE_COMMAND_UI(ID_FILE_USEBACKGROUNGIMAGE, &CCGWorkView::OnUpdateFileUsebackgroungimage)
+	ON_COMMAND(ID_FILE_LOADBACKGROUNGIMAGE, &CCGWorkView::OnFileLoadbackgroungimage)
+	ON_UPDATE_COMMAND_UI(ID_FILE_LOADBACKGROUNGIMAGE, &CCGWorkView::OnUpdateFileLoadbackgroungimage)
+	ON_COMMAND(ID_FILE_TILEBACKGROUNDIMAGE, &CCGWorkView::OnFileTilebackgroundimage)
+	ON_UPDATE_COMMAND_UI(ID_FILE_TILEBACKGROUNDIMAGE, &CCGWorkView::OnUpdateFileTilebackgroundimage)
+	ON_COMMAND(ID_FILE_STRECHBACKGROUNGIMAGE, &CCGWorkView::OnFileStrechbackgroungimage)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -999,4 +1006,60 @@ void CCGWorkView::OnOptionsInvertnormals()
 void CCGWorkView::OnUpdateOptionsInvertnormals(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(!scene.getRegularNormals());
+}
+
+
+void CCGWorkView::OnFileUsebackgroungimage()
+{
+	// TODO: Add your command handler code here
+}
+
+
+void CCGWorkView::OnUpdateFileUsebackgroungimage(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(scene.getUseBackGroundImage());
+}
+
+
+void CCGWorkView::OnFileLoadbackgroungimage()
+{
+	scene.setUseBackGroundImage(true);
+	TCHAR szFilters[] = _T("PNG Image Files (*.PNG)");
+
+	CFileDialog dlg(TRUE, _T("PNG"), _T("*.PNG"), OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, szFilters);
+
+	if (dlg.DoModal() == IDOK) {
+		m_strItdFileName = dlg.GetPathName();		// Full path and filename
+		PngWrapper p;
+
+		
+		// Open the file and read it.
+		// Your code here...
+
+
+		RedrawWindow();
+	}
+}
+
+
+void CCGWorkView::OnUpdateFileLoadbackgroungimage(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(false);
+}
+
+
+void CCGWorkView::OnFileTilebackgroundimage()
+{
+}
+
+
+void CCGWorkView::OnUpdateFileTilebackgroundimage(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+}
+
+
+void CCGWorkView::OnFileStrechbackgroungimage()
+{
+	// TODO: Add your command handler code here
 }

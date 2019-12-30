@@ -185,6 +185,13 @@ public:
 	afx_msg void OnUpdateOptionsDrawsilhouette(CCmdUI *pCmdUI);
 	afx_msg void OnOptionsInvertnormals();
 	afx_msg void OnUpdateOptionsInvertnormals(CCmdUI *pCmdUI);
+	afx_msg void OnFileUsebackgroungimage();
+	afx_msg void OnUpdateFileUsebackgroungimage(CCmdUI *pCmdUI);
+	afx_msg void OnFileLoadbackgroungimage();
+	afx_msg void OnUpdateFileLoadbackgroungimage(CCmdUI *pCmdUI);
+	afx_msg void OnFileTilebackgroundimage();
+	afx_msg void OnUpdateFileTilebackgroundimage(CCmdUI *pCmdUI);
+	afx_msg void OnFileStrechbackgroungimage();
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp

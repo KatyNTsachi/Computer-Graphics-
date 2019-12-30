@@ -554,7 +554,7 @@ LightCoefficient Scene::getColorAtPoint(Model &model, MyPolygon polygon, int x, 
 
 		if (N * L > 0)
 		{
-			color = color + (I_p * k_d * (abs(L * N)));
+			color = color + (I_p * k_d * (abs(L * N))) + model.k_s * pow(Transformations::getAlpha(L, N, V), specularityExponent) ;
 		}
 		color.setActive(true);
 	}
@@ -1041,4 +1041,21 @@ bool Scene::getRegularNormals()
 void Scene::setRegularNormals(bool _show_regular_normals)
 {
 	show_regular_normals = _show_regular_normals;
+}
+
+bool Scene::getUseBackGroundImage()
+{
+	return useBackGroundImage;
+}
+void Scene::setUseBackGroundImage(bool _useBackGroundImage)
+{
+	useBackGroundImage = _useBackGroundImage;
+}
+
+bool Scene::getTileBackGroungImage()
+{
+	return tileBackGroungImage;
+}
+void Scene::setTileBackGroungImage(bool _tileBackGroungImage) {
+	tileBackGroungImage = _tileBackGroungImage;
 }

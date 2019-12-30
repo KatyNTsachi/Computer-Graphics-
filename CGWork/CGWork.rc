@@ -79,6 +79,10 @@ BEGIN
     BEGIN
         MENUITEM "&Load",                       ID_FILE_LOAD
         MENUITEM "E&xit",                       ID_APP_EXIT
+        MENUITEM "Load BackGroung Image",       ID_FILE_LOADBACKGROUNGIMAGE
+        MENUITEM "Use BackGroung Image",        ID_FILE_USEBACKGROUNGIMAGE
+        MENUITEM "Tile BackGround Image",       ID_FILE_TILEBACKGROUNDIMAGE
+        MENUITEM "Strech BackGroung Image",     ID_FILE_STRECHBACKGROUNGIMAGE
     END
     POPUP "&View"
     BEGIN

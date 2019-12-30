@@ -55,8 +55,17 @@ public:
 	void setDrawSilhouette(bool _drawSilhouette);
 	bool getRegularNormals();
 	void setRegularNormals(bool _show_regular_normals);
+	bool getUseBackGroundImage();
+	void setUseBackGroundImage(bool _useBackGroundImage);
+	bool getTileBackGroungImage();
+	void setTileBackGroungImage(bool _useBackGroundImage);
+	
 
 private:
+	int specularityExponent = 2;
+	Vector V = Vector(1, 0, 0, 0);
+	bool tileBackGroungImage = false;
+	bool useBackGroundImage = false;
 	bool show_regular_normals;
 	std::vector<Model> model_list;
 	std::vector<Camera> camera_list;
@@ -86,7 +95,7 @@ private:
 	LightCoefficient getColorAt(Model &model, MyPolygon polygon, int x, int y, double z);
 	LightCoefficient getGouraudColorAt(Model &model, MyPolygon polygon, int x, int y, double z);
 	COLORREF getPhongColorAt(Model &model, MyPolygon polygon, int x, int y);
-	shadingTypes shadingType;
+	shadingTypes shadingType = FLAT_SHADING;
 	LightCoefficient k_a = LightCoefficient(255, 255, 255);
 	LightCoefficient I_a = LightCoefficient(0.2, 0.2, 0.2);
 	#define MAX_COUNT_OF_LIGHTSOURCES 7
@@ -99,7 +108,7 @@ private:
 	int height, width;
 	bool show_original_normals;
 	bool draw_wireFrame;
-	bool drawSilhouette = true;
+	bool drawSilhouette = false;
 	COLORREF silhouetteColor = RGB(255, 0, 0);
 	Matrix perspectiveTransformation = Matrix(	Vector(1, 0, 0, 0),
 												Vector(1, 0, 0, 0),
