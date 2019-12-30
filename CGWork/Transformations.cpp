@@ -158,42 +158,62 @@ Vector Transformations::getNormalInTheMiddle(Vector N1, Vector N2, int steps, in
 	double dot_prod = N1 * N2;
 	double cos_angle = std::abs(dot_prod) / (N1.abs() * N2.abs());
 	double angle = acos(cos_angle);
-	double rotate_angle = angle * ( ((double)i) / steps);
 
+	double rotate_angle = angle * ( ((double)i) / steps);
+	int sign;
 	Vector tmp_vec;
+	Vector t1, t2, t3,t4,t5,t6;
 
 	// x axis
 	tmp_vec[0] = cross[0];
 	tmp_vec[1] = 0;
 	tmp_vec[2] = cross[2];
 	tmp_vec.Normalize();
-	double alpha = acos(tmp_vec[0]);
+	double alpha = tmp_vec[0] > 0 ? acos(tmp_vec[2]) :  2 * M_PI - acos(tmp_vec[2]);
+
+	Matrix x_trans = Transformations::rotation(alpha, ID_AXIS_Y);
+	t1 = x_trans.getTranformation(cross);
 
 	// y axis
 	tmp_vec[0] = 0;
-	tmp_vec[1] = cross[1];
-	tmp_vec[2] = cross[2];
+	tmp_vec[1] = t1[1];
+	tmp_vec[2] = t1[2];
 	tmp_vec.Normalize();
-	double beta = acos(tmp_vec[1]);
-	Vector t;
-	//correct angles 
-	alpha = M_PI / 2 - alpha;
-	beta = M_PI / 2 - beta;
-	Matrix x_trans = Transformations::rotation(alpha, ID_AXIS_Y);
-	t = x_trans.getTranformation(cross);
-	
+	double beta = tmp_vec[1] > 0 ? acos(tmp_vec[2]) : 2 * M_PI - acos(tmp_vec[2]);
+
 	Matrix y_trans = Transformations::rotation(-beta, ID_AXIS_X);
-	t = y_trans.getTranformation(cross);
+	t2 = y_trans.getTranformation(cross);
 
 	Matrix i_x_trans = Transformations::rotation(-alpha, ID_AXIS_Y);
 	Matrix i_y_trans = Transformations::rotation(beta, ID_AXIS_X);
 
 	Matrix all_trans = x_trans * y_trans ;
-	Matrix all_trans_inv = i_y_trans * i_x_trans;
+	t3 = all_trans.getTranformation(N1);
+	// z axis
+	tmp_vec[0] = t3[0];
+	tmp_vec[1] = t3[1];
+	tmp_vec[2] = 0;
+	tmp_vec.Normalize();
+	double gamma = tmp_vec[1] > 0 ? acos(tmp_vec[0]) : 2 * M_PI - acos(tmp_vec[0]);
+	Matrix z_trans = Transformations::rotation(gamma, ID_AXIS_Z);
 
+
+	all_trans = all_trans * z_trans;
+	t4 = all_trans.getTranformation(cross);
+	t5 = all_trans.getTranformation(N1);
+	t6 = all_trans.getTranformation(N2);
+
+	Matrix i_z_trans = Transformations::rotation(-gamma, ID_AXIS_Z);
+
+	Matrix all_trans_inv = i_z_trans * i_y_trans * i_x_trans;
+
+	rotate_angle = t6[1] > 0 ? rotate_angle : -rotate_angle;
 	Matrix my_rotation = Transformations::rotation(-rotate_angle, ID_AXIS_Z);
 
 	all_trans = all_trans * my_rotation;
+
+	t3 = all_trans.getTranformation(cross);
+
 	res_vec = all_trans.getTranformation(N1);
 	res_vec = all_trans_inv.getTranformation(res_vec);
 

@@ -509,7 +509,7 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 						Vector N1 = normal_mat[y * width + min_x_for_this_y];
 						Vector N2 = normal_mat[y * width + max_x_for_this_y];
 						int steps = max_x_for_this_y - min_x_for_this_y;
-						int dx = x - max_x_for_this_y;
+						int dx = x - min_x_for_this_y;
 
 						Vector tmp_N = Transformations::getNormalInTheMiddle(N1, N2, steps, dx);
 						tmp_color = getColorAtPoint(model, polygon, x, y, z, tmp_N);
@@ -668,8 +668,6 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 		}
 		else
 		{
-			//N1 = Vector(1, -1, -1, 0);
-			//N2 = Vector(1, 1, -1, 0);
 			Vector normal_vec = Transformations::getNormalInTheMiddle(N1, N2, dy, n);
 			normal_mat[int(clipedY * width + clipedX)] = normal_vec;
 		}
