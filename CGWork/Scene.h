@@ -63,7 +63,9 @@ public:
 	void setBackgroundImageHeight(int _height);
 	void setBackgroungImageWidth(int _width);
 	void setBackgroundImage(vector<COLORREF> _image);
-
+	void drawBackground(int view_mat[]);
+	void drawBackgroundTile(int view_mat[]);
+	void drawBackgroundStretch(int view_mat[]);
 
 private:
 	int specularityExponent = 2;

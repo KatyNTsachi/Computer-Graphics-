@@ -9,7 +9,7 @@
 Scene::Scene()
 {
 	show_background = false;
-	tile_backgroung = false;
+	tile_background = false;
 	show_regular_normals = true;
 	paint_bounding_box = false;
 	show_original_normals = true;
@@ -208,20 +208,9 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_
 	width = abs(r.right - r.left);
 	height = abs(r.bottom - r.top);
 
-
-	for (int i = 0; i < background_image_height; i++)
-	{
-		for (int j = 0; j < background_image_width; j++)
-		{
-			if (i < height && j < width)
-			{
-				COLORREF background_color = background_image[i * background_image_width + j];
-				view_mat[i * width + j] = background_color;
-			}
-		}
-	}
-
-
+	if (show_background)
+		drawBackground(view_mat);
+	
 
 	//error messege
 	if (camera_number > camera_list.size() - 1)
@@ -1085,21 +1074,21 @@ void Scene::setRegularNormals(bool _show_regular_normals)
 	show_regular_normals = _show_regular_normals;
 }
 
-bool Scene::getUseBackGroundImage()
+bool Scene::getUseBackgroundImage()
 {
-	return useBackGroundImage;
+	return useBackgroundImage;
 }
-void Scene::setUseBackGroundImage(bool _useBackGroundImage)
+void Scene::setUseBackgroundImage(bool _useBackGroundImage)
 {
-	useBackGroundImage = _useBackGroundImage;
+	useBackgroundImage = _useBackGroundImage;
 }
 
-bool Scene::getTileBackGroungImage()
+bool Scene::getTileBackgroundImage()
 {
-	return tileBackGroungImage;
+	return tileBackgroundImage;
 }
-void Scene::setTileBackGroungImage(bool _tileBackGroungImage) {
-	tileBackGroungImage = _tileBackGroungImage;
+void Scene::setTileBackgroundImage(bool _tileBackGroungImage) {
+	tileBackgroundImage = _tileBackGroungImage;
 }
 
 
@@ -1132,3 +1121,41 @@ void Scene::setTileBackgroundImage(bool _tile_background)
 {
 	tile_background = _tile_background;
 }
+
+
+void Scene::setTileBackgroundImage(bool _tile_background)
+{
+
+}
+
+void Scene::drawBackground(int view_mat[])
+{
+	drawBackgroundTile(view_mat);
+	if (tile_background)
+		drawBackgroundTile(view_mat);
+	else
+		drawBackgroundStretch(view_mat);
+}
+
+void Scene::drawBackgroundTile(int view_mat[])
+{
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			int tmp_i = i % background_image_width;
+			int tmp_j = j % background_image_width;
+			COLORREF background_color = background_image[tmp_i * background_image_width + tmp_j];
+			view_mat[i * width + j] = background_color;
+		}
+	}
+
+
+}
+
+void Scene::drawBackgroundStretch(int view_mat[])
+{
+
+
+}
+
