@@ -109,16 +109,18 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_COMMAND(ID_COLOR_SILHOUETTECOLOR, &CCGWorkView::OnColorSilhouettecolor)
 	ON_COMMAND(ID_OPTIONS_DRAWSILHOUETTE, &CCGWorkView::OnOptionsDrawsilhouette)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_DRAWSILHOUETTE, &CCGWorkView::OnUpdateOptionsDrawsilhouette)
-	ON_COMMAND(ID_OPTIONS_INVERTNORMALS, &CCGWorkView::OnOptionsInvertnormals)
-	ON_UPDATE_COMMAND_UI(ID_OPTIONS_INVERTNORMALS, &CCGWorkView::OnUpdateOptionsInvertnormals)
-	ON_COMMAND(ID_FILE_USEBACKGROUNGIMAGE, &CCGWorkView::OnFileUsebackgroungimage)
-	ON_UPDATE_COMMAND_UI(ID_FILE_USEBACKGROUNGIMAGE, &CCGWorkView::OnUpdateFileUsebackgroungimage)
-	ON_COMMAND(ID_FILE_LOADBACKGROUNGIMAGE, &CCGWorkView::OnFileLoadbackgroungimage)
-	ON_UPDATE_COMMAND_UI(ID_FILE_LOADBACKGROUNGIMAGE, &CCGWorkView::OnUpdateFileLoadbackgroungimage)
-	ON_COMMAND(ID_FILE_TILEBACKGROUNDIMAGE, &CCGWorkView::OnFileTilebackgroundimage)
-	ON_UPDATE_COMMAND_UI(ID_FILE_TILEBACKGROUNDIMAGE, &CCGWorkView::OnUpdateFileTilebackgroundimage)
-	ON_COMMAND(ID_FILE_STRECHBACKGROUNGIMAGE, &CCGWorkView::OnFileStrechbackgroungimage)
+	ON_COMMAND(ID_OPTIONS_INVERTNORMALS, &CCGWorkView::onInvertNormals)
+	ON_UPDATE_COMMAND_UI(ID_OPTIONS_INVERTNORMALS, &CCGWorkView::onUpdateInvertNormals)
+	ON_COMMAND(ID_FILE_USEBACKGROUNGIMAGE, &CCGWorkView::onUseBackgroundImage)
+	ON_UPDATE_COMMAND_UI(ID_FILE_USEBACKGROUNGIMAGE, &CCGWorkView::onUpdateUseBackgroundImage)
+	ON_COMMAND(ID_FILE_LOADBACKGROUNGIMAGE, &CCGWorkView::onLoadBackgroundImage)
+	ON_UPDATE_COMMAND_UI(ID_FILE_LOADBACKGROUNGIMAGE, &CCGWorkView::onUpdateFileLoadBackgroundImage)
+	ON_COMMAND(ID_FILE_TILEBACKGROUNDIMAGE, &CCGWorkView::onFileTileBackgroundImage)
+	ON_UPDATE_COMMAND_UI(ID_FILE_TILEBACKGROUNDIMAGE, &CCGWorkView::onUpdateTileBackgroundImage)
+	ON_COMMAND(ID_FILE_STRECHBACKGROUNGIMAGE, &CCGWorkView::onFileStrechBackgroundImage)
 	ON_UPDATE_COMMAND_UI(ID_FILE_STRECHBACKGROUNGIMAGE, &CCGWorkView::onUpdateStrechBackgroundImage)
+	ON_COMMAND(ID_OPTIONS_SHOWONLYFRONTFACINGPOLYGONS, &CCGWorkView::onFrontFacingPolygons)
+	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWONLYFRONTFACINGPOLYGONS, &CCGWorkView::onUpdateFrontFacingPolygons)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -997,33 +999,33 @@ void CCGWorkView::OnUpdateOptionsDrawsilhouette(CCmdUI *pCmdUI)
 }
 
 
-void CCGWorkView::OnOptionsInvertnormals()
+void CCGWorkView::onInvertNormals()
 {
 	scene.setRegularNormals(!scene.getRegularNormals());
 	RedrawWindow();
 }
 
 
-void CCGWorkView::OnUpdateOptionsInvertnormals(CCmdUI *pCmdUI)
+void CCGWorkView::onUpdateInvertNormals(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(!scene.getRegularNormals());
 }
 
 
-void CCGWorkView::OnFileUsebackgroungimage()
+void CCGWorkView::onUseBackgroundImage()
 {
 	scene.setUseBackgroundImage(!scene.getUseBackgroundImage());
 	RedrawWindow();
 }
 
 
-void CCGWorkView::OnUpdateFileUsebackgroungimage(CCmdUI *pCmdUI)
+void CCGWorkView::onUpdateUseBackgroundImage(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(scene.getUseBackgroundImage());
 }
 
 
-void CCGWorkView::OnFileLoadbackgroungimage()
+void CCGWorkView::onLoadBackgroundImage()
 {
 	scene.setUseBackgroundImage(true);
 	TCHAR szFilters[] = _T("PNG Image Files (*.PNG)");
@@ -1055,25 +1057,25 @@ void CCGWorkView::OnFileLoadbackgroungimage()
 }
 
 
-void CCGWorkView::OnUpdateFileLoadbackgroungimage(CCmdUI *pCmdUI)
+void CCGWorkView::onUpdateFileLoadBackgroundImage(CCmdUI *pCmdUI)
 {
 }
 
 
-void CCGWorkView::OnFileTilebackgroundimage()
+void CCGWorkView::onFileTileBackgroundImage()
 {
 	scene.setTileBackgroundImage(!scene.getTileBackgroundImage());
 	RedrawWindow();
 }
 
 
-void CCGWorkView::OnUpdateFileTilebackgroundimage(CCmdUI *pCmdUI)
+void CCGWorkView::onUpdateTileBackgroundImage(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(scene.getTileBackgroundImage());
 }
 
 
-void CCGWorkView::OnFileStrechbackgroungimage()
+void CCGWorkView::onFileStrechBackgroundImage()
 {
 	scene.setTileBackgroundImage(!scene.getTileBackgroundImage());
 	RedrawWindow();
@@ -1083,4 +1085,15 @@ void CCGWorkView::OnFileStrechbackgroungimage()
 void CCGWorkView::onUpdateStrechBackgroundImage(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(!scene.getTileBackgroundImage());
+}
+
+void CCGWorkView::onFrontFacingPolygons()
+{
+	scene.setShowPositiveNormals(!scene.getShowPositiveNormals());
+}
+
+
+void CCGWorkView::onUpdateFrontFacingPolygons(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(!scene.getShowPositiveNormals());
 }
