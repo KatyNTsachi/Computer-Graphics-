@@ -66,6 +66,8 @@ public:
 	void drawBackground(int view_mat[]);
 	void drawBackgroundTile(int view_mat[]);
 	void drawBackgroundStretch(int view_mat[]);
+	void setShowPositiveNormals(bool _show_positive_normals);
+	bool getShowPositiveNormals();
 
 private:
 	int specularityExponent = 2;
@@ -128,6 +130,7 @@ private:
 												Vector(0, 0, -1, 0));
 	double d, alpha;
 	bool isPerspective = false;
+	bool show_positive_normals;
 };
 
 

@@ -1159,3 +1159,15 @@ void Scene::drawBackgroundStretch(int view_mat[])
 
 }
 
+void Scene::setShowPositiveNormals(bool _show_positive_normals)
+{
+	show_positive_normals = _show_positive_normals;
+}
+
+
+bool Scene::getShowPositiveNormals()
+{
+	return show_positive_normals;
+}
+
+
