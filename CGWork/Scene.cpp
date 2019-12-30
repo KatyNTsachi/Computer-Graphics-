@@ -350,59 +350,65 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 	int count = 0;
 	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
 	{
-		count++;
-		int min_x = getMinXOfPolygon(transformation, *polygon);
-		int min_y = getMinYOfPolygon(transformation, *polygon);
-		int max_x = getMaxXOfPolygon(transformation, *polygon);
-		int max_y = getMaxYOfPolygon(transformation, *polygon);
-
-		//if all the polgon is out of the screen
-		if (max_x < 0 || min_x >= width || max_y < 0 || min_y >= height)
+		Vector Z(0, 0, 1, 0);
+		Vector N = polygon->getOriginalNormal(true);
+		double normal_dot_z = Z * N;
+		if (show_positive_normals == false || (show_positive_normals && normal_dot_z > 0))
 		{
-			continue;
-		}
-			
-		// draw edges of polygon
-		MyPolygon transformedPolygon = polygon->tranformPolygon(transformation);
-		vector<Line> line_list = transformedPolygon.getLines();
-		//if ((count == 50 || count == 51)) {
-		if (count != -1) {
-			for (auto transformed_line = line_list.begin(); transformed_line != line_list.end(); transformed_line++)
+			count++;
+			int min_x = getMinXOfPolygon(transformation, *polygon);
+			int min_y = getMinYOfPolygon(transformation, *polygon);
+			int max_x = getMaxXOfPolygon(transformation, *polygon);
+			int max_y = getMaxYOfPolygon(transformation, *polygon);
+
+			//if all the polgon is out of the screen
+			if (max_x < 0 || min_x >= width || max_y < 0 || min_y >= height)
 			{
-				//Line transformed_line = tranformLine(*line, transformation);
-				if (!draw_wireFrame)
+				continue;
+			}
+
+			// draw edges of polygon
+			MyPolygon transformedPolygon = polygon->tranformPolygon(transformation);
+			vector<Line> line_list = transformedPolygon.getLines();
+			//if ((count == 50 || count == 51)) {
+			if (count != -1) {
+				for (auto transformed_line = line_list.begin(); transformed_line != line_list.end(); transformed_line++)
 				{
-					if (abs(transformed_line->getP1().getY() - transformed_line->getP2().getY()) >= 1)
+					//Line transformed_line = tranformLine(*line, transformation);
+					if (!draw_wireFrame)
 					{
-						this->drawLineForScanConversion(pDC, *transformed_line, tmp_drawing_view_mat, view_mat, normal_mat, color_mat, model, transformedPolygon);
+						if (abs(transformed_line->getP1().getY() - transformed_line->getP2().getY()) >= 1)
+						{
+							this->drawLineForScanConversion(pDC, *transformed_line, tmp_drawing_view_mat, view_mat, normal_mat, color_mat, model, transformedPolygon);
+						}
+					}
+					else
+					{
+						this->drawLine(pDC, *transformed_line, RGB(255, 0, 0), view_mat, tmp_drawing_view_mat);
 					}
 				}
-				else
-				{
-					this->drawLine(pDC, *transformed_line, RGB(255, 0, 0), view_mat, tmp_drawing_view_mat);
-				}
 			}
-		}
 
 
-		// fill shape of polygon
-		//if ((count == 50 ||count == 51) && !draw_wireFrame)
-		if (count != -1 && !draw_wireFrame)
-			fillPolygon(model, *polygon, transformation, pDC, tmp_view_mat, z_buffer, tmp_drawing_view_mat, normal_mat, color_mat);
+			// fill shape of polygon
+			//if ((count == 50 ||count == 51) && !draw_wireFrame)
+			if (count != -1 && !draw_wireFrame)
+				fillPolygon(model, *polygon, transformation, pDC, tmp_view_mat, z_buffer, tmp_drawing_view_mat, normal_mat, color_mat);
 
-		// clear last polygon from tmp drawing matrix
-		if (!draw_wireFrame)
-		{
-			for (int i = max(min_x - 2, 0); i < min(max_x + 2, width); i++)
+			// clear last polygon from tmp drawing matrix
+			if (!draw_wireFrame)
 			{
-				for (int j = max(min_y - 2, 0); j < min(max_y + 2, height); j++)
+				for (int i = max(min_x - 2, 0); i < min(max_x + 2, width); i++)
 				{
-					tmp_drawing_view_mat[j*width + i] = EMPTY_TMP_DRAWING_VIEW_MAT_PIXEL;
+					for (int j = max(min_y - 2, 0); j < min(max_y + 2, height); j++)
+					{
+						tmp_drawing_view_mat[j*width + i] = EMPTY_TMP_DRAWING_VIEW_MAT_PIXEL;
+					}
 				}
 			}
+			//if (count == 2)
+			//	break;
 		}
-		//if (count == 2)
-		//	break;
 	}
 	if (!draw_wireFrame)
 	{
