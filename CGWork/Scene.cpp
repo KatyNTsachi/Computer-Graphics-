@@ -554,7 +554,8 @@ LightCoefficient Scene::getColorAtPoint(Model &model, MyPolygon polygon, int x, 
 
 		if (N * L > 0)
 		{
-			color = color + (I_p * k_d * (abs(L * N))) + model.k_s * pow(Transformations::getAlpha(L, N, V), specularityExponent) ;
+			LightCoefficient tmp = k_s * pow(Transformations::getAlpha(L, N, V), specularityExponent);
+			color = color + (I_p * k_d * (abs(L * N))) + tmp;
 		}
 		color.setActive(true);
 	}
