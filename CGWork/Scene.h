@@ -55,21 +55,20 @@ public:
 	void setDrawSilhouette(bool _drawSilhouette);
 	bool getRegularNormals();
 	void setRegularNormals(bool _show_regular_normals);
-	bool getUseBackGroundImage();
-	void setUseBackGroundImage(bool _useBackGroundImage);
-	bool getTileBackGroungImage();
-	void setTileBackGroungImage(bool _useBackGroundImage);
+	bool getUseBackgroundImage(); 
+	void setUseBackgroundImage(bool _show_background);
+	bool getTileBackgroundImage();
+	void setTileBackgroundImage(bool _tile_background);
 
-	void setBeckgroundImageHeight();
-	void setBeckgroungImageWidth();
-	void setBackgroundImage();
-	
+	void setBackgroundImageHeight(int _height);
+	void setBackgroungImageWidth(int _width);
+	void setBackgroundImage(vector<COLORREF> _image);
+
 
 private:
 	int specularityExponent = 2;
 	Vector V = Vector(0, 0, -1, 0);
-	bool tileBackGroungImage = false;
-	bool useBackGroundImage = false;
+
 	bool show_regular_normals;
 	std::vector<Model> model_list;
 	std::vector<Camera> camera_list;
@@ -96,7 +95,6 @@ private:
 
 	// light
 	LightCoefficient getColorAtPoint(Model &model, MyPolygon polygon, int x, int y, double z, Vector N);
-	LightCoefficient getColorAt(Model &model, MyPolygon polygon, int x, int y, double z);
 	LightCoefficient getGouraudColorAt(Model &model, MyPolygon polygon, int x, int y, double z);
 	COLORREF getPhongColorAt(Model &model, MyPolygon polygon, int x, int y);
 	shadingTypes shadingType = FLAT_SHADING;
@@ -104,9 +102,11 @@ private:
 	LightCoefficient k_s = LightCoefficient(255, 255, 255);
 	LightCoefficient I_a = LightCoefficient(0.2, 0.2, 0.2);
 
-	int beckgroundImageHeight;
-	int beckgroungImageWidth;
-	vector<int> backgroundImage;
+	int background_image_height;
+	int background_image_width;
+	vector<COLORREF> background_image;
+	bool show_background;
+	bool tile_background;
 
 	#define MAX_COUNT_OF_LIGHTSOURCES 7
 	//std::vector<LightSource*> lightSources;

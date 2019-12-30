@@ -8,6 +8,8 @@
 
 Scene::Scene()
 {
+	show_background = false;
+	tile_backgroung = false;
 	show_regular_normals = true;
 	paint_bounding_box = false;
 	show_original_normals = true;
@@ -203,6 +205,23 @@ void Scene::AddCamera(Camera _camera)
 }
 
 void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[]) {
+	width = abs(r.right - r.left);
+	height = abs(r.bottom - r.top);
+
+
+	for (int i = 0; i < background_image_height; i++)
+	{
+		for (int j = 0; j < background_image_width; j++)
+		{
+			if (i < height && j < width)
+			{
+				COLORREF background_color = background_image[i * background_image_width + j];
+				view_mat[i * width + j] = background_color;
+			}
+		}
+	}
+
+
 
 	//error messege
 	if (camera_number > camera_list.size() - 1)
@@ -258,6 +277,9 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_
 		}
 	}
 	//pDC->GetCurrentBitmap()->SetBitmapBits(view_width * view_height * 4, viewMatrix);
+
+
+
 }
 void Scene::drawLines(CDC* pDC, vector<Line> lines, COLORREF _color, Matrix _transformation, int view_mat[], double tmp_drawing_view_mat[])
 {
@@ -1078,4 +1100,35 @@ bool Scene::getTileBackGroungImage()
 }
 void Scene::setTileBackGroungImage(bool _tileBackGroungImage) {
 	tileBackGroungImage = _tileBackGroungImage;
+}
+
+
+void Scene::setBackgroundImageHeight(int _height)
+{
+	background_image_height = _height;
+}
+void Scene::setBackgroungImageWidth(int _width)
+{
+	background_image_width = _width;
+}
+void Scene::setBackgroundImage(vector<COLORREF> _image)
+{
+	background_image = _image;
+}
+
+bool Scene::getUseBackgroundImage()
+{
+	return show_background;
+}
+void Scene::setUseBackgroundImage(bool _show_background)
+{
+	show_background = _show_background;
+}
+bool Scene::getTileBackgroundImage()
+{
+	return tile_background;
+}
+void Scene::setTileBackgroundImage(bool _tile_background)
+{
+	tile_background = _tile_background;
 }

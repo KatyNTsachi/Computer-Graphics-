@@ -1031,9 +1031,22 @@ void CCGWorkView::OnFileLoadbackgroungimage()
 	if (dlg.DoModal() == IDOK) {
 		CStringA m_strItdFileName = dlg.GetPathName();		// Full path and filename
 		PngWrapper pngReader(m_strItdFileName);
+		pngReader.ReadPng();
 		int width = pngReader.GetWidth();
 		int height = pngReader.GetHeight();
 
+		vector<COLORREF> vec;
+		for (int i = 0; i < height; i++)
+		{
+			for (int j = 0; j < width; j++)
+			{
+				int image_color = pngReader.GetValue(j, i);
+				vec.push_back( RGB(GET_B(image_color), GET_G(image_color), GET_R(image_color) ) );
+			}
+		}
+		scene.setBackgroundImage(vec);
+		scene.setBackgroundImageHeight(height);
+		scene.setBackgroungImageWidth(width);
 
 		RedrawWindow();
 	}
