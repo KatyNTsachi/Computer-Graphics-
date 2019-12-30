@@ -45,11 +45,11 @@ public:
 	void highlightModel(COLORREF _color, int modelIndex);
 	COLORREF getModelColor();
 	COLORREF getFaddedModelColor(int modelIndex);
-	void Scene::unHighlightModel();
-	void Scene::drawWireFrame(bool _draw_wireFrame);
-	void Scene::setLightSourceWithParams(int idx, LightParams lightParams);
-	void Scene::setAmbientLight(LightParams m_ambientLight);
-	void Scene::setShadingType(shadingTypes _shadingType);
+	void unHighlightModel();
+	void drawWireFrame(bool _draw_wireFrame);
+	void setLightSourceWithParams(int idx, LightParams lightParams);
+	void setAmbientLight(LightParams m_ambientLight);
+	void setShadingType(shadingTypes _shadingType);
 	void setSilhouetteColor(COLORREF color);
 	bool getDrawSilhouette();
 	void setDrawSilhouette(bool _drawSilhouette);
@@ -68,6 +68,7 @@ public:
 	void drawBackgroundStretch(int view_mat[]);
 	void setShowPositiveNormals(bool _show_positive_normals);
 	bool getShowPositiveNormals();
+
 
 private:
 	int specularityExponent = 2;

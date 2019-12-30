@@ -121,6 +121,7 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_UPDATE_COMMAND_UI(ID_FILE_STRECHBACKGROUNGIMAGE, &CCGWorkView::onUpdateStrechBackgroundImage)
 	ON_COMMAND(ID_OPTIONS_SHOWONLYFRONTFACINGPOLYGONS, &CCGWorkView::onFrontFacingPolygons)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWONLYFRONTFACINGPOLYGONS, &CCGWorkView::onUpdateFrontFacingPolygons)
+	ON_COMMAND(ID_FILE_SAVE32828, &CCGWorkView::onFileSave)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -146,7 +147,7 @@ CCGWorkView::CCGWorkView()
 	m_show_polygon_normals = 0;
 	m_show_calculated_or_original_normals = ID_OPTIONS_SHOWORIGINALNORMALS;
 	m_bIsPerspective = false;
-
+	need_to_save = false;
 	m_nLightShading = ID_LIGHT_SHADING_FLAT;
 
 	m_lMaterialAmbient = 0.2;
@@ -331,8 +332,8 @@ void CCGWorkView::OnDraw(CDC* pDC)
 	CRect r;
 	GetClientRect(&r);
 
-	int height = r.Height();
-	int width = r.Width();
+	height = r.Height();
+	width = r.Width();
 	int* view_mat = new int[height*width];
 	double* z_buffer = new double[height*width];
 	double* tmp_drawing_view_mat = new double[height*width];
@@ -352,6 +353,17 @@ void CCGWorkView::OnDraw(CDC* pDC)
 	{
 		pDC->BitBlt(r.left, r.top, r.Width(), r.Height(), pDCToUse, r.left, r.top, SRCCOPY);
 	}
+
+	if (need_to_save)
+	{
+		save_mat = new int[height*width];
+		for (int i = 0; i < height*width; i++)
+		{
+			save_mat[i] = view_mat[i];
+		}
+		need_to_save = false;
+	}
+
 
 	delete[] view_mat;
 
@@ -1098,4 +1110,36 @@ void CCGWorkView::onFrontFacingPolygons()
 void CCGWorkView::onUpdateFrontFacingPolygons(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(scene.getShowPositiveNormals());
+}
+
+
+void CCGWorkView::onFileSave()
+{
+	char strFilter[] = { "png image (*.png)|*.png|" };
+	CFileDialog FileDlg(FALSE, CString(".png"), NULL, 0, CString(strFilter));
+	if (FileDlg.DoModal() == IDOK)
+	{
+		need_to_save = true;
+		agendaName = FileDlg.GetFileName(); 
+		agendaPath = FileDlg.GetFolderPath(); 
+		RedrawWindow();
+		CString full_path = agendaPath + TEXT("\\") + agendaName;
+
+		//now we have save_mat var
+		PngWrapper png_wrp( CT2A(full_path), width, height);
+
+		png_wrp.InitWritePng();
+		for (int i = 0; i < height; i++)
+		{
+			for (int j = 0; j < width; j++)
+			{
+				int val = save_mat[i * width + j];
+				png_wrp.SetValue(j, i, SET_RGB(GET_G(val), GET_B(val), GET_A(val)));
+			}
+
+		}
+
+		png_wrp.WritePng();
+	}
+	delete[] save_mat;
 }

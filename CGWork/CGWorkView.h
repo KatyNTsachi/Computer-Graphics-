@@ -45,9 +45,10 @@ private:
 	int m_show_vertex_normals;
 	int m_show_polygon_normals;
 	bool m_wireFrame = true;
-
+	bool need_to_save;
 	CString m_strItdFileName;		// file name of IRIT data
-
+	CString agendaName;
+	CString agendaPath;
 	int m_nLightShading;			// shading: Flat, Gouraud.
 
 	double m_lMaterialAmbient;		// The Ambient in the scene
@@ -65,7 +66,9 @@ private:
 	Matrix getTranslationMatrix(double mouseDraggingDistance);
 	Matrix getScaleMatrix(double mouseDraggingDistance);
 	Matrix getUniformScaleMatrix(double mouseDraggingDistance);
-
+	int* save_mat;
+	int height;
+	int width;
 	//mouse coordinates
 	int x_mouse_coordinate, y_mouse_coordinate;
 
@@ -195,6 +198,7 @@ public:
 	afx_msg void onUpdateStrechBackgroundImage(CCmdUI *pCmdUI);
 	afx_msg void onFrontFacingPolygons();
 	afx_msg void onUpdateFrontFacingPolygons(CCmdUI *pCmdUI);
+	afx_msg void onFileSave();
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp
