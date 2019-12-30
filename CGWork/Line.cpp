@@ -66,3 +66,9 @@ bool Line::operator==(const Line &other) const
 		&& p2.getZ() == other.p1.getZ()));
 	return result;
 }
+
+
+Line Line::flipLine()
+{
+	return *this;
+}

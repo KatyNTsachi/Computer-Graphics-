@@ -235,10 +235,40 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_
 			drawPolygons(*tmp_model, bounding_box_polygon_list, all_trans, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
 		}
 		if (paint_vertex_normals) {
-			if(show_original_normals)
-				drawLines(pDC, tmp_model->getOriginalVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+			if (show_original_normals)
+			{
+				if(show_regular_normals)
+					drawLines(pDC, tmp_model->getOriginalVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+				else
+				{
+					vector<Line> tmp_vec = tmp_model->getOriginalVertexNormalList();
+					vector<Line> new_vec;
+
+					for (auto i = tmp_vec.begin(); i != tmp_vec.end(); i++)
+					{
+						new_vec.push_back( (*i).flipLine() );
+					}
+					
+					drawLines(pDC, new_vec, tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+				}
+			}
 			else
-				drawLines(pDC, tmp_model->getCalculatedVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+			{
+				if (show_regular_normals)
+					drawLines(pDC, tmp_model->getCalculatedVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+				else
+				{
+					vector<Line> tmp_vec = tmp_model->getCalculatedVertexNormalList();
+					vector<Line> new_vec;
+
+					for (auto i = tmp_vec.begin(); i != tmp_vec.end(); i++)
+					{
+						new_vec.push_back((*i).flipLine());
+					}
+
+					drawLines(pDC, new_vec, tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+				}
+			}
 		}
 		if (paint_polygon_normals) {
 			if (show_original_normals)

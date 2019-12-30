@@ -14,7 +14,8 @@ public:
 	static Matrix inverseRotation(double _angle, int _axis);
 	static Matrix inverseScale(double _x, double _y, double _z);
 	static Matrix prespective(double alpha, double d);
-	static Vector Transformations::getNormalInTheMiddle(Vector N1, Vector N2, int steps, int i);
+	static Vector getNormalInTheMiddle(Vector N1, Vector N2, int steps, int i);
+	static Vector flipNormal(Vector N1);
 
 };
 

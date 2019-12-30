@@ -15,7 +15,7 @@ public:
 	void setP1(Point _p);
 	void setP2(Point _p);
 	Line tranformLine(Matrix tranformation_matrix);
-
+	Line flipLine();
 	bool operator==(const Line &other) const;
 
 private:

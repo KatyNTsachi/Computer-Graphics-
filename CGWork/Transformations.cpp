@@ -219,3 +219,53 @@ Vector Transformations::getNormalInTheMiddle(Vector N1, Vector N2, int steps, in
 
 	return res_vec;
 }
+
+
+Vector Transformations::flipNormal(Vector N1)
+{
+
+	Vector res_vec;
+
+	double angle = M_PI;
+
+	int sign;
+	Vector tmp_vec;
+	Vector t1, t2, t3, t4, t5, t6;
+
+	// x axis
+	tmp_vec[0] = N1[0];
+	tmp_vec[1] = 0;
+	tmp_vec[2] = N1[2];
+	tmp_vec.Normalize();
+	double alpha = tmp_vec[0] > 0 ? acos(tmp_vec[2]) : 2 * M_PI - acos(tmp_vec[2]);
+
+	Matrix x_trans = Transformations::rotation(alpha, ID_AXIS_Y);
+	t1 = x_trans.getTranformation(N1);
+
+	// y axis
+	tmp_vec[0] = 0;
+	tmp_vec[1] = t1[1];
+	tmp_vec[2] = t1[2];
+	tmp_vec.Normalize();
+	double beta = tmp_vec[1] > 0 ? acos(tmp_vec[2]) : 2 * M_PI - acos(tmp_vec[2]);
+
+	Matrix y_trans = Transformations::rotation(-beta, ID_AXIS_X);
+	t2 = y_trans.getTranformation(N1);
+
+	Matrix i_x_trans = Transformations::rotation(-alpha, ID_AXIS_Y);
+	Matrix i_y_trans = Transformations::rotation(beta, ID_AXIS_X);
+
+	Matrix all_trans = x_trans * y_trans;
+	t3 = all_trans.getTranformation(N1);
+
+	Matrix all_trans_inv = i_y_trans * i_x_trans;
+
+	Matrix my_rotation = Transformations::rotation(angle, ID_AXIS_X);
+
+	all_trans = all_trans * my_rotation;
+
+	res_vec = all_trans.getTranformation(N1);
+	res_vec = all_trans_inv.getTranformation(res_vec);
+
+	return res_vec;
+}
