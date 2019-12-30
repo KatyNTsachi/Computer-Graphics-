@@ -16,6 +16,7 @@ public:
 	static Matrix prespective(double alpha, double d);
 	static Vector getNormalInTheMiddle(Vector N1, Vector N2, int steps, int i);
 	static Vector flipNormal(Vector N1);
+	static double getAlpha(Vector L, Vector N, Vector V);
 
 };
 
