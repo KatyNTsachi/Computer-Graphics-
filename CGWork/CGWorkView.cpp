@@ -118,6 +118,7 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_COMMAND(ID_FILE_TILEBACKGROUNDIMAGE, &CCGWorkView::OnFileTilebackgroundimage)
 	ON_UPDATE_COMMAND_UI(ID_FILE_TILEBACKGROUNDIMAGE, &CCGWorkView::OnUpdateFileTilebackgroundimage)
 	ON_COMMAND(ID_FILE_STRECHBACKGROUNGIMAGE, &CCGWorkView::OnFileStrechbackgroungimage)
+	ON_UPDATE_COMMAND_UI(ID_FILE_STRECHBACKGROUNGIMAGE, &CCGWorkView::OnUpdateFileStrechbackgroungimage)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -1011,19 +1012,19 @@ void CCGWorkView::OnUpdateOptionsInvertnormals(CCmdUI *pCmdUI)
 
 void CCGWorkView::OnFileUsebackgroungimage()
 {
-	// TODO: Add your command handler code here
+	scene.setUseBackgroundImage(!scene.getUseBackgroundImage());
 }
 
 
 void CCGWorkView::OnUpdateFileUsebackgroungimage(CCmdUI *pCmdUI)
 {
-	pCmdUI->SetCheck(scene.getUseBackGroundImage());
+	pCmdUI->SetCheck(scene.getUseBackgroundImage());
 }
 
 
 void CCGWorkView::OnFileLoadbackgroungimage()
 {
-	scene.setUseBackGroundImage(true);
+	scene.setUseBackgroundImage(true);
 	TCHAR szFilters[] = _T("PNG Image Files (*.PNG)");
 
 	CFileDialog dlg(TRUE, _T("PNG"), _T("*.PNG"), OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, szFilters);
@@ -1055,22 +1056,28 @@ void CCGWorkView::OnFileLoadbackgroungimage()
 
 void CCGWorkView::OnUpdateFileLoadbackgroungimage(CCmdUI *pCmdUI)
 {
-	pCmdUI->SetCheck(false);
 }
 
 
 void CCGWorkView::OnFileTilebackgroundimage()
 {
+	scene.setTileBackgroundImage(!scene.getTileBackgroundImage());
 }
 
 
 void CCGWorkView::OnUpdateFileTilebackgroundimage(CCmdUI *pCmdUI)
 {
-	// TODO: Add your command update UI handler code here
+	pCmdUI->SetCheck(scene.getTileBackgroundImage());
 }
 
 
 void CCGWorkView::OnFileStrechbackgroungimage()
 {
-	// TODO: Add your command handler code here
+	scene.setTileBackgroundImage(!scene.getTileBackgroundImage());
+}
+
+
+void CCGWorkView::OnUpdateFileStrechbackgroungimage(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(!scene.getTileBackgroundImage());
 }
