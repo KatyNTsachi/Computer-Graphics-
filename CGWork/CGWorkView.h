@@ -183,16 +183,18 @@ public:
 	afx_msg void OnColorSilhouettecolor();
 	afx_msg void OnOptionsDrawsilhouette();
 	afx_msg void OnUpdateOptionsDrawsilhouette(CCmdUI *pCmdUI);
-	afx_msg void OnOptionsInvertnormals();
-	afx_msg void OnUpdateOptionsInvertnormals(CCmdUI *pCmdUI);
-	afx_msg void OnFileUsebackgroungimage();
-	afx_msg void OnUpdateFileUsebackgroungimage(CCmdUI *pCmdUI);
-	afx_msg void OnFileLoadbackgroungimage();
-	afx_msg void OnUpdateFileLoadbackgroungimage(CCmdUI *pCmdUI);
-	afx_msg void OnFileTilebackgroundimage();
-	afx_msg void OnUpdateFileTilebackgroundimage(CCmdUI *pCmdUI);
-	afx_msg void OnFileStrechbackgroungimage();
+	afx_msg void onInvertNormals();
+	afx_msg void onUpdateInvertNormals(CCmdUI *pCmdUI);
+	afx_msg void onUseBackgroundImage();
+	afx_msg void onUpdateUseBackgroundImage(CCmdUI *pCmdUI);
+	afx_msg void onLoadBackgroundImage();
+	afx_msg void onUpdateFileLoadBackgroundImage(CCmdUI *pCmdUI);
+	afx_msg void onFileTileBackgroundImage();
+	afx_msg void onUpdateTileBackgroundImage(CCmdUI *pCmdUI);
+	afx_msg void onFileStrechBackgroundImage();
 	afx_msg void onUpdateStrechBackgroundImage(CCmdUI *pCmdUI);
+	afx_msg void onFrontFacingPolygons();
+	afx_msg void onUpdateFrontFacingPolygons(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp

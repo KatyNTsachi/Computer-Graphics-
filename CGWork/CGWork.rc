@@ -125,6 +125,7 @@ BEGIN
         MENUITEM "Prespective Parameters",      ID_OPTIONS_PRESPECTIVEPARAMETERS
         MENUITEM "Draw Silhouette",             ID_OPTIONS_DRAWSILHOUETTE
         MENUITEM "Invert Normals",              ID_OPTIONS_INVERTNORMALS
+        MENUITEM "Show Only Front Facing Polygons", ID_OPTIONS_SHOWONLYFRONTFACINGPOLYGONS
     END
     POPUP "&Light"
     BEGIN
