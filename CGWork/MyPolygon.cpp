@@ -2,7 +2,7 @@
 #include "Vector.h"
 #include "Matrix.h"
 #include "Line.h"
-
+#include "Transformations.h"
 
 MyPolygon::MyPolygon()
 {
@@ -44,14 +44,14 @@ void MyPolygon::setCalculatedNormal(Vector _normal)
 	calculated_normal = _normal;
 }
 
-Vector MyPolygon::getOriginalNormal()
+Vector MyPolygon::getOriginalNormal(bool show_regular_normals)
 {
-	return original_normal;
+	return flipOrNot(original_normal, show_regular_normals);
 }
 
-Vector MyPolygon::getCalculatedNormal()
+Vector MyPolygon::getCalculatedNormal(bool show_regular_normals)
 {
-	return calculated_normal;
+	return flipOrNot(calculated_normal, show_regular_normals);
 }
 
 void MyPolygon::setListOfLines(std::vector<Line> _list_of_lines)
@@ -97,4 +97,11 @@ MyPolygon MyPolygon::tranformPolygon(Matrix tranformation_matrix)
 	new_poly.center_of_polygon = tranformation_matrix.getTranformation(this->center_of_polygon); // this->center_of_polygon * tranformation_matrix;
 
 	return new_poly;
+}
+
+Vector MyPolygon::flipOrNot(Vector &v, bool show_regular_normals)
+{
+	if (show_regular_normals)
+		return v;
+	return Transformations::flipNormal(v);
 }

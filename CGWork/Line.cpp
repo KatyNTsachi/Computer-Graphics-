@@ -1,5 +1,5 @@
 #include "Line.h"
-
+#include "Transformations.h"
 
 
 Line::Line(Point p1_new, Point p2_new)
@@ -70,5 +70,8 @@ bool Line::operator==(const Line &other) const
 
 Line Line::flipLine()
 {
-	return *this;
+	Vector vec(p2.getX() - p1.getX(), p2.getY() - p1.getY(), p2.getZ() - p1.getZ(), 0);
+	Vector new_vec = Transformations::flipNormal(vec);
+	Line new_line = Line( p1, Point(p1.getX() + new_vec[0], p1.getY() + new_vec[1], p1.getZ() + new_vec[2]) );
+	return new_line;
 }

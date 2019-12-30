@@ -125,8 +125,8 @@ void Model::addNormals()
 	for (auto tmp_polygon = polygon_list.begin(); tmp_polygon != polygon_list.end(); tmp_polygon++)
 	{
 		Point center = tmp_polygon->getCenter();
-		Vector original_normal = tmp_polygon->getOriginalNormal();
-		Vector calculated_normal = tmp_polygon->getCalculatedNormal();
+		Vector original_normal = tmp_polygon->getOriginalNormal(true);
+		Vector calculated_normal = tmp_polygon->getCalculatedNormal(true);
 
 		polygon_original_normal_list.push_back(Line(	Point(center.getX(), center.getY(), center.getZ()),
 														Point(center.getX() + original_normal[0], center.getY() + original_normal[1] , center.getZ() + original_normal[2] )));
@@ -143,8 +143,8 @@ void Model::addNormals()
 				int xxx = 0;
 			}
 
-			Vector point_original_normal = tmp_line->getP1().getOriginalNormal();
-			Vector point_calculated_normal = tmp_line->getP1().getCalculatedNormal();
+			Vector point_original_normal = tmp_line->getP1().getOriginalNormal(true);
+			Vector point_calculated_normal = tmp_line->getP1().getCalculatedNormal(true);
 
 			vertex_original_normal_list.push_back(Line(	tmp_line->getP1(),
 														Point(	tmp_line->getP1().getX() + point_original_normal[0],
@@ -162,24 +162,24 @@ void Model::addNormals()
 }
 
 
-std::vector<Line> Model::getOriginalPolygonNormalList()
+std::vector<Line> Model::getOriginalPolygonNormalList(bool show_regular_normals)
 {
-	return polygon_original_normal_list;
+	return flipOrNot(polygon_original_normal_list, show_regular_normals);
 }
 
-std::vector<Line> Model::getCalculatedPolygonNormalList()
+std::vector<Line> Model::getCalculatedPolygonNormalList(bool show_regular_normals)
 {
-	return polygon_calculated_normal_list;
+	return flipOrNot(polygon_calculated_normal_list, show_regular_normals);
 }
 
-std::vector<Line> Model::getOriginalVertexNormalList()
+std::vector<Line> Model::getOriginalVertexNormalList(bool show_regular_normals)
 {
-	return vertex_original_normal_list;
+	return flipOrNot(vertex_original_normal_list, show_regular_normals);
 }
 
-std::vector<Line> Model::getCalculatedVertexNormalList()
+std::vector<Line> Model::getCalculatedVertexNormalList(bool show_regular_normals)
 {
-	return vertex_calculated_normal_list;
+	return flipOrNot(vertex_calculated_normal_list, show_regular_normals);
 }
 
 COLORREF Model::getNormalsColor()
@@ -212,7 +212,7 @@ std::vector<Line> Model::getSilhouetteLinesList(Matrix transformation)
 	unordered_map<Line, vector<Vector>, KeyHasher> lines_hush_table;
 	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
 	{
-		tmp_N = transformation.getTranformation(polygon->getOriginalNormal());
+		tmp_N = transformation.getTranformation(polygon->getOriginalNormal(true));
 		polygonLines = polygon->getLines();
 		for (auto line = polygonLines.begin(); line != polygonLines.end(); line++)
 		{
@@ -231,4 +231,19 @@ std::vector<Line> Model::getSilhouetteLinesList(Matrix transformation)
 		}
 	}
 	return SilhouetteLines;
+}
+
+
+std::vector<Line> Model::flipOrNot(std::vector<Line> &vec_line, bool show_regular_normals)
+{
+	if (show_regular_normals)
+		return vec_line;
+
+	std::vector<Line> new_vec;
+
+	for (auto i = vec_line.begin(); i != vec_line.end(); i++)
+	{
+		new_vec.push_back((*i).flipLine());
+	}
+	return new_vec;
 }

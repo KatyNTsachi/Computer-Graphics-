@@ -237,46 +237,20 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_
 		if (paint_vertex_normals) {
 			if (show_original_normals)
 			{
-				if(show_regular_normals)
-					drawLines(pDC, tmp_model->getOriginalVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
-				else
-				{
-					vector<Line> tmp_vec = tmp_model->getOriginalVertexNormalList();
-					vector<Line> new_vec;
-
-					for (auto i = tmp_vec.begin(); i != tmp_vec.end(); i++)
-					{
-						new_vec.push_back( (*i).flipLine() );
-					}
-					
-					drawLines(pDC, new_vec, tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
-				}
+				drawLines(pDC, tmp_model->getOriginalVertexNormalList(show_regular_normals), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
 			}
 			else
 			{
-				if (show_regular_normals)
-					drawLines(pDC, tmp_model->getCalculatedVertexNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
-				else
-				{
-					vector<Line> tmp_vec = tmp_model->getCalculatedVertexNormalList();
-					vector<Line> new_vec;
-
-					for (auto i = tmp_vec.begin(); i != tmp_vec.end(); i++)
-					{
-						new_vec.push_back((*i).flipLine());
-					}
-
-					drawLines(pDC, new_vec, tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
-				}
+				drawLines(pDC, tmp_model->getCalculatedVertexNormalList(show_regular_normals), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
 			}
 		}
 		if (paint_polygon_normals) {
 			if (show_original_normals)
 			{
-				drawLines(pDC, tmp_model->getOriginalPolygonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+				drawLines(pDC, tmp_model->getOriginalPolygonNormalList(show_regular_normals), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
 			}
 			else
-				drawLines(pDC, tmp_model->getCalculatedPolygonNormalList(), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+				drawLines(pDC, tmp_model->getCalculatedPolygonNormalList(show_regular_normals), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
 
 		}
 		if (drawSilhouette) {
@@ -647,8 +621,8 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 	dx = (int(p2.getX()) - int(p1.getX()));
 	dz = (p2.getZ() - p1.getZ());
 
-	Vector N1 = p1.getOriginalNormal();
-	Vector N2 = p2.getOriginalNormal();
+	Vector N1 = p1.getOriginalNormal(show_regular_normals);
+	Vector N2 = p2.getOriginalNormal(show_regular_normals);
 
 	dnormal = (N2 - N1);
 
@@ -668,7 +642,7 @@ void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], i
 	
 
 	int n = 0;
-	LightCoefficient polygonColor = getColorAtPoint(model, polygon, polygon.getCenter().getX(), polygon.getCenter().getY(), polygon.getCenter().getZ(), polygon.getOriginalNormal());
+	LightCoefficient polygonColor = getColorAtPoint(model, polygon, polygon.getCenter().getX(), polygon.getCenter().getY(), polygon.getCenter().getZ(), polygon.getOriginalNormal(show_regular_normals));
 
 	while (y <= int(p2.getY()))
 	{

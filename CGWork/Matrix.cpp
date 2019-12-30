@@ -94,8 +94,8 @@ Point Matrix::getTranformation(Point p)
 	new_point.setY(new_point.getY() / w);
 	new_point.setZ(new_point.getZ() / w);
 
-	Vector calculatedNormal = p.getCalculatedNormal();
-	Vector originalNormal = p.getOriginalNormal();
+	Vector calculatedNormal = p.getCalculatedNormal(true);
+	Vector originalNormal = p.getOriginalNormal(true);
 	Vector transformedCalculatedNormal = getTranformation(calculatedNormal);
 	Vector transformedOriginalNormal = getTranformation(originalNormal);
 

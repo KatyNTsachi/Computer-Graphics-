@@ -20,12 +20,14 @@ public:
 	void printPoint();
 	void setOriginalNormal(Vector _normal);
 	void setCalculatedNormal(Vector _normal);
-	Vector getOriginalNormal();
-	Vector getCalculatedNormal();
+	Vector getOriginalNormal(bool show_regular_normals);
+	Vector getCalculatedNormal(bool show_regular_normals);
 
 private:
 	double x, y, z;
 	Vector original_normal;
 	Vector calculated_normal;
+	Vector flipOrNot(Vector &v, bool show_regular_normals);
+
 };
 

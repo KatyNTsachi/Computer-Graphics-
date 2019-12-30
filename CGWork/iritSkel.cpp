@@ -301,7 +301,7 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 				p1.setCalculatedNormal(Vector(x / tmp_counter, y / tmp_counter, z / tmp_counter, 0));
 
 			//for the original normals
-			if (p1.getOriginalNormal() == Vector(0, 0, 0, 0))
+			if (p1.getOriginalNormal(true) == Vector(0, 0, 0, 0))
 			{
 				double x = 0, y = 0, z = 0;
 				int tmp_counter = 0;
@@ -334,7 +334,7 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 				p2.setCalculatedNormal(Vector(x / tmp_counter, y / tmp_counter, z / tmp_counter, 0));
 
 			//for the original normals
-			if (p2.getOriginalNormal() == Vector(0, 0, 0, 0))
+			if (p2.getOriginalNormal(true) == Vector(0, 0, 0, 0))
 			{
 				double x = 0, y = 0, z = 0;
 				int tmp_counter = 0;

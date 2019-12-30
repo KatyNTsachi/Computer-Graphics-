@@ -18,14 +18,17 @@ public:
 	Point getCenter();
 	void setOriginalNormal(Vector _normal);
 	void setCalculatedNormal(Vector _normal);
-	Vector getOriginalNormal();
-	Vector getCalculatedNormal();
+	Vector getOriginalNormal(bool show_regular_normals);
+	Vector getCalculatedNormal(bool show_regular_normals);
 	void setListOfLines(std::vector<Line> _list_of_lines);
 	MyPolygon tranformPolygon(Matrix transformationMatrix);
+	
 private:
 	std::vector<Line> lines;
 	Vector original_normal;
 	Vector calculated_normal;
 	Point center_of_polygon;
+	Vector flipOrNot(Vector &v, bool show_regular_normals);
+
 };
 

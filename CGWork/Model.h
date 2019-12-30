@@ -35,10 +35,10 @@ public:
 	void setShouldBoundingBox(bool _print_bounding_box);
 	bool getShouldBoundingBox();
 	void addNormals();
-	std::vector<Line> getOriginalVertexNormalList();
-	std::vector<Line> getCalculatedVertexNormalList();
-	std::vector<Line> getOriginalPolygonNormalList();
-	std::vector<Line> getCalculatedPolygonNormalList();
+	std::vector<Line> getOriginalVertexNormalList(bool show_regular_normals);
+	std::vector<Line> getCalculatedVertexNormalList(bool show_regular_normals);
+	std::vector<Line> getOriginalPolygonNormalList(bool show_regular_normals);
+	std::vector<Line> getCalculatedPolygonNormalList(bool show_regular_normals);
 	std::vector<Line> getSilhouetteLinesList(Matrix transformation);
 	void setListOfPolygons(std::vector<MyPolygon> _list_of_polygons);
 	COLORREF getNormalsColor();
@@ -54,6 +54,7 @@ private:
 	std::vector<Line> polygon_calculated_normal_list;
 	std::vector<Line> vertex_original_normal_list;
 	std::vector<Line> vertex_calculated_normal_list;
+	std::vector<Line> flipOrNot(std::vector<Line> &vec_line, bool show_regular_normals);
 
 
 	Matrix objectSpaceTransformation;

@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iostream>
 #include <string.h>
+#include "Transformations.h"
 using namespace std;
 
 Point::Point()
@@ -78,17 +79,26 @@ void Point::setOriginalNormal(Vector _normal)
 	original_normal = _normal;
 }
 
-Vector Point::getOriginalNormal()
-{
-	return original_normal;
-}
+
 
 void Point::setCalculatedNormal(Vector _normal)
 {
 	calculated_normal = _normal;
 }
 
-Vector Point::getCalculatedNormal()
+Vector Point::getOriginalNormal(bool show_regular_normals)
 {
-	return calculated_normal;
+	return flipOrNot(original_normal, show_regular_normals);
+}
+
+Vector Point::getCalculatedNormal(bool show_regular_normals)
+{
+	return flipOrNot(calculated_normal, show_regular_normals);
+}
+
+Vector Point::flipOrNot(Vector &v, bool show_regular_normals)
+{
+	if (show_regular_normals)
+		return v;
+	return Transformations::flipNormal(v);
 }
