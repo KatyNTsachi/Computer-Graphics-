@@ -1090,10 +1090,12 @@ void CCGWorkView::onUpdateStrechBackgroundImage(CCmdUI *pCmdUI)
 void CCGWorkView::onFrontFacingPolygons()
 {
 	scene.setShowPositiveNormals(!scene.getShowPositiveNormals());
+	RedrawWindow();
+
 }
 
 
 void CCGWorkView::onUpdateFrontFacingPolygons(CCmdUI *pCmdUI)
 {
-	pCmdUI->SetCheck(!scene.getShowPositiveNormals());
+	pCmdUI->SetCheck(scene.getShowPositiveNormals());
 }

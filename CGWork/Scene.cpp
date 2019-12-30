@@ -13,6 +13,7 @@ Scene::Scene()
 	show_regular_normals = true;
 	paint_bounding_box = false;
 	show_original_normals = true;
+	show_positive_normals = false;
 	//ParallelLightSource *parallelLightSource = new ParallelLightSource(Vector(1, 0, 0, 0), LightCoefficient(1, 1, 1));
 	//PointLightSource *parallelLightSource = new PointLightSource(Point(1, 0, 0), LightCoefficient(255, 255, 255));
 	//lightSources[0] = (parallelLightSource);
@@ -350,25 +351,27 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 	int count = 0;
 	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
 	{
+		count++;
+		int min_x = getMinXOfPolygon(transformation, *polygon);
+		int min_y = getMinYOfPolygon(transformation, *polygon);
+		int max_x = getMaxXOfPolygon(transformation, *polygon);
+		int max_y = getMaxYOfPolygon(transformation, *polygon);
+
+		//if all the polgon is out of the screen
+		if (max_x < 0 || min_x >= width || max_y < 0 || min_y >= height)
+		{
+			continue;
+		}
+
+		// draw edges of polygon
+		MyPolygon transformedPolygon = polygon->tranformPolygon(transformation);
+			
 		Vector Z(0, 0, 1, 0);
-		Vector N = polygon->getOriginalNormal(true);
+		Vector N = transformedPolygon.getOriginalNormal(true);
 		double normal_dot_z = Z * N;
 		if (show_positive_normals == false || (show_positive_normals && normal_dot_z > 0))
 		{
-			count++;
-			int min_x = getMinXOfPolygon(transformation, *polygon);
-			int min_y = getMinYOfPolygon(transformation, *polygon);
-			int max_x = getMaxXOfPolygon(transformation, *polygon);
-			int max_y = getMaxYOfPolygon(transformation, *polygon);
 
-			//if all the polgon is out of the screen
-			if (max_x < 0 || min_x >= width || max_y < 0 || min_y >= height)
-			{
-				continue;
-			}
-
-			// draw edges of polygon
-			MyPolygon transformedPolygon = polygon->tranformPolygon(transformation);
 			vector<Line> line_list = transformedPolygon.getLines();
 			//if ((count == 50 || count == 51)) {
 			if (count != -1) {
