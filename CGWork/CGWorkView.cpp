@@ -1029,12 +1029,10 @@ void CCGWorkView::OnFileLoadbackgroungimage()
 	CFileDialog dlg(TRUE, _T("PNG"), _T("*.PNG"), OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, szFilters);
 
 	if (dlg.DoModal() == IDOK) {
-		m_strItdFileName = dlg.GetPathName();		// Full path and filename
-		PngWrapper p;
-
-		
-		// Open the file and read it.
-		// Your code here...
+		CStringA m_strItdFileName = dlg.GetPathName();		// Full path and filename
+		PngWrapper pngReader(m_strItdFileName);
+		int width = pngReader.GetWidth();
+		int height = pngReader.GetHeight();
 
 
 		RedrawWindow();

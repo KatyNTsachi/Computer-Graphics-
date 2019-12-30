@@ -59,6 +59,10 @@ public:
 	void setUseBackGroundImage(bool _useBackGroundImage);
 	bool getTileBackGroungImage();
 	void setTileBackGroungImage(bool _useBackGroundImage);
+
+	void setBeckgroundImageHeight();
+	void setBeckgroungImageWidth();
+	void setBackgroundImage();
 	
 
 private:
@@ -99,6 +103,11 @@ private:
 	LightCoefficient k_a = LightCoefficient(255, 255, 255);
 	LightCoefficient k_s = LightCoefficient(255, 255, 255);
 	LightCoefficient I_a = LightCoefficient(0.2, 0.2, 0.2);
+
+	int beckgroundImageHeight;
+	int beckgroungImageWidth;
+	vector<int> backgroundImage;
+
 	#define MAX_COUNT_OF_LIGHTSOURCES 7
 	//std::vector<LightSource*> lightSources;
 	LightSource* lightSources[MAX_COUNT_OF_LIGHTSOURCES] = { NULL };
@@ -118,3 +127,5 @@ private:
 	double d, alpha;
 	bool isPerspective = false;
 };
+
+
