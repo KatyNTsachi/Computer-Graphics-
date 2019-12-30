@@ -53,8 +53,11 @@ public:
 	void setSilhouetteColor(COLORREF color);
 	bool getDrawSilhouette();
 	void setDrawSilhouette(bool _drawSilhouette);
+	bool getRegularNormals();
+	void setRegularNormals(bool _show_regular_normals);
 
 private:
+	bool show_regular_normals;
 	std::vector<Model> model_list;
 	std::vector<Camera> camera_list;
 	void Scene::drawLine(CDC* pDC, Line line, COLORREF _color, int view_mat[], double depth_mat[]);

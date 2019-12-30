@@ -8,6 +8,7 @@
 
 Scene::Scene()
 {
+	show_regular_normals = true;
 	paint_bounding_box = false;
 	show_original_normals = true;
 	//ParallelLightSource *parallelLightSource = new ParallelLightSource(Vector(1, 0, 0, 0), LightCoefficient(1, 1, 1));
@@ -1026,4 +1027,14 @@ void Scene::setLightSourceWithParams(int idx, LightParams lightParams)
 void Scene::setShadingType(shadingTypes _shadingType)
 {
 	shadingType = _shadingType;
+}
+
+bool Scene::getRegularNormals()
+{
+	return show_regular_normals;
+}
+
+void Scene::setRegularNormals(bool _show_regular_normals)
+{
+	show_regular_normals = _show_regular_normals;
 }
