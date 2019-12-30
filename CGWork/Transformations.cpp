@@ -275,7 +275,6 @@ Vector Transformations::flipNormal(Vector N1)
 double Transformations::getAlpha(Vector L, Vector N, Vector V)
 {
 
-	//
 	Vector res_vec;
 
 	//get the cross product
@@ -311,6 +310,7 @@ double Transformations::getAlpha(Vector L, Vector N, Vector V)
 	t2 = y_trans.getTranformation(cross);
 
 	Matrix all_trans = x_trans * y_trans;
+	t3 = all_trans.getTranformation(cross);
 	t3 = all_trans.getTranformation(L);
 	// z axis
 	tmp_vec[0] = t3[0];
@@ -323,6 +323,8 @@ double Transformations::getAlpha(Vector L, Vector N, Vector V)
 
 	all_trans = all_trans * z_trans;
 	t4 = all_trans.getTranformation(cross);
+	t4 = all_trans.getTranformation(L);
+
 	t6 = all_trans.getTranformation(N);
 
 	rotate_angle = t6[1] > 0 ? rotate_angle : -rotate_angle;
@@ -331,7 +333,9 @@ double Transformations::getAlpha(Vector L, Vector N, Vector V)
 	all_trans = all_trans * my_rotation;
 
 	t3 = all_trans.getTranformation(L);
-	
+	t3.Normalize();
+	V.Normalize();
+
 	double dot_res;
 	dot_res = abs(t3 * V);
 

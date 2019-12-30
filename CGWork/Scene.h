@@ -63,7 +63,7 @@ public:
 
 private:
 	int specularityExponent = 2;
-	Vector V = Vector(1, 0, 1, 0);
+	Vector V = Vector(0, 0, -1, 0);
 	bool tileBackGroungImage = false;
 	bool useBackGroundImage = false;
 	bool show_regular_normals;
@@ -97,7 +97,7 @@ private:
 	COLORREF getPhongColorAt(Model &model, MyPolygon polygon, int x, int y);
 	shadingTypes shadingType = FLAT_SHADING;
 	LightCoefficient k_a = LightCoefficient(255, 255, 255);
-	LightCoefficient k_s = LightCoefficient(1000, 1000, 1000);
+	LightCoefficient k_s = LightCoefficient(255, 255, 255);
 	LightCoefficient I_a = LightCoefficient(0.2, 0.2, 0.2);
 	#define MAX_COUNT_OF_LIGHTSOURCES 7
 	//std::vector<LightSource*> lightSources;

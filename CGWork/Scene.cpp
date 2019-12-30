@@ -408,13 +408,20 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 			}
 		}
 
+		
 		double normalize_factor = (max > 255 ) ? (255 / double(max)) : 1;
 		//normalize + fill view_mat
 		for (int i = 0; i < height*width; i++)
 		{
 			if (tmp_view_mat[i].isActive())
 			{
-				COLORREF tmp_color = RGB(tmp_view_mat[i].getR() * normalize_factor, tmp_view_mat[i].getG() * normalize_factor, tmp_view_mat[i].getB() * normalize_factor);
+				tmp_view_mat[i] = tmp_view_mat[i].multiplyColorOnly(normalize_factor);
+				tmp_view_mat[i] = tmp_view_mat[i] + tmp_view_mat[i].getShine();
+				double R = tmp_view_mat[i].getR() > 255 ? 255 : tmp_view_mat[i].getR();
+				double G = tmp_view_mat[i].getG() > 255 ? 255 : tmp_view_mat[i].getG();
+				double B = tmp_view_mat[i].getB() > 255 ? 255 : tmp_view_mat[i].getB();
+				COLORREF tmp_color = RGB(R, G, B);
+
 				view_mat[i] = ((GetBValue(tmp_color)) + (GetRValue(tmp_color) << 16) + (GetGValue(tmp_color) << 8));
 			}
 		}
@@ -554,8 +561,20 @@ LightCoefficient Scene::getColorAtPoint(Model &model, MyPolygon polygon, int x, 
 
 		if (N * L > 0)
 		{
-			LightCoefficient tmp = k_s * pow(Transformations::getAlpha(L, N, V), specularityExponent);
-			color = color + (I_p * k_d * (abs(L * N))) + tmp;
+			//Vector flip_L = Transformations::flipNormal(L);
+			Vector flip_L = L;
+			flip_L.Normalize();
+			Vector tmp_vec = Transformations::getNormalInTheMiddle(flip_L, N, 1, 2);
+			tmp_vec.Normalize();
+			V.Normalize();
+			double shine_factor = V * tmp_vec;
+			shine_factor = shine_factor > 0 ? shine_factor : 0;
+
+			LightCoefficient tmp = k_s * pow(shine_factor, specularityExponent);
+
+			color = color + (I_p * (((double)1)/255) * k_d * (abs(L * N)));
+			LightCoefficient tmp_shine = color.getShine();
+			color.setShine(tmp_shine.getR() + tmp.getR(), tmp_shine.getG() + tmp.getG(), tmp_shine.getB() + tmp.getB());
 		}
 		color.setActive(true);
 	}

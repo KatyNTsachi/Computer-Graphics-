@@ -6,6 +6,10 @@ LightCoefficient::LightCoefficient()
 	entries[1] = 0;
 	entries[2] = 0;
 	active = false;
+	entries_shine[0] = 0;
+	entries_shine[1] = 0;
+	entries_shine[2] = 0;
+
 }
 
 LightCoefficient::LightCoefficient(double x, double y, double z)
@@ -14,6 +18,10 @@ LightCoefficient::LightCoefficient(double x, double y, double z)
 	entries[1] = y;
 	entries[2] = z;
 	active = false;
+	entries_shine[0] = 0;
+	entries_shine[1] = 0;
+	entries_shine[2] = 0;
+
 }
 
 LightCoefficient LightCoefficient::operator * (LightCoefficient const &lightCoefficient2) {
@@ -21,6 +29,12 @@ LightCoefficient LightCoefficient::operator * (LightCoefficient const &lightCoef
 	lightCoefficient3.entries[0] = lightCoefficient2.entries[0] * entries[0];
 	lightCoefficient3.entries[1] = lightCoefficient2.entries[1] * entries[1];
 	lightCoefficient3.entries[2] = lightCoefficient2.entries[2] * entries[2];
+
+	lightCoefficient3.entries_shine[0] = lightCoefficient2.entries_shine[0] * entries_shine[0];
+	lightCoefficient3.entries_shine[1] = lightCoefficient2.entries_shine[1] * entries_shine[1];
+	lightCoefficient3.entries_shine[2] = lightCoefficient2.entries_shine[2] * entries_shine[2];
+
+
 	return lightCoefficient3;
 }
 
@@ -30,6 +44,25 @@ LightCoefficient LightCoefficient::operator * (double a)
 	lightCoefficient3.entries[0] = a * entries[0];
 	lightCoefficient3.entries[1] = a * entries[1];
 	lightCoefficient3.entries[2] = a * entries[2];
+
+	lightCoefficient3.entries_shine[0] = a * entries_shine[0];
+	lightCoefficient3.entries_shine[1] = a * entries_shine[1];
+	lightCoefficient3.entries_shine[2] = a * entries_shine[2];
+
+	return lightCoefficient3;
+}
+
+LightCoefficient LightCoefficient::multiplyColorOnly(double a)
+{
+	LightCoefficient lightCoefficient3;
+	lightCoefficient3.entries[0] = a * entries[0];
+	lightCoefficient3.entries[1] = a * entries[1];
+	lightCoefficient3.entries[2] = a * entries[2];
+
+	lightCoefficient3.entries_shine[0] = entries_shine[0];
+	lightCoefficient3.entries_shine[1] = entries_shine[1];
+	lightCoefficient3.entries_shine[2] = entries_shine[2];
+
 	return lightCoefficient3;
 }
 
@@ -38,6 +71,11 @@ LightCoefficient LightCoefficient::operator + (LightCoefficient const &lightCoef
 	lightCoefficient3.entries[0] = lightCoefficient2.entries[0] + entries[0];
 	lightCoefficient3.entries[1] = lightCoefficient2.entries[1] + entries[1];
 	lightCoefficient3.entries[2] = lightCoefficient2.entries[2] + entries[2];
+
+	lightCoefficient3.entries_shine[0] = lightCoefficient2.entries_shine[0] + entries_shine[0];
+	lightCoefficient3.entries_shine[1] = lightCoefficient2.entries_shine[1] + entries_shine[1];
+	lightCoefficient3.entries_shine[2] = lightCoefficient2.entries_shine[2] + entries_shine[2];
+
 	return lightCoefficient3;
 }
 
@@ -75,4 +113,17 @@ void LightCoefficient::setActive(bool _active)
 bool LightCoefficient::isActive()
 {
 	return active;
+}
+
+
+void LightCoefficient::setShine(double x, double y, double z)
+{
+	entries_shine[0] = x;
+	entries_shine[1] = y;
+	entries_shine[2] = z;
+}
+
+LightCoefficient LightCoefficient::getShine()
+{
+	return LightCoefficient(entries_shine[0], entries_shine[1], entries_shine[2]);
 }
