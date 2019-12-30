@@ -120,6 +120,7 @@ BEGIN
         MENUITEM "Number Of Polygons",          ID_OPTIONS_NUMBEROFPOLYGONS
         MENUITEM "Prespective Parameters",      ID_OPTIONS_PRESPECTIVEPARAMETERS
         MENUITEM "Draw Silhouette",             ID_OPTIONS_DRAWSILHOUETTE
+        MENUITEM "Invert Normals",              ID_OPTIONS_INVERTNORMALS
     END
     POPUP "&Light"
     BEGIN

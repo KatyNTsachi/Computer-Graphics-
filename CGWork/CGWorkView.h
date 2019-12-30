@@ -183,6 +183,8 @@ public:
 	afx_msg void OnColorSilhouettecolor();
 	afx_msg void OnOptionsDrawsilhouette();
 	afx_msg void OnUpdateOptionsDrawsilhouette(CCmdUI *pCmdUI);
+	afx_msg void OnOptionsInvertnormals();
+	afx_msg void OnUpdateOptionsInvertnormals(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp

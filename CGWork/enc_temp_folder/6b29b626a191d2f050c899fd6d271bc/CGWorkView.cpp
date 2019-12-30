@@ -991,12 +991,11 @@ void CCGWorkView::OnUpdateOptionsDrawsilhouette(CCmdUI *pCmdUI)
 
 void CCGWorkView::OnOptionsInvertnormals()
 {
-	scene.setRegularNormals(!scene.getRegularNormals());
 	RedrawWindow();
 }
 
 
 void CCGWorkView::OnUpdateOptionsInvertnormals(CCmdUI *pCmdUI)
 {
-	pCmdUI->SetCheck(!scene.getRegularNormals());
+	// TODO: Add your command update UI handler code here
 }
