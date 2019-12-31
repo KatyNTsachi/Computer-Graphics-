@@ -13,7 +13,7 @@
 #include "gl\gl.h"    // Include the standard CGWork  headers
 #include "gl\glu.h"   // Add the utility library
 
-
+#include "LightDialog.h"
 #include "Light.h"
 #include "Scene.h"
 
@@ -69,6 +69,7 @@ private:
 	int* save_mat;
 	int height;
 	int width;
+	
 	//mouse coordinates
 	int x_mouse_coordinate, y_mouse_coordinate;
 
@@ -85,6 +86,7 @@ private:
 public:
 	virtual ~CCGWorkView();
 	InputParametersDialogBar numberOfPolygonDialog;
+	CLightDialog light_dialog;
 	PrespectiveParametersDialog prespectiveParametersDialog;
 	MouseSensitivity mouse_sensitivity;
 #ifdef _DEBUG

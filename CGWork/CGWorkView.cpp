@@ -17,6 +17,7 @@ using std::endl;
 #include "MouseSensitivity.h"
 #include"InputParametersDialogBar.h"
 #include "PrespectiveParametersDialog.h"
+#include "Resource.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -609,24 +610,22 @@ void CCGWorkView::OnUpdateShadingPhong(CCmdUI *pCmdUI)
 
 void CCGWorkView::OnLightConstants() 
 {
-	CLightDialog dlg;
-
 	for (int id=LIGHT_ID_1;id<MAX_LIGHT;id++)
 	{	    
-	    dlg.SetDialogData((LightID)id,m_lights[id]);
+	    light_dialog.SetDialogData((LightID)id,m_lights[id]);
 	}
-	dlg.SetDialogData(LIGHT_ID_AMBIENT,m_ambientLight);
+	light_dialog.SetDialogData(LIGHT_ID_AMBIENT,m_ambientLight);
 
-	if (dlg.DoModal() == IDOK) 
+	if (light_dialog.DoModal() == IDOK)
 	{
 	    for (int id=LIGHT_ID_1;id< LIGHT_ID_8;id++)
 	    {
-		m_lights[id] = dlg.GetDialogData((LightID)id);
+		m_lights[id] = light_dialog.GetDialogData((LightID)id);
 		scene.setLightSourceWithParams(id, m_lights[id]);
 	    }
-	    m_ambientLight = dlg.GetDialogData(LIGHT_ID_AMBIENT);
+	    m_ambientLight = light_dialog.GetDialogData(LIGHT_ID_AMBIENT);
 		scene.setAmbientLight(m_ambientLight);
-		scene.setSpecularityExponent(dlg.getSpecularityExponent());
+		scene.setSpecularityExponent(light_dialog.getSpecularityExponent());
 	}	
 	RedrawWindow();
 }

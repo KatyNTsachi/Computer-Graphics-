@@ -89,7 +89,7 @@ private:
 	void addBoundingBox(Model &_model);
 	void normalizeTheModel(Model &_model);
 	void setModelColor(Model &_model);
-
+	int getSpecularityExponent();
 	// scane conversion
 	int getMinXOfPolygon(Matrix transformation, MyPolygon &polygon);
 	int getMaxXOfPolygon(Matrix transformation, MyPolygon &polygon);

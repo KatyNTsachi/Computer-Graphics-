@@ -13,6 +13,7 @@ IMPLEMENT_DYNAMIC(CLightDialog, CDialog)
 CLightDialog::CLightDialog(CWnd* pParent /*=NULL*/)
 	: CDialog(CLightDialog::IDD, pParent)
 {
+	specularity_exponent = 2;
     m_currentLightIdx = 0;
 }
 

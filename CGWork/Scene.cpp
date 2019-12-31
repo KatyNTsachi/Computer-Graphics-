@@ -1183,5 +1183,8 @@ bool Scene::getShowPositiveNormals()
 	return show_positive_normals;
 }
 
-
+int Scene::getSpecularityExponent()
+{
+	return specularityExponent;
+}
 
