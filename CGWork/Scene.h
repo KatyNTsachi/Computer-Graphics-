@@ -68,12 +68,13 @@ public:
 	void drawBackgroundStretch(int view_mat[]);
 	void setShowPositiveNormals(bool _show_positive_normals);
 	bool getShowPositiveNormals();
+	void setSpecularityExponent(int n);
 
 
 private:
 	int specularityExponent = 2;
 	Vector V = Vector(0, 0, -1, 0);
-
+	
 	bool show_regular_normals;
 	std::vector<Model> model_list;
 	std::vector<Camera> camera_list;

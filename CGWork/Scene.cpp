@@ -108,6 +108,10 @@ void Scene::addBoundingBox(Model &_model)
 	_model.addPolygonToBoundingBox(tmp_polygon);
 }
 
+void Scene::setSpecularityExponent(int n) {
+	specularityExponent = n;
+}
+
 void Scene::normalizeTheModel(Model &_model)
 {
 	double min_x, min_y, min_z, max_x, max_y, max_z;

@@ -626,6 +626,7 @@ void CCGWorkView::OnLightConstants()
 	    }
 	    m_ambientLight = dlg.GetDialogData(LIGHT_ID_AMBIENT);
 		scene.setAmbientLight(m_ambientLight);
+		scene.setSpecularityExponent(dlg.getSpecularityExponent());
 	}	
 	RedrawWindow();
 }

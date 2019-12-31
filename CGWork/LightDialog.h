@@ -23,6 +23,7 @@ public:
 protected:
 	LightParams m_lights[MAX_LIGHT];
 	LightParams m_ambiant;
+	int specularity_exponent;
 	int m_currentLightIdx;
 	int GetCurrentLightIndex();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -32,4 +33,8 @@ public:
     afx_msg void OnBnClickedRadioLight();
 //    afx_msg void On();
     virtual BOOL OnInitDialog();
+	afx_msg void OnEnChangeEdit1();
+	afx_msg void OnEnChangeExponent();
+	int getSpecularityExponent();
+	afx_msg void OnEnChangeLightDirX();
 };
