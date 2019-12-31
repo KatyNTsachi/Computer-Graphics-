@@ -391,7 +391,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 					}
 					else
 					{
-						this->drawLine(pDC, *transformed_line, RGB(255, 0, 0), view_mat, tmp_drawing_view_mat);
+						this->drawLine(pDC, *transformed_line, model.getModelColor(), view_mat, tmp_drawing_view_mat);
 					}
 				}
 			}
