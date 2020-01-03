@@ -4,6 +4,7 @@
 #include "ParallelLightSource.h"
 #include "PointLightSource.h"
 #include "CGWorkDefines.h"
+#include <algorithm>  
 
 
 Scene::Scene()
@@ -358,7 +359,9 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 	LightCoefficient *color_mat = new LightCoefficient[height*width];
 	for (int i = 0; i < height*width; i++)
 	{
-		tmp_view_mat[i].push_back(LightCoefficient(0, 0, 0));
+		LightCoefficient tmp_color(0, 0, 0);
+		tmp_color.setActive(true);
+		tmp_view_mat[i].push_back(tmp_color);
 	}
 	Vector* normal_mat = new Vector[height*width];   
 	int count = 0;
@@ -429,6 +432,14 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 	}
 	if (!draw_wireFrame)
 	{
+		//transperancy calculation
+		for (int i = 0; i < height*width; i++)
+		{
+			if (tmp_view_mat[i][0].isActive())
+			{
+				tmp_view_mat[i][0] = flattenAlpha(tmp_view_mat[i], z_buffer[i]);
+			}
+		}
 		//find max
 		int max = 1;
 		for (int i = 0; i < height*width; i++)
@@ -535,44 +546,69 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 			}
 			if (isInside || isLine)
 			{
-
-				if (z_buffer[y * width + x][0] > z)
+				double min_factor = 0.5;
+				if ((max_x_for_this_y - min_x_for_this_y) > 0)
 				{
-					double min_factor = 0.5;
-					if ((max_x_for_this_y - min_x_for_this_y) > 0)
-					{
-						min_factor = ((double)(max_x_for_this_y - x)) / (max_x_for_this_y - min_x_for_this_y);
-					}
-					double max_factor = 1 - min_factor;
-
-					LightCoefficient tmp_color;
-					if (color_from_edge == true)
-					{
-						tmp_color = color_mat[y * width + min_x_for_this_y] * min_factor + color_mat[y * width + max_x_for_this_y] * max_factor;
-					}
-					else
-					{
-						Vector N1 = normal_mat[y * width + min_x_for_this_y];
-						Vector N2 = normal_mat[y * width + max_x_for_this_y];
-						int steps = max_x_for_this_y - min_x_for_this_y;
-						int dx = x - min_x_for_this_y;
-
-						Vector tmp_N = Transformations::getNormalInTheMiddle(N1, N2, steps, dx);
-						tmp_color = getColorAtPoint(model, polygon, x, y, z, tmp_N);
-					}
-
-					tmp_color.setActive(true);
-					view_mat[y * width + x][0] = tmp_color;
-					z_buffer[y * width + x][0] = z;
+					min_factor = ((double)(max_x_for_this_y - x)) / (max_x_for_this_y - min_x_for_this_y);
 				}
-				z += slope;
-	
+				double max_factor = 1 - min_factor;
+
+				LightCoefficient tmp_color;
+				if (color_from_edge == true)
+				{
+					tmp_color = color_mat[y * width + min_x_for_this_y] * min_factor + color_mat[y * width + max_x_for_this_y] * max_factor;
+				}
+				else
+				{
+					Vector N1 = normal_mat[y * width + min_x_for_this_y];
+					Vector N2 = normal_mat[y * width + max_x_for_this_y];
+					int steps = max_x_for_this_y - min_x_for_this_y;
+					int dx = x - min_x_for_this_y;
+
+					Vector tmp_N = Transformations::getNormalInTheMiddle(N1, N2, steps, dx);
+					tmp_color = getColorAtPoint(model, polygon, x, y, z, tmp_N);
+				}
+
+				tmp_color.setActive(true);
+				view_mat[y * width + x].push_back(tmp_color);
+				z_buffer[y * width + x].push_back(z);
 			}
+			z += slope;
 		}
 	}
 }
 
+LightCoefficient Scene::flattenAlpha(vector<LightCoefficient> allColors, vector<double> z_buffer)
+{
+	
+	// Declaring vector of pairs 
+	vector< pair <double, int> > vect;
 
+	// Initializing 1st and 2nd element of 
+	// pairs with array values 
+
+	int n = z_buffer.size();
+
+	// Entering values in vector of pairs 
+	for (int i = 0; i < n; i++) {
+		vect.push_back(make_pair(z_buffer[i], i));
+	}
+
+	sort(vect.begin(), vect.end());
+
+	double alpha = 1 , alpha_tmp;
+	LightCoefficient color = allColors[vect[n-1].second];
+	alpha = color.getAlpha();
+
+	for (int i = n-2; i >= 0; i--) {
+		LightCoefficient new_color = allColors[vect[0].second];
+		alpha_tmp = new_color.getAlpha();
+		alpha = alpha * alpha_tmp;
+		color = new_color * (alpha) + (color) * (1 - alpha);
+	}
+	color.setActive(true);
+	return color;
+}
 
 
 LightCoefficient Scene::getColorAtPoint(Model &model, MyPolygon polygon, int x, int y, double z, Vector N)

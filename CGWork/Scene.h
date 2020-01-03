@@ -69,7 +69,7 @@ public:
 	void setShowPositiveNormals(bool _show_positive_normals);
 	bool getShowPositiveNormals();
 	void setSpecularityExponent(int n);
-
+	LightCoefficient flattenAlpha(vector<LightCoefficient> allColors, vector<double> z_buffer);
 
 private:
 	int specularityExponent = 2;
