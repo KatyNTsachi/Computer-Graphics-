@@ -397,6 +397,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 			}
 
 
+
 			// fill shape of polygon
 			//if ((count == 50 ||count == 51) && !draw_wireFrame)
 			if (count != -1 && !draw_wireFrame)
