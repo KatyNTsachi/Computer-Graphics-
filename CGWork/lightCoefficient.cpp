@@ -105,6 +105,10 @@ int LightCoefficient::getB()
 {
 	return entries[2];
 }
+double LightCoefficient::getAlpha()
+{
+	return alpha;
+}
 void LightCoefficient::setActive(bool _active)
 {
 	active = _active;

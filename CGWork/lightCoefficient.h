@@ -16,6 +16,7 @@ public:
 	int getR();
 	int getG();
 	int getB();
+	double getAlpha();
 	void setActive(bool _active);
 	bool isActive();
 	void setShine(double x, double y, double z);
@@ -25,6 +26,7 @@ public:
 private:
 	double entries[3];
 	double entries_shine[3];
+	double alpha = 0.5;
 
 	bool active;
 };

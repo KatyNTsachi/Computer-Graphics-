@@ -209,9 +209,16 @@ void Scene::AddCamera(Camera _camera)
 	camera_list.push_back(_camera);
 }
 
-void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[]) {
+void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tmp_drawing_view_mat[]) {
 	width = abs(r.right - r.left);
 	height = abs(r.bottom - r.top);
+	vector<double> *z_buffer = new vector<double>[height*width];
+
+	for (int i = 0; i < height*width; i++)
+	{
+		z_buffer[i].clear();
+		z_buffer[i].push_back(EMPTY_Z_BUFFER_PIXEL);
+	}
 
 	if (show_background)
 		drawBackground(view_mat);
@@ -271,9 +278,7 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double z_
 		}
 	}
 	//pDC->GetCurrentBitmap()->SetBitmapBits(view_width * view_height * 4, viewMatrix);
-
-
-
+	delete[] z_buffer;
 }
 void Scene::drawLines(CDC* pDC, vector<Line> lines, COLORREF _color, Matrix _transformation, int view_mat[], double tmp_drawing_view_mat[])
 {
@@ -347,10 +352,14 @@ int Scene::getMaxYOfPolygon(Matrix transformation, MyPolygon &polygon)
 	return max_y;
 }
 
-void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix transformation, CDC* pDC, int view_mat[], double z_buffer[], double tmp_drawing_view_mat[])
+void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix transformation, CDC* pDC, int view_mat[], vector<double> z_buffer[], double tmp_drawing_view_mat[])
 {
-	LightCoefficient* tmp_view_mat = new LightCoefficient[height*width];
-	LightCoefficient* color_mat = new LightCoefficient[height*width];
+	vector<LightCoefficient> *tmp_view_mat = new vector<LightCoefficient>[height*width];
+	LightCoefficient *color_mat = new LightCoefficient[height*width];
+	for (int i = 0; i < height*width; i++)
+	{
+		tmp_view_mat[i].push_back(LightCoefficient(0, 0, 0));
+	}
 	Vector* normal_mat = new Vector[height*width];   
 	int count = 0;
 	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
@@ -425,9 +434,9 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 		for (int i = 0; i < height*width; i++)
 		{	
 			int tmp_max = 0;
-			if(tmp_view_mat[i].isActive())
+			if(tmp_view_mat[i][0].isActive())
 			{
-				tmp_max = max(max(tmp_view_mat[i].getR(), tmp_view_mat[i].getG()), tmp_view_mat[i].getB());
+				tmp_max = max(max(tmp_view_mat[i][0].getR(), tmp_view_mat[i][0].getG()), tmp_view_mat[i][0].getB());
 				if (tmp_max > max)
 					max = tmp_max;
 			}
@@ -438,13 +447,13 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 		//normalize + fill view_mat
 		for (int i = 0; i < height*width; i++)
 		{
-			if (tmp_view_mat[i].isActive())
+			if (tmp_view_mat[i][0].isActive())
 			{
-				tmp_view_mat[i] = tmp_view_mat[i].multiplyColorOnly(normalize_factor);
-				tmp_view_mat[i] = tmp_view_mat[i] + tmp_view_mat[i].getShine();
-				double R = tmp_view_mat[i].getR() > 255 ? 255 : tmp_view_mat[i].getR();
-				double G = tmp_view_mat[i].getG() > 255 ? 255 : tmp_view_mat[i].getG();
-				double B = tmp_view_mat[i].getB() > 255 ? 255 : tmp_view_mat[i].getB();
+				tmp_view_mat[i][0] = tmp_view_mat[i][0].multiplyColorOnly(normalize_factor);
+				tmp_view_mat[i][0] = tmp_view_mat[i][0] + tmp_view_mat[i][0].getShine();
+				double R = tmp_view_mat[i][0].getR() > 255 ? 255 : tmp_view_mat[i][0].getR();
+				double G = tmp_view_mat[i][0].getG() > 255 ? 255 : tmp_view_mat[i][0].getG();
+				double B = tmp_view_mat[i][0].getB() > 255 ? 255 : tmp_view_mat[i][0].getB();
 				COLORREF tmp_color = RGB(R, G, B);
 
 				view_mat[i] = ((GetBValue(tmp_color)) + (GetRValue(tmp_color) << 16) + (GetGValue(tmp_color) << 8));
@@ -458,7 +467,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 	delete[] normal_mat;
 }
 
-void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, CDC* pDC, LightCoefficient view_mat[], double z_buffer[], double tmp_drawing_view_mat[], Vector* normal_mat, LightCoefficient* color_mat)
+void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, CDC* pDC, vector<LightCoefficient> view_mat[], vector<double> z_buffer[], double tmp_drawing_view_mat[], Vector* normal_mat, LightCoefficient color_mat[])
 {   
 	bool color_from_edge = false;
 	if (shadingType == FLAT_SHADING || shadingType == GOURAUD_SHADING)
@@ -527,7 +536,7 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 			if (isInside || isLine)
 			{
 
-				if (z_buffer[y * width + x] > z)
+				if (z_buffer[y * width + x][0] > z)
 				{
 					double min_factor = 0.5;
 					if ((max_x_for_this_y - min_x_for_this_y) > 0)
@@ -553,8 +562,8 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 					}
 
 					tmp_color.setActive(true);
-					view_mat[y * width + x] = tmp_color;
-					z_buffer[y * width + x] = z;
+					view_mat[y * width + x][0] = tmp_color;
+					z_buffer[y * width + x][0] = z;
 				}
 				z += slope;
 	
@@ -637,7 +646,7 @@ Matrix Scene::strechToScreenSize(CRect r)
 
 }
 
-void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], int draw_mat[], Vector* normal_mat, LightCoefficient* color_mat, Model &model, MyPolygon &polygon)
+void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], int draw_mat[], Vector* normal_mat, LightCoefficient *color_mat, Model &model, MyPolygon &polygon)
 {
 	Point p1 = line.getP1();
 	Point p2 = line.getP2();
