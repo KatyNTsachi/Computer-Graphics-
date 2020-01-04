@@ -223,15 +223,14 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 
 	if (show_background)
 	{
-		drawBackground(tmp_view_mat);
+		drawBackground(tmp_view_mat, view_mat);
 	}
 	else
 	{
 		for (int i = 0; i < height*width; i++)
 		{
 			//(GetBValue(background_color)) + (GetRValue(background_color) << 16) + (GetGValue(background_color) << 8)
-			LightCoefficient tmp_color(GetBValue(background_color), GetRValue(background_color), GetGValue(background_color));
-			tmp_color = LightCoefficient(255, 0, 0);
+			LightCoefficient tmp_color(GetRValue(background_color), GetGValue(background_color), GetBValue(background_color));
 			tmp_color.setActive(true);
 			tmp_view_mat[i].push_back(tmp_color);
 		}
@@ -1170,15 +1169,15 @@ void Scene::setBackgroundImage(vector<COLORREF> _image)
 	background_image = _image;
 }
 
-void Scene::drawBackground(vector<LightCoefficient> *tmp_view_mat)
+void Scene::drawBackground(vector<LightCoefficient> *tmp_view_mat, int view_mat[])
 {
 	if (tile_background)
-		drawBackgroundTile(tmp_view_mat);
+		drawBackgroundTile(tmp_view_mat, view_mat);
 	else
-		drawBackgroundStretch(tmp_view_mat);
+		drawBackgroundStretch(tmp_view_mat, view_mat);
 }
 
-void Scene::drawBackgroundTile(vector<LightCoefficient> tmp_view_mat[])
+void Scene::drawBackgroundTile(vector<LightCoefficient> tmp_view_mat[], int view_mat[])
 {
 	for (int i = 0; i < height; i++)
 	{
@@ -1187,7 +1186,7 @@ void Scene::drawBackgroundTile(vector<LightCoefficient> tmp_view_mat[])
 			int tmp_i = i % background_image_height;
 			int tmp_j = j % background_image_width;
 			COLORREF background_color = background_image[tmp_i * background_image_width + tmp_j];
-			//view_mat[i * width + j] = background_color;
+			view_mat[i * width + j] = background_color;
 			LightCoefficient background_lightCoefficient(GetRValue(background_color), GetGValue(background_color), GetBValue(background_color), 1.0);
 			tmp_view_mat[i * width + j].push_back(background_lightCoefficient);
 		}
@@ -1196,7 +1195,7 @@ void Scene::drawBackgroundTile(vector<LightCoefficient> tmp_view_mat[])
 
 }
 
-void Scene::drawBackgroundStretch(vector<LightCoefficient> *tmp_view_mat)
+void Scene::drawBackgroundStretch(vector<LightCoefficient> *tmp_view_mat, int view_mat[])
 {
 	double d_i = 0, d_j = 0;
 	double d_i_friction = double(background_image_height) / height;
@@ -1210,9 +1209,9 @@ void Scene::drawBackgroundStretch(vector<LightCoefficient> *tmp_view_mat)
 			int tmp_i = i % background_image_height;
 			int tmp_j = j % background_image_width;
 			COLORREF background_color = background_image[int(d_i) * background_image_width + int(d_j)];
-			//view_mat[i * width + j] = background_color;
-			//LightCoefficient background_lightCoefficient(GetRValue(background_color), GetGValue(background_color), GetBValue(background_color), 1.0);
-			LightCoefficient background_lightCoefficient(0, 0, 0);
+			view_mat[i * width + j] = background_color;
+			LightCoefficient background_lightCoefficient(GetRValue(background_color), GetGValue(background_color), GetBValue(background_color), 1.0);
+			//LightCoefficient background_lightCoefficient(0, 0, 0);
 			background_lightCoefficient.setActive(true);
 			tmp_view_mat[i * width + j].push_back(background_lightCoefficient);
 			d_j = d_j + d_j_friction;

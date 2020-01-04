@@ -63,9 +63,9 @@ public:
 	void setBackgroundImageHeight(int _height);
 	void setBackgroungImageWidth(int _width);
 	void setBackgroundImage(vector<COLORREF> _image);
-	void drawBackground(vector<LightCoefficient> *tmp_view_mat);
-	void drawBackgroundTile(vector<LightCoefficient> *tmp_view_mat);
-	void drawBackgroundStretch(vector<LightCoefficient> *tmp_view_mat);
+	void drawBackground(vector<LightCoefficient> *tmp_view_mat, int view_mat[]);
+	void drawBackgroundTile(vector<LightCoefficient> *tmp_view_mat, int view_mat[]);
+	void drawBackgroundStretch(vector<LightCoefficient> *tmp_view_mat, int view_mat[]);
 	void setShowPositiveNormals(bool _show_positive_normals);
 	bool getShowPositiveNormals();
 	void setSpecularityExponent(int n);

@@ -341,7 +341,7 @@ void CCGWorkView::OnDraw(CDC* pDC)
 	//set backgroundcolor
 	for (int i = 0; i < height*width; i++)
 	{
-		//view_mat[i] = (GetBValue(background_color)) + (GetRValue(background_color) << 16) + (GetGValue(background_color) << 8);
+		view_mat[i] = (GetBValue(background_color)) + (GetRValue(background_color) << 16) + (GetGValue(background_color) << 8);
 		tmp_drawing_view_mat[i] = EMPTY_TMP_DRAWING_VIEW_MAT_PIXEL;
 	}
 
