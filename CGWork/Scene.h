@@ -21,7 +21,7 @@ public:
 	void addModel(Model _model);
 	void AddCamera(Camera _camera);
 	void Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tmp_drawing_view_mat[]);
-	void drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix transformation, CDC* pDC, int view_mat[], vector<double> z_buffer[], double tmp_drawing_view_mat[]);
+	void drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix transformation, CDC* pDC, int view_mat[], vector<double> z_buffer[], vector<LightCoefficient> tmp_view_mat[], double tmp_drawing_view_mat[]);
 	Matrix strechToScreenSize( CRect r);
 	Line tranformLine(Line line, Matrix transformationMatrix);
 	Point tranformPoint(Point p, Matrix transformationMatrix);
@@ -97,7 +97,7 @@ private:
 	int getMaxYOfPolygon(Matrix transformation, MyPolygon &polygon);
 
 	void fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, CDC* pDC, vector<LightCoefficient> view_mat[], vector<double> z_buffer[], double tmp_drawing_view_mat[], Vector* normal_mat, LightCoefficient* color_mat);
-	void drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], int draw_mat[], Vector* normal_mat, LightCoefficient *color_mat, Model &model, MyPolygon &polygon);
+	void drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], Vector* normal_mat, LightCoefficient *color_mat, Model &model, MyPolygon &polygon);
 
 	// light
 	LightCoefficient getColorAtPoint(Model &model, MyPolygon polygon, int x, int y, double z, Vector N);

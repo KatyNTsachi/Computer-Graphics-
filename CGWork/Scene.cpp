@@ -214,11 +214,15 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 	width = abs(r.right - r.left);
 	height = abs(r.bottom - r.top);
 	vector<double> *z_buffer = new vector<double>[height*width];
-
+	vector<LightCoefficient> *tmp_view_mat = new vector<LightCoefficient>[height*width];
 	for (int i = 0; i < height*width; i++)
 	{
 		z_buffer[i].clear();
 		z_buffer[i].push_back(EMPTY_Z_BUFFER_PIXEL);
+
+		LightCoefficient tmp_color(0, 0, 0);
+		tmp_color.setActive(true);
+		tmp_view_mat[i].push_back(tmp_color);
 	}
 
 	if (show_background)
@@ -249,11 +253,11 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 		Matrix all_trans = getTransformationMatrix(*tmp_model, camera_number, r);
 
 		vector<MyPolygon> model_polygon_list = tmp_model->getModelPolygons();
-		drawPolygons(*tmp_model, model_polygon_list, all_trans, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
+		drawPolygons(*tmp_model, model_polygon_list, all_trans, pDC, view_mat, z_buffer, tmp_view_mat, tmp_drawing_view_mat);
 		if (tmp_model->getShouldBoundingBox() )
 		{
 			vector<MyPolygon> bounding_box_polygon_list = tmp_model->getBoundingBoxPolygons();
-			drawPolygons(*tmp_model, bounding_box_polygon_list, all_trans, pDC, view_mat, z_buffer, tmp_drawing_view_mat);
+			drawPolygons(*tmp_model, bounding_box_polygon_list, all_trans, pDC, view_mat, z_buffer, tmp_view_mat, tmp_drawing_view_mat);
 		}
 		if (paint_vertex_normals) {
 			if (show_original_normals)
@@ -278,8 +282,51 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 			drawLines(pDC, tmp_model->getSilhouetteLinesList(all_trans), silhouetteColor, all_trans, view_mat, tmp_drawing_view_mat);
 		}
 	}
+
+	if (!draw_wireFrame)
+	{
+		//transperancy calculation
+		for (int i = 0; i < height*width; i++)
+		{
+			if (tmp_view_mat[i][0].isActive())
+			{
+				tmp_view_mat[i][0] = flattenAlpha(tmp_view_mat[i], z_buffer[i]);
+			}
+		}
+		//find max
+		int max = 1;
+		for (int i = 0; i < height*width; i++)
+		{
+			int tmp_max = 0;
+			if (tmp_view_mat[i][0].isActive())
+			{
+				tmp_max = max(max(tmp_view_mat[i][0].getR(), tmp_view_mat[i][0].getG()), tmp_view_mat[i][0].getB());
+				if (tmp_max > max)
+					max = tmp_max;
+			}
+		}
+
+
+		double normalize_factor = (max > 255) ? (255 / double(max)) : 1;
+		//normalize + fill view_mat
+		for (int i = 0; i < height*width; i++)
+		{
+			if (tmp_view_mat[i][0].isActive())
+			{
+				tmp_view_mat[i][0] = tmp_view_mat[i][0].multiplyColorOnly(normalize_factor);
+				tmp_view_mat[i][0] = tmp_view_mat[i][0] + tmp_view_mat[i][0].getShine();
+				double R = tmp_view_mat[i][0].getR() > 255 ? 255 : tmp_view_mat[i][0].getR();
+				double G = tmp_view_mat[i][0].getG() > 255 ? 255 : tmp_view_mat[i][0].getG();
+				double B = tmp_view_mat[i][0].getB() > 255 ? 255 : tmp_view_mat[i][0].getB();
+				COLORREF tmp_color = RGB(R, G, B);
+
+				view_mat[i] = ((GetBValue(tmp_color)) + (GetRValue(tmp_color) << 16) + (GetGValue(tmp_color) << 8));
+			}
+		}
+	}
 	//pDC->GetCurrentBitmap()->SetBitmapBits(view_width * view_height * 4, viewMatrix);
 	delete[] z_buffer;
+	delete[] tmp_view_mat;
 }
 void Scene::drawLines(CDC* pDC, vector<Line> lines, COLORREF _color, Matrix _transformation, int view_mat[], double tmp_drawing_view_mat[])
 {
@@ -353,16 +400,9 @@ int Scene::getMaxYOfPolygon(Matrix transformation, MyPolygon &polygon)
 	return max_y;
 }
 
-void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix transformation, CDC* pDC, int view_mat[], vector<double> z_buffer[], double tmp_drawing_view_mat[])
+void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix transformation, CDC* pDC, int view_mat[], vector<double> z_buffer[], vector<LightCoefficient> tmp_view_mat[],double tmp_drawing_view_mat[])
 {
-	vector<LightCoefficient> *tmp_view_mat = new vector<LightCoefficient>[height*width];
 	LightCoefficient *color_mat = new LightCoefficient[height*width];
-	for (int i = 0; i < height*width; i++)
-	{
-		LightCoefficient tmp_color(0, 0, 0);
-		tmp_color.setActive(true);
-		tmp_view_mat[i].push_back(tmp_color);
-	}
 	Vector* normal_mat = new Vector[height*width];   
 	int count = 0;
 	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
@@ -398,7 +438,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 					{
 						if (abs(transformed_line->getP1().getY() - transformed_line->getP2().getY()) >= 1)
 						{
-							this->drawLineForScanConversion(pDC, *transformed_line, tmp_drawing_view_mat, view_mat, normal_mat, color_mat, model, transformedPolygon);
+							this->drawLineForScanConversion(pDC, *transformed_line, tmp_drawing_view_mat, normal_mat, color_mat, model, transformedPolygon);
 						}
 					}
 					else
@@ -430,50 +470,6 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 			//	break;
 		}
 	}
-	if (!draw_wireFrame)
-	{
-		//transperancy calculation
-		for (int i = 0; i < height*width; i++)
-		{
-			if (tmp_view_mat[i][0].isActive())
-			{
-				tmp_view_mat[i][0] = flattenAlpha(tmp_view_mat[i], z_buffer[i]);
-			}
-		}
-		//find max
-		int max = 1;
-		for (int i = 0; i < height*width; i++)
-		{	
-			int tmp_max = 0;
-			if(tmp_view_mat[i][0].isActive())
-			{
-				tmp_max = max(max(tmp_view_mat[i][0].getR(), tmp_view_mat[i][0].getG()), tmp_view_mat[i][0].getB());
-				if (tmp_max > max)
-					max = tmp_max;
-			}
-		}
-
-		
-		double normalize_factor = (max > 255 ) ? (255 / double(max)) : 1;
-		//normalize + fill view_mat
-		for (int i = 0; i < height*width; i++)
-		{
-			if (tmp_view_mat[i][0].isActive())
-			{
-				tmp_view_mat[i][0] = tmp_view_mat[i][0].multiplyColorOnly(normalize_factor);
-				tmp_view_mat[i][0] = tmp_view_mat[i][0] + tmp_view_mat[i][0].getShine();
-				double R = tmp_view_mat[i][0].getR() > 255 ? 255 : tmp_view_mat[i][0].getR();
-				double G = tmp_view_mat[i][0].getG() > 255 ? 255 : tmp_view_mat[i][0].getG();
-				double B = tmp_view_mat[i][0].getB() > 255 ? 255 : tmp_view_mat[i][0].getB();
-				COLORREF tmp_color = RGB(R, G, B);
-
-				view_mat[i] = ((GetBValue(tmp_color)) + (GetRValue(tmp_color) << 16) + (GetGValue(tmp_color) << 8));
-			}
-		}
-
-	}
-
-	delete[] tmp_view_mat;
 	delete[] color_mat;
 	delete[] normal_mat;
 }
@@ -499,6 +495,7 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 
 	//limit the max to the screen
 	min_x = max(min_x - 2, 0);
+	int real_min_y = min_y;
 	min_y = max(min_y - 2, 0);
 	max_x = min(max_x + 2, width - 1);
 	max_y = min(max_y + 2, height - 1);
@@ -544,7 +541,8 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 				isInside = !isInside;
 				lineThickness = 0;
 			}
-			if (isInside || isLine)
+			if ((isInside || (isLine && x > (min_x_for_this_y))) && y > real_min_y)
+			//if (isInside)
 			{
 				double min_factor = 0.5;
 				if ((max_x_for_this_y - min_x_for_this_y) > 0)
@@ -682,7 +680,7 @@ Matrix Scene::strechToScreenSize(CRect r)
 
 }
 
-void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], int draw_mat[], Vector* normal_mat, LightCoefficient *color_mat, Model &model, MyPolygon &polygon)
+void Scene::drawLineForScanConversion(CDC* pDC, Line line, double depth_mat[], Vector* normal_mat, LightCoefficient *color_mat, Model &model, MyPolygon &polygon)
 {
 	Point p1 = line.getP1();
 	Point p2 = line.getP2();
