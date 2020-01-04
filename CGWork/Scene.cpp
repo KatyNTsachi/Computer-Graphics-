@@ -1179,6 +1179,15 @@ void Scene::drawBackground(vector<LightCoefficient> *tmp_view_mat, int view_mat[
 
 void Scene::drawBackgroundTile(vector<LightCoefficient> tmp_view_mat[], int view_mat[])
 {
+	/*
+			for (int i = 0; i < height*width; i++)
+		{
+			//(GetBValue(background_color)) + (GetRValue(background_color) << 16) + (GetGValue(background_color) << 8)
+			LightCoefficient tmp_color(GetRValue(background_color), GetGValue(background_color), GetBValue(background_color));
+			tmp_color.setActive(true);
+			tmp_view_mat[i].push_back(tmp_color);
+		}
+	*/
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
@@ -1187,7 +1196,8 @@ void Scene::drawBackgroundTile(vector<LightCoefficient> tmp_view_mat[], int view
 			int tmp_j = j % background_image_width;
 			COLORREF background_color = background_image[tmp_i * background_image_width + tmp_j];
 			view_mat[i * width + j] = background_color;
-			LightCoefficient background_lightCoefficient(GetRValue(background_color), GetGValue(background_color), GetBValue(background_color), 1.0);
+			LightCoefficient background_lightCoefficient(GetBValue(background_color), GetGValue(background_color), GetRValue(background_color));
+			background_lightCoefficient.setActive(true);
 			tmp_view_mat[i * width + j].push_back(background_lightCoefficient);
 		}
 	}
