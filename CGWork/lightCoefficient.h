@@ -6,6 +6,7 @@ class LightCoefficient
 public:
 	LightCoefficient();
 	LightCoefficient::LightCoefficient(double x, double y, double z);
+	LightCoefficient::LightCoefficient(double x, double y, double z, double _alpha);
 	LightCoefficient(const LightCoefficient &old_obj);
 	~LightCoefficient();
 	LightCoefficient operator * (LightCoefficient const &lightCoefficient2);

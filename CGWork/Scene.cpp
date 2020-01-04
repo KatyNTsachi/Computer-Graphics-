@@ -210,7 +210,7 @@ void Scene::AddCamera(Camera _camera)
 	camera_list.push_back(_camera);
 }
 
-void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tmp_drawing_view_mat[]) {
+void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tmp_drawing_view_mat[], COLORREF background_color) {
 	width = abs(r.right - r.left);
 	height = abs(r.bottom - r.top);
 	vector<double> *z_buffer = new vector<double>[height*width];
@@ -219,15 +219,23 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 	{
 		z_buffer[i].clear();
 		z_buffer[i].push_back(EMPTY_Z_BUFFER_PIXEL);
-
-		LightCoefficient tmp_color(0, 0, 0);
-		tmp_color.setActive(true);
-		tmp_view_mat[i].push_back(tmp_color);
 	}
 
 	if (show_background)
-		drawBackground(view_mat);
-	
+	{
+		drawBackground(tmp_view_mat);
+	}
+	else
+	{
+		for (int i = 0; i < height*width; i++)
+		{
+			//(GetBValue(background_color)) + (GetRValue(background_color) << 16) + (GetGValue(background_color) << 8)
+			LightCoefficient tmp_color(GetBValue(background_color), GetRValue(background_color), GetGValue(background_color));
+			tmp_color = LightCoefficient(255, 0, 0);
+			tmp_color.setActive(true);
+			tmp_view_mat[i].push_back(tmp_color);
+		}
+	}
 
 	//error messege
 	if (camera_number > camera_list.size() - 1)
@@ -311,7 +319,7 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 		//normalize + fill view_mat
 		for (int i = 0; i < height*width; i++)
 		{
-			if (tmp_view_mat[i][0].isActive())
+			//if (tmp_view_mat[i][0].isActive())
 			{
 				tmp_view_mat[i][0] = tmp_view_mat[i][0].multiplyColorOnly(normalize_factor);
 				tmp_view_mat[i][0] = tmp_view_mat[i][0] + tmp_view_mat[i][0].getShine();
@@ -1162,22 +1170,15 @@ void Scene::setBackgroundImage(vector<COLORREF> _image)
 	background_image = _image;
 }
 
-
-
-
-
-
-
-void Scene::drawBackground(int view_mat[])
+void Scene::drawBackground(vector<LightCoefficient> *tmp_view_mat)
 {
-
 	if (tile_background)
-		drawBackgroundTile(view_mat);
+		drawBackgroundTile(tmp_view_mat);
 	else
-		drawBackgroundStretch(view_mat);
+		drawBackgroundStretch(tmp_view_mat);
 }
 
-void Scene::drawBackgroundTile(int view_mat[])
+void Scene::drawBackgroundTile(vector<LightCoefficient> tmp_view_mat[])
 {
 	for (int i = 0; i < height; i++)
 	{
@@ -1186,14 +1187,16 @@ void Scene::drawBackgroundTile(int view_mat[])
 			int tmp_i = i % background_image_height;
 			int tmp_j = j % background_image_width;
 			COLORREF background_color = background_image[tmp_i * background_image_width + tmp_j];
-			view_mat[i * width + j] = background_color;
+			//view_mat[i * width + j] = background_color;
+			LightCoefficient background_lightCoefficient(GetRValue(background_color), GetGValue(background_color), GetBValue(background_color), 1.0);
+			tmp_view_mat[i * width + j].push_back(background_lightCoefficient);
 		}
 	}
 
 
 }
 
-void Scene::drawBackgroundStretch(int view_mat[])
+void Scene::drawBackgroundStretch(vector<LightCoefficient> *tmp_view_mat)
 {
 	double d_i = 0, d_j = 0;
 	double d_i_friction = double(background_image_height) / height;
@@ -1207,13 +1210,15 @@ void Scene::drawBackgroundStretch(int view_mat[])
 			int tmp_i = i % background_image_height;
 			int tmp_j = j % background_image_width;
 			COLORREF background_color = background_image[int(d_i) * background_image_width + int(d_j)];
-			view_mat[i * width + j] = background_color;
+			//view_mat[i * width + j] = background_color;
+			//LightCoefficient background_lightCoefficient(GetRValue(background_color), GetGValue(background_color), GetBValue(background_color), 1.0);
+			LightCoefficient background_lightCoefficient(0, 0, 0);
+			background_lightCoefficient.setActive(true);
+			tmp_view_mat[i * width + j].push_back(background_lightCoefficient);
 			d_j = d_j + d_j_friction;
 		}
 		d_i = d_i + d_i_friction;
 	}
-
-
 }
 
 void Scene::setShowPositiveNormals(bool _show_positive_normals)

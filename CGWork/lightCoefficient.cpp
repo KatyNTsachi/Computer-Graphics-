@@ -24,6 +24,18 @@ LightCoefficient::LightCoefficient(double x, double y, double z)
 
 }
 
+LightCoefficient::LightCoefficient(double x, double y, double z, double _alpha)
+{
+	entries[0] = x;
+	entries[1] = y;
+	entries[2] = z;
+	alpha = _alpha;
+	active = false;
+	entries_shine[0] = 0;
+	entries_shine[1] = 0;
+	entries_shine[2] = 0;
+}
+
 LightCoefficient::LightCoefficient(const LightCoefficient &old_obj)
 {
 	entries[0] = old_obj.entries[0];

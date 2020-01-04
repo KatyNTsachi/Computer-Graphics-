@@ -341,11 +341,11 @@ void CCGWorkView::OnDraw(CDC* pDC)
 	//set backgroundcolor
 	for (int i = 0; i < height*width; i++)
 	{
-		view_mat[i] = (GetBValue(background_color)) + (GetRValue(background_color) << 16) + (GetGValue(background_color) << 8);
+		//view_mat[i] = (GetBValue(background_color)) + (GetRValue(background_color) << 16) + (GetGValue(background_color) << 8);
 		tmp_drawing_view_mat[i] = EMPTY_TMP_DRAWING_VIEW_MAT_PIXEL;
 	}
 
-	scene.Draw(pDC, 0, r, view_mat, tmp_drawing_view_mat);
+	scene.Draw(pDC, 0, r, view_mat, tmp_drawing_view_mat, background_color);
 
 	pDCToUse->GetCurrentBitmap()->SetBitmapBits(width * height * 4, view_mat);
 	if (pDCToUse != pDC)
