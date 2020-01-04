@@ -42,6 +42,7 @@ LightCoefficient::LightCoefficient(const LightCoefficient &old_obj)
 	entries[1] = old_obj.entries[1];
 	entries[2] = old_obj.entries[2];
 	active = old_obj.active;
+	alpha = old_obj.alpha;
 	entries_shine[0] = old_obj.entries_shine[0];
 	entries_shine[1] = old_obj.entries_shine[1];
 	entries_shine[2] = old_obj.entries_shine[2];
@@ -72,6 +73,8 @@ LightCoefficient LightCoefficient::operator * (double a)
 	lightCoefficient3.entries_shine[1] = a * entries_shine[1];
 	lightCoefficient3.entries_shine[2] = a * entries_shine[2];
 
+	lightCoefficient3.alpha = alpha;
+
 	return lightCoefficient3;
 }
 
@@ -85,6 +88,7 @@ LightCoefficient LightCoefficient::multiplyColorOnly(double a)
 	lightCoefficient3.entries_shine[0] = entries_shine[0];
 	lightCoefficient3.entries_shine[1] = entries_shine[1];
 	lightCoefficient3.entries_shine[2] = entries_shine[2];
+	lightCoefficient3.alpha = alpha;
 
 	return lightCoefficient3;
 }
@@ -98,6 +102,8 @@ LightCoefficient LightCoefficient::operator + (LightCoefficient const &lightCoef
 	lightCoefficient3.entries_shine[0] = lightCoefficient2.entries_shine[0] + entries_shine[0];
 	lightCoefficient3.entries_shine[1] = lightCoefficient2.entries_shine[1] + entries_shine[1];
 	lightCoefficient3.entries_shine[2] = lightCoefficient2.entries_shine[2] + entries_shine[2];
+	lightCoefficient3.alpha = alpha;
+
 
 	return lightCoefficient3;
 }
@@ -140,6 +146,11 @@ void LightCoefficient::setActive(bool _active)
 bool LightCoefficient::isActive()
 {
 	return active;
+}
+
+void LightCoefficient::setAlpha(double _alpha)
+{
+	alpha = _alpha;
 }
 
 

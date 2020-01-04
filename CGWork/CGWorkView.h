@@ -20,6 +20,7 @@
 #include "InputParametersDialogBar.h"
 #include "prespectiveParametersDialog.h"
 #include "MouseSensitivity.h"
+#include "AlphaDialog.h"
 
 class CCGWorkView : public CView
 {
@@ -35,6 +36,7 @@ public:
 public:
 	BOOL PreTranslateMessage(MSG * pMsg);
 private:
+	AlphaDialog alphaDialog;
 	int m_nAxis;				// Axis of Action, X Y or Z
 	int m_nAction;				// Rotate, Translate, Scale
 	int m_nView;				// Orthographic, perspective
@@ -201,6 +203,7 @@ public:
 	afx_msg void onFrontFacingPolygons();
 	afx_msg void onUpdateFrontFacingPolygons(CCmdUI *pCmdUI);
 	afx_msg void onFileSave();
+	afx_msg void OnColorM();
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp

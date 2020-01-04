@@ -113,6 +113,7 @@ BEGIN
         POPUP "Color ...                                                                                                                                        "
         BEGIN
             MENUITEM "Model Color...",              ID_COLOR_MODELCOLOR
+            MENUITEM "Model Alpha",                 ID_COLOR_M
             MENUITEM "Bounding Box Color...",       ID_COLOR_BOUNDINGBOXCOLOR
             MENUITEM "Normals Color...",            ID_COLOR_NORMALSCOLOR
             MENUITEM "Backgound Color",             ID_COLOR_BACKGOUNDCOLOR
@@ -302,6 +303,17 @@ BEGIN
     EDITTEXT        ID_D,201,54,40,14,ES_AUTOHSCROLL
 END
 
+IDD_DIALOG3 DIALOGEX 0, 0, 309, 176
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,198,155,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,252,155,50,14
+    LTEXT           "Alpha",IDC_STATIC,33,30,19,8
+    EDITTEXT        IDC_LIGHT_COLOR_B,28,47,40,14,ES_AUTOHSCROLL
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -404,6 +416,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 98
     END
+
+    IDD_DIALOG3, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -455,6 +475,11 @@ BEGIN
 END
 
 IDD_LIGHTS_DLG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG3 AFX_DIALOG_LAYOUT
 BEGIN
     0
 END

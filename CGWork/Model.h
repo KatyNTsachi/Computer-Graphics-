@@ -46,8 +46,11 @@ public:
 	LightCoefficient k_d = LightCoefficient(1, 1, 1);
 	LightCoefficient k_s = LightCoefficient(1, 1, 1);
 	int specularityExponent = 1;
+	double getAlpha();
+	void setAlpha(double _alpha);
 
 private:
+	double alpha = 1;
 	std::vector<MyPolygon> polygon_list;
 	std::vector<MyPolygon> bounding_box_polygon_list;
 	std::vector<Line> polygon_original_normal_list;
