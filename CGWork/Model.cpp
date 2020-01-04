@@ -247,3 +247,12 @@ std::vector<Line> Model::flipOrNot(std::vector<Line> &vec_line, bool show_regula
 	}
 	return new_vec;
 }
+
+double Model::getAlpha()
+{
+	return alpha;
+}
+void Model::setAlpha(double _alpha)
+{
+	alpha = _alpha;
+}

@@ -123,6 +123,7 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_COMMAND(ID_OPTIONS_SHOWONLYFRONTFACINGPOLYGONS, &CCGWorkView::onFrontFacingPolygons)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWONLYFRONTFACINGPOLYGONS, &CCGWorkView::onUpdateFrontFacingPolygons)
 	ON_COMMAND(ID_FILE_SAVE32828, &CCGWorkView::onFileSave)
+	ON_COMMAND(ID_COLOR_M, &CCGWorkView::OnColorM)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -1140,4 +1141,17 @@ void CCGWorkView::onFileSave()
 		png_wrp.WritePng();
 	}
 	delete[] save_mat;
+}
+
+
+void CCGWorkView::OnColorM()
+{
+	if (alphaDialog.DoModal() == IDOK) {
+		scene.setAlphaOfAllModels(alphaDialog.getAlpha());
+		if (isOneModelMode)
+		{
+			scene.highlightModel(RGB(0, 255, 255), chosenModelCircularIndex);
+		}
+		RedrawWindow();
+	}
 }

@@ -231,6 +231,7 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 		{
 			//(GetBValue(background_color)) + (GetRValue(background_color) << 16) + (GetGValue(background_color) << 8)
 			LightCoefficient tmp_color(GetRValue(background_color), GetGValue(background_color), GetBValue(background_color));
+			tmp_color.setAlpha(0.5);
 			tmp_color.setActive(true);
 			tmp_view_mat[i].push_back(tmp_color);
 		}
@@ -620,7 +621,7 @@ LightCoefficient Scene::getColorAtPoint(Model &model, MyPolygon polygon, int x, 
 {
 
 	Point objectLocation = Point(x, y, z);
-	LightCoefficient k_d = LightCoefficient(GetRValue(model.getModelColor()), GetGValue(model.getModelColor()), GetBValue(model.getModelColor()));
+	LightCoefficient k_d = LightCoefficient(GetRValue(model.getModelColor()), GetGValue(model.getModelColor()), GetBValue(model.getModelColor()), model.getAlpha());
 	k_a = k_d;
 	LightCoefficient color = k_a * I_a;
 	for (int i = 0; i < MAX_COUNT_OF_LIGHTSOURCES; i++)
@@ -653,7 +654,7 @@ LightCoefficient Scene::getColorAtPoint(Model &model, MyPolygon polygon, int x, 
 		}
 		color.setActive(true);
 	}
-
+	color.setAlpha(model.getAlpha());
 	return color;
 }
 
@@ -1245,4 +1246,13 @@ int Scene::getSpecularityExponent()
 {
 	return specularityExponent;
 }
+
+void Scene::setAlphaOfAllModels(double _alpha)
+{
+	for (int i = 0; i < model_list.size(); i++)
+	{
+		model_list[i].setAlpha(_alpha);
+	}
+}
+
 

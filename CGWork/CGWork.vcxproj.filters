@@ -93,6 +93,9 @@
     <ClCompile Include="LightCoefficient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AlphaDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CGWork.rc">
@@ -254,6 +257,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CGWorkDefines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AlphaDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
