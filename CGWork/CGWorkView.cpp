@@ -258,10 +258,13 @@ BOOL CCGWorkView::InitializeCGWork()
 void CCGWorkView::OnModelColerPicker() {
 	CColorDialog colorDialog;
 	if (colorDialog.DoModal() == IDOK) {
-		scene.setColorOfAllModels(colorDialog.GetColor());
 		if (isOneModelMode)
 		{
-			scene.highlightModel(RGB(0, 255, 255), chosenModelCircularIndex);
+			scene.setColorOfModelAtIndex(colorDialog.GetColor(), chosenModelCircularIndex);
+			scene.highlightModel(chosenModelCircularIndex);
+		}
+		else {
+			scene.setColorOfAllModels(colorDialog.GetColor());
 		}
 		RedrawWindow();
 	}
@@ -464,7 +467,7 @@ void CCGWorkView::OnIsSingleMode()
 	isOneModelMode = !isOneModelMode;
 	if (isOneModelMode)
 	{
-		scene.highlightModel(RGB(0, 255, 255), chosenModelCircularIndex);
+		scene.highlightModel(chosenModelCircularIndex);
 	}
 	else
 	{
@@ -676,14 +679,14 @@ BOOL CCGWorkView::PreTranslateMessage(MSG * pMsg)
 				{
 					chosenModelCircularIndex += scene.getNumberOfModels();
 				}
-				scene.highlightModel(RGB(0, 255, 255), chosenModelCircularIndex);
+				scene.highlightModel(chosenModelCircularIndex);
 				RedrawWindow();
 			}
 			else if (VK_RIGHT == pMsg->wParam)
 			{
 				chosenModelCircularIndex++;
 				chosenModelCircularIndex = chosenModelCircularIndex % scene.getNumberOfModels();
-				scene.highlightModel(RGB(0, 255, 255), chosenModelCircularIndex);
+				scene.highlightModel(chosenModelCircularIndex);
 				RedrawWindow();
 			}
 		}
@@ -1147,10 +1150,13 @@ void CCGWorkView::onFileSave()
 void CCGWorkView::OnColorM()
 {
 	if (alphaDialog.DoModal() == IDOK) {
-		scene.setAlphaOfAllModels(alphaDialog.getAlpha());
 		if (isOneModelMode)
 		{
-			scene.highlightModel(RGB(0, 255, 255), chosenModelCircularIndex);
+			scene.setAlphaOfModelAtIndex(alphaDialog.getAlpha(), chosenModelCircularIndex);
+			scene.highlightModel(chosenModelCircularIndex);
+		}
+		else {
+			scene.setAlphaOfAllModels(alphaDialog.getAlpha());
 		}
 		RedrawWindow();
 	}
