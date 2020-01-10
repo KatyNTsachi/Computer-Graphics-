@@ -42,7 +42,9 @@ public:
 	int getNumberOfModels();
 	void updateTransformationViewSpaceMatricesOfObjectAtIndex(Matrix _transformationMatrix, int _index);
 	void updateTransformationObjectSpaceMatricesOfObjectAtIndex(Matrix _transformationMatrix, int _index);
-	void highlightModel(COLORREF _color, int modelIndex);
+	void highlightModel(int modelIndex);
+	void setColorOfModelAtIndex(COLORREF _color, int modelIndex);
+	void setAlphaOfModelAtIndex(double alpha, int modelIndex);
 	COLORREF getModelColor();
 	COLORREF getFaddedModelColor(int modelIndex);
 	void unHighlightModel();

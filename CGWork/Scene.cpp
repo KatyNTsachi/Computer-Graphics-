@@ -142,7 +142,7 @@ void Scene::setModelColor(Model &_model)
 	_model.setNormalsColor(normalsColor);
 }
 
- void Scene::highlightModel(COLORREF _color, int modelIndex)
+ void Scene::highlightModel(int modelIndex)
 {
 	 COLORREF hilightedColor = getFaddedModelColor(modelIndex);
 
@@ -184,6 +184,13 @@ void Scene::unHighlightModel()
 	model_list[hilightedModelIndex].setColor(originalColorOfHighlitedModel);
 	setModelColor(model_list[hilightedModelIndex]);
 	hilightedModelIndex = -1;
+}
+
+void Scene::setColorOfModelAtIndex(COLORREF _color, int modelIndex)
+{
+	unHighlightModel();
+	model_list[modelIndex].setColor(_color);
+	highlightModel(modelIndex);
 }
 
 /// we are scaling every model we bring in 
@@ -1253,6 +1260,11 @@ void Scene::setAlphaOfAllModels(double _alpha)
 	{
 		model_list[i].setAlpha(_alpha);
 	}
+}
+
+void Scene::setAlphaOfModelAtIndex(double alpha, int modelIndex)
+{
+	model_list[modelIndex].setAlpha(alpha);
 }
 
 
