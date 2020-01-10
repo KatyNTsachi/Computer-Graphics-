@@ -303,9 +303,11 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 		//transperancy calculation
 		for (int i = 0; i < height*width; i++)
 		{
+			bool there_is_no_fog = false;
+			double fog_intensity = 1;
 			if (tmp_view_mat[i][0].isActive())
 			{
-				tmp_view_mat[i][0] = flattenAlpha(tmp_view_mat[i], z_buffer[i]);
+				tmp_view_mat[i][0] = flattenAlpha(tmp_view_mat[i], z_buffer[i], there_is_no_fog, fog_intensity);
 			}
 		}
 		//find max
@@ -415,10 +417,10 @@ int Scene::getMaxYOfPolygon(Matrix transformation, MyPolygon &polygon)
 	return max_y;
 }
 
-void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix transformation, CDC* pDC, int view_mat[], vector<double> z_buffer[], vector<LightCoefficient> tmp_view_mat[],double tmp_drawing_view_mat[])
+void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix transformation, CDC* pDC, int view_mat[], vector<double> z_buffer[], vector<LightCoefficient> tmp_view_mat[], double tmp_drawing_view_mat[])
 {
 	LightCoefficient *color_mat = new LightCoefficient[height*width];
-	Vector* normal_mat = new Vector[height*width];   
+	Vector* normal_mat = new Vector[height*width];
 	int count = 0;
 	for (auto polygon = polygon_list.begin(); polygon != polygon_list.end(); polygon++)
 	{
@@ -436,7 +438,7 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 
 		// draw edges of polygon
 		MyPolygon transformedPolygon = polygon->tranformPolygon(transformation);
-			
+
 		Vector Z(0, 0, 1, 0);
 		Vector N = transformedPolygon.getOriginalNormal(true);
 		double normal_dot_z = Z * N;
@@ -591,7 +593,7 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 	}
 }
 
-LightCoefficient Scene::flattenAlpha(vector<LightCoefficient> allColors, vector<double> z_buffer)
+LightCoefficient Scene::flattenAlpha(vector<LightCoefficient> allColors, vector<double> z_buffer, bool _there_is_no_fog, double _fog_intensity)
 {
 	
 	// Declaring vector of pairs 
@@ -610,11 +612,11 @@ LightCoefficient Scene::flattenAlpha(vector<LightCoefficient> allColors, vector<
 	sort(vect.begin(), vect.end());
 
 	double alpha = 1 , alpha_tmp;
-	LightCoefficient color = allColors[vect[n-1].second];
+	LightCoefficient color = getFogColor(allColors[vect[n-1].second], vect[n - 1].first, _there_is_no_fog, _fog_intensity);
 	alpha = color.getAlpha();
 
 	for (int i = n-2; i >= 0; i--) {
-		LightCoefficient new_color = allColors[vect[0].second];
+		LightCoefficient new_color = getFogColor(allColors[vect[i].second], vect[i].first, _there_is_no_fog, _fog_intensity);
 		alpha_tmp = new_color.getAlpha();
 		alpha = alpha * alpha_tmp;
 		color = new_color * (alpha) + (color) * (1 - alpha);
@@ -1268,3 +1270,30 @@ void Scene::setAlphaOfModelAtIndex(double alpha, int modelIndex)
 }
 
 
+LightCoefficient Scene::getFogColor(LightCoefficient &_color, double z, bool _there_is_no_fog, double _fog_intensity)
+{
+	if (_there_is_no_fog)
+	{
+		return _color;
+	}
+	else
+	{
+		/*
+		double r = _color.getR() + fog_intensity > 255 ? 255 : _color.getR() + fog_intensity;
+		double g = _color.getG() + fog_intensity > 255 ? 255 : _color.getG() + fog_intensity;
+		double b = _color.getB() + fog_intensity > 255 ? 255 : _color.getB() + fog_intensity;
+		*/
+		double fog_added_value = 0;
+		if (_fog_intensity * z > 255)
+			fog_added_value = 255;
+		else
+			fog_added_value = _fog_intensity * z;
+
+		double r = _color.getR() + fog_added_value;
+		double g = _color.getG() + fog_added_value;
+		double b = _color.getB() + fog_added_value;
+
+		LightCoefficient ret_color(r, g, b);
+		return ret_color;
+	}
+}

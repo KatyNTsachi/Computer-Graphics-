@@ -71,8 +71,10 @@ public:
 	void setShowPositiveNormals(bool _show_positive_normals);
 	bool getShowPositiveNormals();
 	void setSpecularityExponent(int n);
-	LightCoefficient flattenAlpha(vector<LightCoefficient> allColors, vector<double> z_buffer);
+
+	LightCoefficient flattenAlpha(vector<LightCoefficient> allColors, vector<double> z_buffer, bool _there_is_no_fog, double _fog_intensity);
 	void setAlphaOfAllModels(double _alpha);
+	LightCoefficient getFogColor(LightCoefficient &_color, double z, bool _there_is_no_fog, double _fog_intensity);
 
 private:
 	int specularityExponent = 2;
