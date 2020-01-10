@@ -24,11 +24,15 @@ public:
 	bool isActive();
 	void setShine(double x, double y, double z);
 	LightCoefficient getShine();
-
+	void setFog(double x, double y, double z);
+	LightCoefficient getFog();
+	void cutColorBigValues();
 
 private:
 	double entries[3];
 	double entries_shine[3];
+	double entries_fog[3];
+
 	double alpha = 1;
 
 	bool active;

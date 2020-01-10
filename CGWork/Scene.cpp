@@ -300,6 +300,8 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 
 	if (!draw_wireFrame)
 	{
+
+
 		//transperancy calculation
 		for (int i = 0; i < height*width; i++)
 		{
@@ -310,6 +312,7 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 				tmp_view_mat[i][0] = flattenAlpha(tmp_view_mat[i], z_buffer[i], there_is_no_fog, fog_intensity);
 			}
 		}
+
 		//find max
 		int max = 1;
 		for (int i = 0; i < height*width; i++)
@@ -332,6 +335,8 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 			{
 				tmp_view_mat[i][0] = tmp_view_mat[i][0].multiplyColorOnly(normalize_factor);
 				tmp_view_mat[i][0] = tmp_view_mat[i][0] + tmp_view_mat[i][0].getShine();
+				tmp_view_mat[i][0] = tmp_view_mat[i][0] + tmp_view_mat[i][0].getFog();
+
 				double R = tmp_view_mat[i][0].getR() > 255 ? 255 : tmp_view_mat[i][0].getR();
 				double G = tmp_view_mat[i][0].getG() > 255 ? 255 : tmp_view_mat[i][0].getG();
 				double B = tmp_view_mat[i][0].getB() > 255 ? 255 : tmp_view_mat[i][0].getB();
@@ -621,6 +626,7 @@ LightCoefficient Scene::flattenAlpha(vector<LightCoefficient> allColors, vector<
 		alpha = alpha * alpha_tmp;
 		color = new_color * (alpha) + (color) * (1 - alpha);
 	}
+
 	color.setActive(true);
 	return color;
 }
@@ -1278,22 +1284,18 @@ LightCoefficient Scene::getFogColor(LightCoefficient &_color, double z, bool _th
 	}
 	else
 	{
-		/*
-		double r = _color.getR() + fog_intensity > 255 ? 255 : _color.getR() + fog_intensity;
-		double g = _color.getG() + fog_intensity > 255 ? 255 : _color.getG() + fog_intensity;
-		double b = _color.getB() + fog_intensity > 255 ? 255 : _color.getB() + fog_intensity;
-		*/
 		double fog_added_value = 0;
-		if (_fog_intensity * z > 255)
+		double mul_factor = _fog_intensity * z;
+
+		if(mul_factor > 255)
 			fog_added_value = 255;
+		else if(mul_factor < 0)
+			fog_added_value = 0;
 		else
-			fog_added_value = _fog_intensity * z;
+			fog_added_value = mul_factor;
 
-		double r = _color.getR() + fog_added_value;
-		double g = _color.getG() + fog_added_value;
-		double b = _color.getB() + fog_added_value;
+		_color.setFog(fog_added_value, fog_added_value, fog_added_value);
 
-		LightCoefficient ret_color(r, g, b);
-		return ret_color;
+		return _color;
 	}
 }
