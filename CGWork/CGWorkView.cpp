@@ -126,6 +126,7 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_COMMAND(ID_COLOR_M, &CCGWorkView::OnColorM)
 	ON_COMMAND(ID_OPTIONS_SHOWFOG, &CCGWorkView::OnOptionsShowfog)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWFOG, &CCGWorkView::OnUpdateOptionsShowfog)
+	ON_COMMAND(ID_COLOR_FOGCOLOR, &CCGWorkView::OnColorFogcolor)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -474,7 +475,7 @@ void CCGWorkView::OnIsSingleMode()
 	else
 	{
 		scene.unHighlightModel();
-		chosenModelCircularIndex = -1;
+		chosenModelCircularIndex = 0;
 	}
 	RedrawWindow();
 }
@@ -1174,4 +1175,15 @@ void CCGWorkView::OnOptionsShowfog()
 void CCGWorkView::OnUpdateOptionsShowfog(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(scene.getShowFog());
+}
+
+
+void CCGWorkView::OnColorFogcolor()
+{
+	CColorDialog colorDialog;
+	if (colorDialog.DoModal() == IDOK) {
+		scene.setFogColor(colorDialog.GetColor());
+		RedrawWindow();
+	}
+
 }

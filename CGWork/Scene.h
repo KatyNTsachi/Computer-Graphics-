@@ -30,6 +30,7 @@ public:
 	void updateTransformationMatrixOfCamera(Matrix transformationMatrix, bool isRotation);
 	void setSouldShowBoundingBox(bool _show_bounding_box);
 	void setColorOfAllModels(COLORREF color);
+	void setFogColor(COLORREF color);
 	void setBoundingBoxColor(COLORREF color);
 	void setNormalsColor(COLORREF color);
 	bool paint_vertex_normals = false;
@@ -74,11 +75,12 @@ public:
 	bool getShowFog();
 	void setShowFog(bool _show_fog);
 
-	LightCoefficient flattenAlpha(vector<LightCoefficient> allColors, vector<double> z_buffer, bool _there_is_no_fog, double _fog_intensity);
+	LightCoefficient flattenAlpha(vector<LightCoefficient> allColors, vector<double> &z_buffer, bool _there_is_no_fog, double _fog_intensity);
 	void setAlphaOfAllModels(double _alpha);
 	LightCoefficient getFogColor(LightCoefficient &_color, double z, bool _there_is_no_fog, double _fog_intensity);
 
 private:
+	COLORREF fog_color = RGB(255, 255, 255);
 	int specularityExponent = 2;
 	Vector V = Vector(0, 0, -1, 0);
 	bool there_is_no_fog = true;

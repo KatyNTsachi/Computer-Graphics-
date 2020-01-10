@@ -113,6 +113,7 @@ BEGIN
         POPUP "Color ...                                                                                                                                        "
         BEGIN
             MENUITEM "Model Color...",              ID_COLOR_MODELCOLOR
+            MENUITEM "Fog Color...",                ID_COLOR_FOGCOLOR
             MENUITEM "Model Alpha",                 ID_COLOR_M
             MENUITEM "Bounding Box Color...",       ID_COLOR_BOUNDINGBOXCOLOR
             MENUITEM "Normals Color...",            ID_COLOR_NORMALSCOLOR

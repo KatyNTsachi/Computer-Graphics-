@@ -333,8 +333,16 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 			//if (tmp_view_mat[i][0].isActive())
 			{
 				tmp_view_mat[i][0] = tmp_view_mat[i][0].multiplyColorOnly(normalize_factor);
+				double partion = z_buffer[i][0] > 0 ? z_buffer[i][0] : 0;
+				//partion = (4 / (1 + pow(1.0001, -partion))) - 2;
+				
+				partion = (40 * partion / EMPTY_Z_BUFFER_PIXEL);
+				partion = partion <= 1 ? partion : 1;
+				if (there_is_no_fog)
+					partion = 0;
+				tmp_view_mat[i][0] = tmp_view_mat[i][0].multiplyColorOnly(1 - partion) + tmp_view_mat[i][0].getFog() * partion;
 				tmp_view_mat[i][0] = tmp_view_mat[i][0] + tmp_view_mat[i][0].getShine();
-				tmp_view_mat[i][0] = tmp_view_mat[i][0] + tmp_view_mat[i][0].getFog();
+				
 
 				double R = tmp_view_mat[i][0].getR() > 255 ? 255 : tmp_view_mat[i][0].getR();
 				double G = tmp_view_mat[i][0].getG() > 255 ? 255 : tmp_view_mat[i][0].getG();
@@ -597,7 +605,7 @@ void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, 
 	}
 }
 
-LightCoefficient Scene::flattenAlpha(vector<LightCoefficient> allColors, vector<double> z_buffer, bool _there_is_no_fog, double _fog_intensity)
+LightCoefficient Scene::flattenAlpha(vector<LightCoefficient> allColors, vector<double> &z_buffer, bool _there_is_no_fog, double _fog_intensity)
 {
 	
 	// Declaring vector of pairs 
@@ -626,7 +634,7 @@ LightCoefficient Scene::flattenAlpha(vector<LightCoefficient> allColors, vector<
 		color = color + new_color * alpha * alpha_tmp;	
 		alpha = alpha * (1 - alpha_tmp);
 	}
-
+	z_buffer[0] = vect[0].first;
 	color.setActive(true);
 	return color;
 }
@@ -1033,6 +1041,11 @@ void Scene::setNormalsColor(COLORREF color)
 	}
 }
 
+void Scene::setFogColor(COLORREF color)
+{
+	fog_color = color;
+}
+
 void Scene::setSilhouetteColor(COLORREF color)
 {
 	silhouetteColor = color;
@@ -1286,15 +1299,17 @@ LightCoefficient Scene::getFogColor(LightCoefficient &_color, double z, bool _th
 	{
 		double fog_added_value = 0;
 		double mul_factor = _fog_intensity * z;
-
+		/*
 		if(mul_factor > 255)
 			fog_added_value = 255;
 		else if(mul_factor < 0)
 			fog_added_value = 0;
 		else
 			fog_added_value = mul_factor;
-
-		_color.setFog(fog_added_value, fog_added_value, fog_added_value);
+		fog_added_value = fog_added_value / 255;
+		*/
+		fog_added_value = 1;
+		_color.setFog(GetRValue(fog_color)*fog_added_value, GetGValue(fog_color)*fog_added_value, GetBValue(fog_color)*fog_added_value);
 
 		return _color;
 	}
