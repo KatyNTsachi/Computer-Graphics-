@@ -124,6 +124,8 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWONLYFRONTFACINGPOLYGONS, &CCGWorkView::onUpdateFrontFacingPolygons)
 	ON_COMMAND(ID_FILE_SAVE32828, &CCGWorkView::onFileSave)
 	ON_COMMAND(ID_COLOR_M, &CCGWorkView::OnColorM)
+	ON_COMMAND(ID_OPTIONS_SHOWFOG, &CCGWorkView::OnOptionsShowfog)
+	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWFOG, &CCGWorkView::OnUpdateOptionsShowfog)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -1095,7 +1097,6 @@ void CCGWorkView::onFileStrechBackgroundImage()
 	RedrawWindow();
 }
 
-
 void CCGWorkView::onUpdateStrechBackgroundImage(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(!scene.getTileBackgroundImage());
@@ -1160,4 +1161,17 @@ void CCGWorkView::OnColorM()
 		}
 		RedrawWindow();
 	}
+}
+
+
+void CCGWorkView::OnOptionsShowfog()
+{
+	scene.setShowFog(!scene.getShowFog());
+	RedrawWindow();
+}
+
+
+void CCGWorkView::OnUpdateOptionsShowfog(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(scene.getShowFog());
 }

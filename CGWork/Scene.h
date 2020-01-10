@@ -71,6 +71,8 @@ public:
 	void setShowPositiveNormals(bool _show_positive_normals);
 	bool getShowPositiveNormals();
 	void setSpecularityExponent(int n);
+	bool getShowFog();
+	void setShowFog(bool _show_fog);
 
 	LightCoefficient flattenAlpha(vector<LightCoefficient> allColors, vector<double> z_buffer, bool _there_is_no_fog, double _fog_intensity);
 	void setAlphaOfAllModels(double _alpha);
@@ -79,7 +81,7 @@ public:
 private:
 	int specularityExponent = 2;
 	Vector V = Vector(0, 0, -1, 0);
-	
+	bool there_is_no_fog = true;
 	bool show_regular_normals;
 	std::vector<Model> model_list;
 	std::vector<Camera> camera_list;

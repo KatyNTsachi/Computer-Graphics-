@@ -204,6 +204,8 @@ public:
 	afx_msg void onUpdateFrontFacingPolygons(CCmdUI *pCmdUI);
 	afx_msg void onFileSave();
 	afx_msg void OnColorM();
+	afx_msg void OnOptionsShowfog();
+	afx_msg void OnUpdateOptionsShowfog(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp

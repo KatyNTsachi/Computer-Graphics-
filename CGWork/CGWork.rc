@@ -128,6 +128,7 @@ BEGIN
         MENUITEM "Draw Silhouette",             ID_OPTIONS_DRAWSILHOUETTE
         MENUITEM "Invert Normals",              ID_OPTIONS_INVERTNORMALS
         MENUITEM "Show Only Front Facing Polygons", ID_OPTIONS_SHOWONLYFRONTFACINGPOLYGONS
+        MENUITEM "Show Fog",                    ID_OPTIONS_SHOWFOG
     END
     POPUP "&Light"
     BEGIN

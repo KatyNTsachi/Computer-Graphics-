@@ -305,7 +305,6 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 		//transperancy calculation
 		for (int i = 0; i < height*width; i++)
 		{
-			bool there_is_no_fog = false;
 			double fog_intensity = 1;
 			if (tmp_view_mat[i][0].isActive())
 			{
@@ -1298,4 +1297,15 @@ LightCoefficient Scene::getFogColor(LightCoefficient &_color, double z, bool _th
 
 		return _color;
 	}
+}
+
+
+bool Scene::getShowFog() 
+{
+	return !there_is_no_fog;
+}
+
+void Scene::setShowFog(bool _show_fog)
+{
+	there_is_no_fog = !_show_fog;
 }
