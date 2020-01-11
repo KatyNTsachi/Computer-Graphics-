@@ -510,8 +510,8 @@ void Scene::drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix tra
 	delete[] normal_mat;
 }
 
-void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, CDC* pDC, vector<LightCoefficient> view_mat[], vector<double> z_buffer[], double tmp_drawing_view_mat[], Vector* normal_mat, LightCoefficient color_mat[])
-{   
+void Scene::fillPolygon(Model &model, MyPolygon polygon, Matrix transformation, CDC* pDC, vector<LightCoefficient> view_mat[], vector<double> z_buffer[], double tmp_drawing_view_mat[], Vector* normal_mat, LightCoefficient* color_mat)
+{ 
 	bool color_from_edge = false;
 	if (shadingType == FLAT_SHADING || shadingType == GOURAUD_SHADING)
 	{
