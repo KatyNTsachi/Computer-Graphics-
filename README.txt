@@ -10,3 +10,12 @@ QUESTIONS
 
 BUGS:
 
+
+
+POINTS:
+-transperent	- 3
+-fog 			- 2
+-spot light		- 2
+
+sum 			- 7
+remain 			- 2
