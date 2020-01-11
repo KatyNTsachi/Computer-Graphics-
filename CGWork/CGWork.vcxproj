@@ -219,6 +219,7 @@
     <ClCompile Include="PointLightSource.cpp" />
     <ClCompile Include="PrespectiveParametersDialog.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SpotLightSource.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -264,6 +265,7 @@
     <ClInclude Include="PrespectiveParametersDialog.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SpotLightSource.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="..\include\allocate.h" />
     <ClInclude Include="..\include\attribut.h" />

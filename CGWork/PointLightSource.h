@@ -12,6 +12,9 @@ public:
 	PointLightSource(Point location, LightCoefficient _I_p);
 	Vector getNormal(Point Objectlocation);
 	LightCoefficient getI_p(Point objectLocation);
+	Vector getFlipNormal(Point Objectlocation);
+
+	
 private:
 	Point location;
 };

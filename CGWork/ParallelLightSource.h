@@ -12,6 +12,7 @@ public:
 	ParallelLightSource(Vector _normal, LightCoefficient _I_p);
 	Vector getNormal(Point objectLocation);
 	void setNormal(Vector _normal);
+	Vector getFlipNormal(Point Objectlocation);
 	LightCoefficient getI_p(Point objectLocation);
 private:
 	Vector normal;

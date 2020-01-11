@@ -5,7 +5,7 @@
 #include "PointLightSource.h"
 #include "CGWorkDefines.h"
 #include <algorithm>  
-
+#include "SpotLightSource.h"
 
 Scene::Scene()
 {
@@ -17,7 +17,10 @@ Scene::Scene()
 	show_positive_normals = false;
 	//ParallelLightSource *parallelLightSource = new ParallelLightSource(Vector(1, 0, 0, 0), LightCoefficient(1, 1, 1));
 	//PointLightSource *parallelLightSource = new PointLightSource(Point(1, 0, 0), LightCoefficient(255, 255, 255));
-	//lightSources[0] = (parallelLightSource);
+	//SpotLightSource *spot_light_source = new SpotLightSource(Point(400, 100, 0),Vector(1,0,0,0), LightCoefficient(255, 255, 255));
+
+	//lightSources[0] = (spot_light_source);
+
 }
 
 Scene::~Scene()
@@ -654,26 +657,30 @@ LightCoefficient Scene::getColorAtPoint(Model &model, MyPolygon polygon, int x, 
 			continue;
 		}
 		Vector L = lightSources[i]->getNormal(objectLocation);
-
-
-		LightCoefficient I_p = lightSources[i]->getI_p(objectLocation);
-
-		if (N * L > 0)
+		
+		//if the L vector is zero then we dont see the light
+		// it means that this is a spot light and we dont see it
+		if( L[0] != 0 || L[1] != 0 || L[2] != 0 || L[3] != 0)
 		{
-			//Vector flip_L = Transformations::flipNormal(L);
-			Vector flip_L = L;
-			flip_L.Normalize();
-			Vector tmp_vec = Transformations::getNormalInTheMiddle(flip_L, N, 1, 2);
-			tmp_vec.Normalize();
-			V.Normalize();
-			double shine_factor = V * tmp_vec;
-			shine_factor = shine_factor > 0 ? shine_factor : 0;
+			LightCoefficient I_p = lightSources[i]->getI_p(objectLocation);
+			Vector flip_L = lightSources[i]->getFlipNormal(objectLocation);
+			if (N * flip_L > 0)
+			{
+				//Vector flip_L = Transformations::flipNormal(L);
+				Vector flip_L = lightSources[i]->getFlipNormal(objectLocation);
+				flip_L.Normalize();
+				Vector tmp_vec = Transformations::getNormalInTheMiddle(flip_L, N, 1, 2);
+				tmp_vec.Normalize();
+				V.Normalize();
+				double shine_factor = V * tmp_vec;
+				shine_factor = shine_factor > 0 ? shine_factor : 0;
 
-			LightCoefficient tmp = k_s * pow(shine_factor, specularityExponent);
+				LightCoefficient tmp = k_s * pow(shine_factor, specularityExponent);
 
-			color = color + (I_p * (((double)1)/255) * k_d * (abs(L * N)));
-			LightCoefficient tmp_shine = color.getShine();
-			color.setShine(tmp_shine.getR() + tmp.getR(), tmp_shine.getG() + tmp.getG(), tmp_shine.getB() + tmp.getB());
+				color = color + (I_p * (((double)1)/255) * k_d * (abs(L * N)));
+				LightCoefficient tmp_shine = color.getShine();
+				color.setShine(tmp_shine.getR() + tmp.getR(), tmp_shine.getG() + tmp.getG(), tmp_shine.getB() + tmp.getB());
+			}
 		}
 		color.setActive(true);
 	}
@@ -1133,17 +1140,22 @@ void Scene::setLightSourceWithParams(int idx, LightParams lightParams)
 	}
 	if (lightParams.enabled)
 	{
+		LightCoefficient I_p(lightParams.colorR, lightParams.colorG, lightParams.colorB);
 		if (lightParams.type == LIGHT_TYPE_DIRECTIONAL)
 		{
 			Vector direction(lightParams.dirX, lightParams.dirY, lightParams.dirZ, 0);
-			LightCoefficient I_p(lightParams.colorR, lightParams.colorG, lightParams.colorB);
 			lightSources[idx] = new ParallelLightSource(direction, I_p);
 		}
-		else
+		else if (lightParams.type == LIGHT_TYPE_POINT)
 		{
 			Point position(lightParams.posX, lightParams.posY, lightParams.posZ);
-			LightCoefficient I_p(lightParams.colorR, lightParams.colorG, lightParams.colorB);
 			lightSources[idx] = new PointLightSource(position, I_p);
+		}
+		else 
+		{
+			Point position(lightParams.posX, lightParams.posY, lightParams.posZ);
+			Vector direction(lightParams.dirX, lightParams.dirY, lightParams.dirZ, 0);
+			lightSources[idx] = new SpotLightSource(position, direction, I_p);
 		}
 	}
 	else

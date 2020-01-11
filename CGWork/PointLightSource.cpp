@@ -13,6 +13,14 @@ Vector PointLightSource::getNormal(Point Objectlocation)
 	return L;
 }
 
+Vector PointLightSource::getFlipNormal(Point Objectlocation)
+{
+	Vector L = Vector(Objectlocation.getX() - location.getX(), Objectlocation.getY() - location.getY(), Objectlocation.getZ() - location.getZ(), 0);
+	L = L * (-1);
+	L.Normalize();
+	return L;
+}
+
 LightCoefficient PointLightSource::getI_p(Point objectLocation)
 {
 	Vector L = Vector(objectLocation.getX() - location.getX(), objectLocation.getY() - location.getY(), objectLocation.getZ() - location.getZ(), 0);

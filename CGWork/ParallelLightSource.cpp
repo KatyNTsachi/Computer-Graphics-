@@ -25,3 +25,9 @@ Vector ParallelLightSource::getNormal(Point Objectlocation)
 {
 	return normal;
 }
+
+Vector ParallelLightSource::getFlipNormal(Point Objectlocation)
+{
+	return normal * (-1);
+}
+
