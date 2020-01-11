@@ -1159,7 +1159,8 @@ void Scene::setLightSourceWithParams(int idx, LightParams lightParams)
 		{
 			Point position(lightParams.posX, lightParams.posY, lightParams.posZ);
 			Vector direction(lightParams.dirX, lightParams.dirY, lightParams.dirZ, 0);
-			lightSources[idx] = new SpotLightSource(position, direction, I_p);
+			double theta = lightParams.theta;
+			lightSources[idx] = new SpotLightSource(position, direction, I_p, theta);
 		}
 	}
 	else

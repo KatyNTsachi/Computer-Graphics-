@@ -8,7 +8,7 @@ class SpotLightSource :
 	public LightSource
 {
 public:
-	SpotLightSource(Point _location, Vector _dir, LightCoefficient _I_p);
+	SpotLightSource(Point _location, Vector _dir, LightCoefficient _I_p, double theta);
 	Vector getNormal(Point Objectlocation);
 	Vector getFlipNormal(Point Objectlocation);
 

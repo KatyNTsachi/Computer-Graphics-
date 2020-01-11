@@ -12,6 +12,7 @@ IMPLEMENT_DYNAMIC(CLightDialog, CDialog)
 
 CLightDialog::CLightDialog(CWnd* pParent /*=NULL*/)
 	: CDialog(CLightDialog::IDD, pParent)
+	, spot_light_angel(_T(""))
 {
 	specularity_exponent = 2;
     m_currentLightIdx = 0;
@@ -45,25 +46,26 @@ void CLightDialog::DoDataExchange(CDataExchange* pDX)
 
 	//NOTE:Add more dialog controls which are associated with the structure below this line		
 	//...
-
+	DDX_Text(pDX, IDC_EDIT2, m_lights[m_currentLightIdx].theta);
 	//the following class members can't be updated directly through DDX
 	//using a helper variable for type-casting to solve the compilation error
 
-	int helper=m_lights[m_currentLightIdx].enabled;
-	DDX_Check(pDX,IDC_LIGHT_ENABLED,helper);
+	int helper = m_lights[m_currentLightIdx].enabled;
+	DDX_Check(pDX, IDC_LIGHT_ENABLED, helper);
 	m_lights[m_currentLightIdx].enabled = (bool)helper;
 
 	helper = m_lights[m_currentLightIdx].type;
-	DDX_CBIndex(pDX,IDC_LIGHT_TYPE,helper);
+	DDX_CBIndex(pDX, IDC_LIGHT_TYPE, helper);
 	m_lights[m_currentLightIdx].type = (LightType)helper;
 
 	helper = m_lights[m_currentLightIdx].space;
-	DDX_CBIndex(pDX,IDC_LIGHT_SPACE,helper);
+	DDX_CBIndex(pDX, IDC_LIGHT_SPACE, helper);
 	m_lights[m_currentLightIdx].space = (LightSpace)helper;
 
 	DDX_Text(pDX, IDC_EDIT1, specularity_exponent);
-	
 
+
+	DDX_Text(pDX, IDC_EDIT2, spot_light_angel);
 }
 
 

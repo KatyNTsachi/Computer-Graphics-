@@ -37,4 +37,5 @@ public:
 	afx_msg void OnEnChangeExponent();
 	int getSpecularityExponent();
 	afx_msg void OnEnChangeLightDirX();
+	CString spot_light_angel;
 };
