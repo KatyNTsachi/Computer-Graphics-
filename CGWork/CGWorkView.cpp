@@ -1221,7 +1221,10 @@ void CCGWorkView::OnKernalsize3()
 	if (scene.getKernalSize() != 3) 
 	{
 		scene.setKernalSize(3);
-		RedrawWindow();
+		if (scene.getShouldPerformAntiAliasing())
+		{
+			RedrawWindow();
+		}
 	}
 }
 
@@ -1237,7 +1240,10 @@ void CCGWorkView::OnKernalsize5()
 	if (scene.getKernalSize() != 5)
 	{
 		scene.setKernalSize(5);
-		RedrawWindow();
+		if (scene.getShouldPerformAntiAliasing())
+		{
+			RedrawWindow();
+		}
 	}
 }
 
@@ -1253,7 +1259,10 @@ void CCGWorkView::OnFiltertypeBox()
 	if (scene.getFilterType() != BOX)
 	{
 		scene.setFilterType(BOX);
-		RedrawWindow();
+		if (scene.getShouldPerformAntiAliasing()) 
+		{
+			RedrawWindow();
+		}
 	}
 }
 
@@ -1263,7 +1272,10 @@ void CCGWorkView::OnFiltertypeTriangle()
 	if (scene.getFilterType() != TRIANGLE)
 	{
 		scene.setFilterType(TRIANGLE);
-		RedrawWindow();
+		if (scene.getShouldPerformAntiAliasing())
+		{
+			RedrawWindow();
+		}
 	}
 }
 
@@ -1273,7 +1285,10 @@ void CCGWorkView::OnFiltertypeGaussian()
 	if (scene.getFilterType() != GAUSSIAN)
 	{
 		scene.setFilterType(GAUSSIAN);
-		RedrawWindow();
+		if (scene.getShouldPerformAntiAliasing())
+		{
+			RedrawWindow();
+		}
 	}
 }
 
@@ -1283,7 +1298,10 @@ void CCGWorkView::OnFiltertypeSinc()
 	if (scene.getFilterType() != SINC)
 	{
 		scene.setFilterType(SINC);
-		RedrawWindow();
+		if (scene.getShouldPerformAntiAliasing())
+		{
+			RedrawWindow();
+		}
 	}
 }
 

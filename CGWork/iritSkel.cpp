@@ -160,7 +160,7 @@ bool CGSkelStoreData(IPObjectStruct *PObj)
 	}
 	if (CGSkelGetObjectTransp(PObj, &Transp))
 	{
-		/* transparency code */
+		model.setAlpha(Transp);
 	}
 	if ((Str = CGSkelGetObjectTexture(PObj)) != NULL)
 	{
