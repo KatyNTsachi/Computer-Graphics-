@@ -357,7 +357,8 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 			}
 		}
 	}
-	antiAliasing::blur(view_mat, width, height, kernal_size, kernal_type);
+	if(shouldFilter)
+		antiAliasing::blur(view_mat, width, height, kernal_size, kernal_type);
 
 	//pDC->GetCurrentBitmap()->SetBitmapBits(view_width * view_height * 4, viewMatrix);
 	delete[] z_buffer;
