@@ -1,12 +1,13 @@
 #include "SpotLightSource.h"
 
 
-SpotLightSource::SpotLightSource(Point _location, Vector _dir, LightCoefficient _I_p)
+SpotLightSource::SpotLightSource(Point _location, Vector _dir, LightCoefficient _I_p, double theta)
 {
 	location = _location;
 	I_p = _I_p;
 	dir = _dir;
 	dir.Normalize();
+	angle_th = theta * M_PI / 180;
 }
 
 Vector SpotLightSource::getNormal(Point Objectlocation)
