@@ -82,7 +82,11 @@ public:
 	// anti aliasing 
 	void setShouldPerformAntiAliasing(bool _shouldPerformAntiAliasing);
 	bool getShouldPerformAntiAliasing();
-
+	void setKernalSize(int _kernalSize);
+	int getKernalSize();
+	void setFilterType(kernalTypes _kernal_type);
+	kernalTypes getFilterType();
+	
 
 private:
 	COLORREF fog_color = RGB(255, 255, 255);

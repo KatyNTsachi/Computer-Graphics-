@@ -1351,3 +1351,22 @@ bool Scene::getShouldPerformAntiAliasing()
 {
 	return shouldFilter;
 }
+
+void Scene::setKernalSize(int _kernal_size)
+{
+	kernal_size = _kernal_size;
+}
+
+int Scene::getKernalSize()
+{
+	return kernal_size;
+}
+
+void Scene::setFilterType(kernalTypes _kernal_type)
+{
+	kernal_type = _kernal_type;
+}
+kernalTypes Scene::getFilterType()
+{
+	return kernal_type;
+}

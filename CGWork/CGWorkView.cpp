@@ -129,6 +129,18 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_COMMAND(ID_COLOR_FOGCOLOR, &CCGWorkView::OnColorFogcolor)
 	ON_COMMAND(ID_ANTIALIASING_PERFORMANTIALIASING, &CCGWorkView::OnAntialiasingPerformantialiasing)
 	ON_UPDATE_COMMAND_UI(ID_ANTIALIASING_PERFORMANTIALIASING, &CCGWorkView::OnUpdateAntialiasingPerformantialiasing)
+	ON_COMMAND(ID_KERNALSIZE_3, &CCGWorkView::OnKernalsize3)
+	ON_UPDATE_COMMAND_UI(ID_KERNALSIZE_3, &CCGWorkView::OnUpdateKernalsize3)
+	ON_COMMAND(ID_KERNALSIZE_5, &CCGWorkView::OnKernalsize5)
+	ON_UPDATE_COMMAND_UI(ID_KERNALSIZE_5, &CCGWorkView::OnUpdateKernalsize5)
+	ON_COMMAND(ID_FILTERTYPE_BOX, &CCGWorkView::OnFiltertypeBox)
+	ON_COMMAND(ID_FILTERTYPE_TRIANGLE, &CCGWorkView::OnFiltertypeTriangle)
+	ON_COMMAND(ID_FILTERTYPE_GAUSSIAN, &CCGWorkView::OnFiltertypeGaussian)
+	ON_COMMAND(ID_FILTERTYPE_SINC, &CCGWorkView::OnFiltertypeSinc)
+	ON_UPDATE_COMMAND_UI(ID_FILTERTYPE_BOX, &CCGWorkView::OnUpdateFiltertypeBox)
+	ON_UPDATE_COMMAND_UI(ID_FILTERTYPE_GAUSSIAN, &CCGWorkView::OnUpdateFiltertypeGaussian)
+	ON_UPDATE_COMMAND_UI(ID_FILTERTYPE_SINC, &CCGWorkView::OnUpdateFiltertypeSinc)
+	ON_UPDATE_COMMAND_UI(ID_FILTERTYPE_TRIANGLE, &CCGWorkView::OnUpdateFiltertypeTriangle)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -1194,10 +1206,107 @@ void CCGWorkView::OnColorFogcolor()
 void CCGWorkView::OnAntialiasingPerformantialiasing()
 {
 	scene.setShouldPerformAntiAliasing(!scene.getShouldPerformAntiAliasing());
+	RedrawWindow();
 }
 
 
 void CCGWorkView::OnUpdateAntialiasingPerformantialiasing(CCmdUI *pCmdUI)
 {
 	pCmdUI->SetCheck(scene.getShouldPerformAntiAliasing());
+}
+
+
+void CCGWorkView::OnKernalsize3()
+{
+	if (scene.getKernalSize() != 3) 
+	{
+		scene.setKernalSize(3);
+		RedrawWindow();
+	}
+}
+
+
+void CCGWorkView::OnUpdateKernalsize3(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(scene.getKernalSize() == 3);
+}
+
+
+void CCGWorkView::OnKernalsize5()
+{
+	if (scene.getKernalSize() != 5)
+	{
+		scene.setKernalSize(5);
+		RedrawWindow();
+	}
+}
+
+
+void CCGWorkView::OnUpdateKernalsize5(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(scene.getKernalSize() == 5);
+}
+
+
+void CCGWorkView::OnFiltertypeBox()
+{
+	if (scene.getFilterType() != BOX)
+	{
+		scene.setFilterType(BOX);
+		RedrawWindow();
+	}
+}
+
+
+void CCGWorkView::OnFiltertypeTriangle()
+{
+	if (scene.getFilterType() != TRIANGLE)
+	{
+		scene.setFilterType(TRIANGLE);
+		RedrawWindow();
+	}
+}
+
+
+void CCGWorkView::OnFiltertypeGaussian()
+{
+	if (scene.getFilterType() != GAUSSIAN)
+	{
+		scene.setFilterType(GAUSSIAN);
+		RedrawWindow();
+	}
+}
+
+
+void CCGWorkView::OnFiltertypeSinc()
+{
+	if (scene.getFilterType() != SINC)
+	{
+		scene.setFilterType(SINC);
+		RedrawWindow();
+	}
+}
+
+
+void CCGWorkView::OnUpdateFiltertypeBox(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(scene.getFilterType() == BOX);
+}
+
+
+void CCGWorkView::OnUpdateFiltertypeGaussian(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(scene.getFilterType() == GAUSSIAN);
+}
+
+
+void CCGWorkView::OnUpdateFiltertypeSinc(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(scene.getFilterType() == SINC);
+}
+
+
+void CCGWorkView::OnUpdateFiltertypeTriangle(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(scene.getFilterType() == TRIANGLE);
 }

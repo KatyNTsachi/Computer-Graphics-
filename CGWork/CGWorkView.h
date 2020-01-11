@@ -209,6 +209,18 @@ public:
 	afx_msg void OnColorFogcolor();
 	afx_msg void OnAntialiasingPerformantialiasing();
 	afx_msg void OnUpdateAntialiasingPerformantialiasing(CCmdUI *pCmdUI);
+	afx_msg void OnKernalsize3();
+	afx_msg void OnUpdateKernalsize3(CCmdUI *pCmdUI);
+	afx_msg void OnKernalsize5();
+	afx_msg void OnUpdateKernalsize5(CCmdUI *pCmdUI);
+	afx_msg void OnFiltertypeBox();
+	afx_msg void OnFiltertypeTriangle();
+	afx_msg void OnFiltertypeGaussian();
+	afx_msg void OnFiltertypeSinc();
+	afx_msg void OnUpdateFiltertypeBox(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateFiltertypeGaussian(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateFiltertypeSinc(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateFiltertypeTriangle(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp
