@@ -6,6 +6,7 @@
 #include "CGWorkDefines.h"
 #include <algorithm>  
 #include "SpotLightSource.h"
+#include "antiAliasing.h"
 
 Scene::Scene()
 {
@@ -356,10 +357,10 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 			}
 		}
 	}
-	antiAliasing anti_aliasing();
 	int kernal_size = 3;
-	int kernal_type = 0;
-	anti_aliasing.blur(view_mat, width, height, kernal_size, kernal_type);
+	kernalTypes kernal_type = BOX;
+	antiAliasing::blur(view_mat, width, height, kernal_size, kernal_type);
+
 	//pDC->GetCurrentBitmap()->SetBitmapBits(view_width * view_height * 4, viewMatrix);
 	delete[] z_buffer;
 	delete[] tmp_view_mat;

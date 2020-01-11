@@ -161,6 +161,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AlphaDialog.cpp" />
+    <ClCompile Include="antiAliasing.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CGWork.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
@@ -240,6 +241,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlphaDialog.h" />
+    <ClInclude Include="antiAliasing.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CGWork.h" />
     <ClInclude Include="CGWorkDefines.h" />

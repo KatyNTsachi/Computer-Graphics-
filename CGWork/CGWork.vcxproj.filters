@@ -99,6 +99,9 @@
     <ClCompile Include="SpotLightSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="antiAliasing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CGWork.rc">
@@ -266,6 +269,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpotLightSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="antiAliasing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
