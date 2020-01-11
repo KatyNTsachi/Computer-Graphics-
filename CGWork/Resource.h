@@ -96,13 +96,22 @@
 #define ID_COLOR_M                      32829
 #define ID_OPTIONS_SHOWFOG              32830
 #define ID_COLOR_FOGCOLOR               32831
+#define ID_ANTIALIASING_PERFORMANTIALIASING 32832
+#define ID_ANTIALIASING_KERNALSIZE      32833
+#define ID_KERNALSIZE_3                 32834
+#define ID_KERNALSIZE_5                 32835
+#define ID_ANTIALIASING_FILTERTYPE      32836
+#define ID_FILTERTYPE_BOX               32837
+#define ID_FILTERTYPE_TRIANGLE          32838
+#define ID_FILTERTYPE_GAUSSIAN          32839
+#define ID_FILTERTYPE_SINC              32840
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        158
-#define _APS_NEXT_COMMAND_VALUE         32832
+#define _APS_NEXT_COMMAND_VALUE         32841
 #define _APS_NEXT_CONTROL_VALUE         1050
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

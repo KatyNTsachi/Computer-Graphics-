@@ -127,6 +127,8 @@ BEGIN_MESSAGE_MAP(CCGWorkView, CView)
 	ON_COMMAND(ID_OPTIONS_SHOWFOG, &CCGWorkView::OnOptionsShowfog)
 	ON_UPDATE_COMMAND_UI(ID_OPTIONS_SHOWFOG, &CCGWorkView::OnUpdateOptionsShowfog)
 	ON_COMMAND(ID_COLOR_FOGCOLOR, &CCGWorkView::OnColorFogcolor)
+	ON_COMMAND(ID_ANTIALIASING_PERFORMANTIALIASING, &CCGWorkView::OnAntialiasingPerformantialiasing)
+	ON_UPDATE_COMMAND_UI(ID_ANTIALIASING_PERFORMANTIALIASING, &CCGWorkView::OnUpdateAntialiasingPerformantialiasing)
 END_MESSAGE_MAP()
 
 // A patch to fix GLaux disappearance from VS2005 to VS2008
@@ -1186,4 +1188,16 @@ void CCGWorkView::OnColorFogcolor()
 		RedrawWindow();
 	}
 
+}
+
+
+void CCGWorkView::OnAntialiasingPerformantialiasing()
+{
+	scene.setShouldPerformAntiAliasing(!scene.getShouldPerformAntiAliasing());
+}
+
+
+void CCGWorkView::OnUpdateAntialiasingPerformantialiasing(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(scene.getShouldPerformAntiAliasing());
 }

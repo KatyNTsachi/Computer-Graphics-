@@ -357,8 +357,6 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 			}
 		}
 	}
-	int kernal_size = 3;
-	kernalTypes kernal_type = BOX;
 	antiAliasing::blur(view_mat, width, height, kernal_size, kernal_type);
 
 	//pDC->GetCurrentBitmap()->SetBitmapBits(view_width * view_height * 4, viewMatrix);
@@ -1341,4 +1339,14 @@ bool Scene::getShowFog()
 void Scene::setShowFog(bool _show_fog)
 {
 	there_is_no_fog = !_show_fog;
+}
+
+void Scene::setShouldPerformAntiAliasing(bool _shouldPerformAntiAliasing)
+{
+	shouldFilter = _shouldPerformAntiAliasing;
+}
+
+bool Scene::getShouldPerformAntiAliasing()
+{
+	return shouldFilter;
 }

@@ -9,7 +9,7 @@
 class antiAliasing
 {
 public:
-	static int[] blur(int * view_mat, int width,int height,int kernal_size, kernalTypes kernal_type);
+	static void blur(int * view_mat, int width,int height,int kernal_size, kernalTypes kernal_type);
 
 private:
 	static std::vector<double> getKernal(int kernal_size, kernalTypes kernal_type);

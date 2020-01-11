@@ -145,6 +145,22 @@ BEGIN
     BEGIN
         MENUITEM "&About CGWork...",            ID_APP_ABOUT
     END
+    POPUP "Anti Aliasing"
+    BEGIN
+        MENUITEM "perform anti aliasing",       ID_ANTIALIASING_PERFORMANTIALIASING
+        POPUP "kernal size"
+        BEGIN
+            MENUITEM "3",                           ID_KERNALSIZE_3
+            MENUITEM "5",                           ID_KERNALSIZE_5
+        END
+        POPUP "filter type"
+        BEGIN
+            MENUITEM "Box",                         ID_FILTERTYPE_BOX
+            MENUITEM "Triangle",                    ID_FILTERTYPE_TRIANGLE
+            MENUITEM "Gaussian",                    ID_FILTERTYPE_GAUSSIAN
+            MENUITEM "Sinc",                        ID_FILTERTYPE_SINC
+        END
+    END
 END
 
 

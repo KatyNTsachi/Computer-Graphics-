@@ -1,15 +1,27 @@
 #include "antiAliasing.h"
 
-int[] antiAliasing::blur(int* view_mat, int width, int height, int kernal_size, kernalTypes kernal_type)
+void antiAliasing::blur(int* view_mat, int width, int height, int kernal_size, kernalTypes kernal_type)
 {
 	std::vector<LightCoefficient> * tmp_view_mat = new std::vector<LightCoefficient>[height*width];
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			int color = view_mat[i * width + j];
+			LightCoefficient light_coefficient(GetRValue(color),
+				GetGValue(color),
+				GetBValue(color));
+			tmp_view_mat[i * width + j].push_back(light_coefficient);
+		}
+	}
+
 	std::vector<double> kernal_vec = getKernal(kernal_size, kernal_type);
 
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			std::vector<LightCoefficient> relevant_pixels = getRelevantPixels(view_mat, width, height, i, j, kernal_size);
+			std::vector<LightCoefficient> relevant_pixels = getRelevantPixels(tmp_view_mat, width, height, i, j, kernal_size);
 			tmp_view_mat[i * width + j].push_back(getMul(relevant_pixels, kernal_vec));
 		}
 	}
@@ -19,7 +31,9 @@ int[] antiAliasing::blur(int* view_mat, int width, int height, int kernal_size, 
 	{
 		for (int j = 0; j < width; j++)
 		{
-			view_mat[i * width + j][0] = tmp_view_mat[i * width + j][0];
+			LightCoefficient light_coefficient = tmp_view_mat[i * width + j][1];
+			view_mat[i * width + j] = RGB(light_coefficient.getR(),
+				light_coefficient.getG(), light_coefficient.getB());
 		}
 	}
 
@@ -76,37 +90,88 @@ std::vector<LightCoefficient> antiAliasing::getRelevantPixels(std::vector<LightC
 
 std::vector<double> antiAliasing::getBoxKernalOfSize(int kernal_size)
 {
-	double val = 1.0 / 9;
-	//std::vector<double> ret_vec = { val, val, val, val, val, val, val, val, val };
-	std::vector<double> ret_vec = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	return ret_vec;
-	/*
 	if (kernal_size == 3)
 	{
 		double val = 1.0 / 9;
-		return std::vector(val, val, val, val, val, val, val, val, val);
+		std::vector<double> ret_vec = { val, val, val, val, val, val, val, val, val };
+		return ret_vec;
 	}
 	else
 	{
 		double val = 1.0 / 25;
-		return std::vector(val, val, val, val, val, val, val, val, val, );
+		std::vector<double> ret_vec = { val, val, val, val, val,
+			val, val, val, val, val,
+			val, val, val, val, val,
+			val, val, val, val, val,
+			val, val, val, val, val };
+		return ret_vec;
 	}
-	*/
 }
 
 std::vector<double> antiAliasing::getTriangleKernalOfSize(int kernal_size)
 {
-	return getBoxKernalOfSize(kernal_size);
+	if (kernal_size == 3)
+	{
+		std::vector<double> ret_vec = 
+		{ 1.0 / 16, 2.0 / 16, 1.0 / 16,
+		  2.0 / 16, 4.0 / 16, 2.0 / 16,
+		  1.0 / 16, 2.0 / 16, 1.0 / 16 };
+		return ret_vec;
+	}
+	else
+	{
+		std::vector<double> ret_vec =
+		{ 1.0 / 81, 2.0 / 81, 3.0 / 81, 2.0 / 81, 1.0 / 81,
+		  2.0 / 81, 4.0 / 81, 6.0 / 81, 4.0 / 81, 2.0 / 81,
+	      3.0 / 81, 6.0 / 81, 9.0 / 81, 6.0 / 81, 3.0 / 81,
+		  2.0 / 81, 4.0 / 81, 6.0 / 81, 4.0 / 81, 2.0 / 81,
+		  1.0 / 81, 2.0 / 81, 3.0 / 81, 2.0 / 81, 1.0 / 81, };
+		return ret_vec;
+	}
 }
 
 std::vector<double> antiAliasing::getGaussianKernalOfSize(int kernal_size)
 {
-	return getBoxKernalOfSize(kernal_size);
+	if (kernal_size == 3)
+	{
+		std::vector<double> ret_vec =
+		{ 1.0 / 17, 2.0 / 17, 1.0 / 17,
+		  2.0 / 17, 5.0 / 17, 2.0 / 17,
+		  1.0 / 17, 2.0 / 17, 1.0 / 17 };
+		return ret_vec;
+	}
+	else
+	{
+		std::vector<double> ret_vec =
+		{ 1.0 / 50, 1.0 / 50, 1.0 / 50, 1.0 / 50, 1.0 / 50,
+		  1.0 / 50, 2.0 / 50, 4.0 / 50, 2.0 / 50, 1.0 / 50,
+		  1.0 / 50, 4.0 / 50, 10.0 / 50, 4.0 / 50, 1.0 / 50,
+		  1.0 / 50, 2.0 / 50, 4.0 / 50, 2.0 / 50, 1.0 / 50,
+		  1.0 / 50, 1.0 / 50, 1.0 / 50, 1.0 / 50, 1.0 / 50, };
+		return ret_vec;
+	}
 }
 
 std::vector<double> antiAliasing::getSincKernalOfSize(int kernal_size)
 {
-	return getBoxKernalOfSize(kernal_size);
+	if (kernal_size == 3)
+	{
+		std::vector<double> ret_vec =
+		{ 2.0 / 24, 3.0 / 24, 2.0 / 24,
+		  3.0 / 24, 4.0 / 24, 3.0 / 24,
+		  2.0 / 24, 3.0 / 24, 2.0 / 24 };
+		return ret_vec;
+	}
+	else
+	{
+		std::vector<double> ret_vec =
+		{ -2.0 / 33, -1.0 / 33, 0.0 / 33, -1.0 / 33, -2.0 / 50,
+		  -1.0 / 33, 4.00 / 33, 6.0 / 33, 4.00 / 33, -1.0 / 50,
+		  0.00 / 33, 6.00 / 33, 9.0 / 33, 6.00 / 33, 0.00 / 50,
+		  -1.0 / 33, 4.00 / 33, 6.0 / 33, 4.00 / 33, -1.0 / 50,
+		  -2.0 / 33, -1.0 / 33, 0.0 / 33, -1.0 / 33, -2.0 / 50, };
+		return ret_vec;
+	}
 }
 
 LightCoefficient antiAliasing::getMul(std::vector<LightCoefficient> &relevant_pixels, std::vector<double> &kernal)

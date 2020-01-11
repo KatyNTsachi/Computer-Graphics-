@@ -207,6 +207,8 @@ public:
 	afx_msg void OnOptionsShowfog();
 	afx_msg void OnUpdateOptionsShowfog(CCmdUI *pCmdUI);
 	afx_msg void OnColorFogcolor();
+	afx_msg void OnAntialiasingPerformantialiasing();
+	afx_msg void OnUpdateAntialiasingPerformantialiasing(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in CGWorkView.cpp

@@ -79,6 +79,11 @@ public:
 	void setAlphaOfAllModels(double _alpha);
 	LightCoefficient getFogColor(LightCoefficient &_color, double z, bool _there_is_no_fog, double _fog_intensity);
 
+	// anti aliasing 
+	void setShouldPerformAntiAliasing(bool _shouldPerformAntiAliasing);
+	bool getShouldPerformAntiAliasing();
+
+
 private:
 	COLORREF fog_color = RGB(255, 255, 255);
 	int specularityExponent = 2;
@@ -116,6 +121,11 @@ private:
 	LightCoefficient k_a = LightCoefficient(255, 255, 255);
 	LightCoefficient k_s = LightCoefficient(255, 255, 255);
 	LightCoefficient I_a = LightCoefficient(0.2, 0.2, 0.2);
+
+	// anti aliasing
+	int kernal_size = 3;
+	kernalTypes kernal_type = BOX;
+	bool shouldFilter = false;
 
 	int background_image_height;
 	int background_image_width;
