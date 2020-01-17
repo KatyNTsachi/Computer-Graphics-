@@ -221,9 +221,24 @@ void Scene::AddCamera(Camera _camera)
 	camera_list.push_back(_camera);
 }
 
-void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tmp_drawing_view_mat[], COLORREF background_color) {
+void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], COLORREF background_color) {
 	width = abs(r.right - r.left);
 	height = abs(r.bottom - r.top);
+
+	if (shouldFilter)
+	{
+		width = width * kernal_size;
+		height = height * kernal_size;
+	}
+
+	double* tmp_drawing_view_mat = new double[height*width];
+
+	for (int i = 0; i < height*width; i++)
+	{
+		//view_mat[i] = (GetBValue(background_color)) + (GetRValue(background_color) << 16) + (GetGValue(background_color) << 8);
+		tmp_drawing_view_mat[i] = EMPTY_TMP_DRAWING_VIEW_MAT_PIXEL;
+	}
+	int* render_view_mat = new int[height*width];
 	vector<double> *z_buffer = new vector<double>[height*width];
 	vector<LightCoefficient> *tmp_view_mat = new vector<LightCoefficient>[height*width];
 	for (int i = 0; i < height*width; i++)
@@ -234,7 +249,7 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 
 	if (show_background)
 	{
-		drawBackground(tmp_view_mat, view_mat);
+		drawBackground(tmp_view_mat, render_view_mat);
 	}
 	else
 	{
@@ -272,33 +287,33 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 		Matrix all_trans = getTransformationMatrix(*tmp_model, camera_number, r);
 
 		vector<MyPolygon> model_polygon_list = tmp_model->getModelPolygons();
-		drawPolygons(*tmp_model, model_polygon_list, all_trans, pDC, view_mat, z_buffer, tmp_view_mat, tmp_drawing_view_mat);
+		drawPolygons(*tmp_model, model_polygon_list, all_trans, pDC, render_view_mat, z_buffer, tmp_view_mat, tmp_drawing_view_mat);
 		if (tmp_model->getShouldBoundingBox() )
 		{
 			vector<MyPolygon> bounding_box_polygon_list = tmp_model->getBoundingBoxPolygons();
-			drawPolygons(*tmp_model, bounding_box_polygon_list, all_trans, pDC, view_mat, z_buffer, tmp_view_mat, tmp_drawing_view_mat);
+			drawPolygons(*tmp_model, bounding_box_polygon_list, all_trans, pDC, render_view_mat, z_buffer, tmp_view_mat, tmp_drawing_view_mat);
 		}
 		if (paint_vertex_normals) {
 			if (show_original_normals)
 			{
-				drawLines(pDC, tmp_model->getOriginalVertexNormalList(show_regular_normals), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+				drawLines(pDC, tmp_model->getOriginalVertexNormalList(show_regular_normals), tmp_model->getNormalsColor(), all_trans, render_view_mat, tmp_drawing_view_mat);
 			}
 			else
 			{
-				drawLines(pDC, tmp_model->getCalculatedVertexNormalList(show_regular_normals), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+				drawLines(pDC, tmp_model->getCalculatedVertexNormalList(show_regular_normals), tmp_model->getNormalsColor(), all_trans, render_view_mat, tmp_drawing_view_mat);
 			}
 		}
 		if (paint_polygon_normals) {
 			if (show_original_normals)
 			{
-				drawLines(pDC, tmp_model->getOriginalPolygonNormalList(show_regular_normals), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+				drawLines(pDC, tmp_model->getOriginalPolygonNormalList(show_regular_normals), tmp_model->getNormalsColor(), all_trans, render_view_mat, tmp_drawing_view_mat);
 			}
 			else
-				drawLines(pDC, tmp_model->getCalculatedPolygonNormalList(show_regular_normals), tmp_model->getNormalsColor(), all_trans, view_mat, tmp_drawing_view_mat);
+				drawLines(pDC, tmp_model->getCalculatedPolygonNormalList(show_regular_normals), tmp_model->getNormalsColor(), all_trans, render_view_mat, tmp_drawing_view_mat);
 
 		}
 		if (drawSilhouette) {
-			drawLines(pDC, tmp_model->getSilhouetteLinesList(all_trans), silhouetteColor, all_trans, view_mat, tmp_drawing_view_mat);
+			drawLines(pDC, tmp_model->getSilhouetteLinesList(all_trans), silhouetteColor, all_trans, render_view_mat, tmp_drawing_view_mat);
 		}
 	}
 
@@ -353,17 +368,54 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tm
 				double B = tmp_view_mat[i][0].getB() > 255 ? 255 : tmp_view_mat[i][0].getB();
 				COLORREF tmp_color = RGB(R, G, B);
 
-				view_mat[i] = ((GetBValue(tmp_color)) + (GetRValue(tmp_color) << 16) + (GetGValue(tmp_color) << 8));
+				render_view_mat[i] = ((GetBValue(tmp_color)) + (GetRValue(tmp_color) << 16) + (GetGValue(tmp_color) << 8));
 			}
 		}
 	}
-	if(shouldFilter)
-		antiAliasing::blur(view_mat, width, height, kernal_size, kernal_type);
+	if (shouldFilter)
+	{
+		antiAliasing::blur(render_view_mat, width, height, kernal_size, kernal_type, shouldFilter);
 
+	}
+
+
+	//copy
+	for (int i = 0; i < height; i++)
+	{
+
+		for (int j = 0; j < width; j++)
+		{
+			if (!shouldFilter)
+			{
+				view_mat[i*width + j] = render_view_mat[i*width + j];
+			}
+
+			else if (kernal_size == 3)
+			{
+
+				if ((i - 1) % kernal_size == 0 && (j - 1) % kernal_size == 0)
+					view_mat[(i / kernal_size)*width + (j / kernal_size)] = render_view_mat[i*width + j];
+
+			}
+
+			else if (kernal_size == 5)
+			{
+
+				if ((i - 2) % kernal_size == 0 && (j - 2) % kernal_size == 0)
+					view_mat[(i / kernal_size)*width + (j / kernal_size)] = render_view_mat[i*width + j];
+
+			}
+
+		}
+	}
 	//pDC->GetCurrentBitmap()->SetBitmapBits(view_width * view_height * 4, viewMatrix);
 	delete[] z_buffer;
 	delete[] tmp_view_mat;
+	delete[] render_view_mat;
+	delete[] tmp_drawing_view_mat;
 }
+
+
 void Scene::drawLines(CDC* pDC, vector<Line> lines, COLORREF _color, Matrix _transformation, int view_mat[], double tmp_drawing_view_mat[])
 {
 	for (auto line = lines.begin(); line != lines.end(); line++)
@@ -705,8 +757,8 @@ COLORREF Scene::getPhongColorAt(Model &model, MyPolygon polygon, int x, int y)
 
 Matrix Scene::strechToScreenSize(CRect r)
 {
-	width = abs(r.right - r.left);
-	height = abs(r.bottom - r.top);
+	//width = abs(r.right - r.left);
+	//height = abs(r.bottom - r.top);
 	
 	double min_axis;
 	if ((width / 2) < (height / 2))

@@ -20,7 +20,7 @@ public:
 	~Scene();
 	void addModel(Model _model);
 	void AddCamera(Camera _camera);
-	void Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], double tmp_drawing_view_mat[], COLORREF background_color);
+	void Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], COLORREF background_color);
 	void drawPolygons(Model model, vector<MyPolygon> polygon_list, Matrix transformation, CDC* pDC, int view_mat[], vector<double> z_buffer[], vector<LightCoefficient> tmp_view_mat[], double tmp_drawing_view_mat[]);
 	Matrix strechToScreenSize( CRect r);
 	Line tranformLine(Line line, Matrix transformationMatrix);
