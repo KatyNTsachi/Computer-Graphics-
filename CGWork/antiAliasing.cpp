@@ -40,7 +40,40 @@ void antiAliasing::blur(int * view_mat, int width, int height, int kernal_size, 
 
 	delete[] tmp_view_mat;
 
+}
 
+void antiAliasing::downSample(int * view_mat, int * rendering_view_mat, int width, int height, int kernal_size, kernalTypes kernal_type)
+{
+
+	std::vector<LightCoefficient> * tmp_view_mat = new std::vector<LightCoefficient>[height*width];
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			int color = rendering_view_mat[i * width + j];
+			LightCoefficient light_coefficient(GetRValue(color),
+				GetGValue(color),
+				GetBValue(color));
+			tmp_view_mat[i * width + j].push_back(light_coefficient);
+		}
+	}
+
+	std::vector<double> kernal_vec = getKernal(kernal_size, BOX);
+
+	int offset = ( kernal_size - 1 ) / 2;
+	int step_size = kernal_size;
+
+	for (int i = offset; i < height; i = i + step_size)
+	{
+		for (int j = offset; j < width; j = j +step_size)
+		{
+			std::vector<LightCoefficient> relevant_pixels = getRelevantPixels(tmp_view_mat, width, height, i, j, kernal_size);
+			LightCoefficient light_coefficient = getMul(relevant_pixels, kernal_vec);
+			view_mat[(i / kernal_size) * (width / kernal_size) + (j / kernal_size)] = RGB(light_coefficient.getR(),
+				light_coefficient.getG(), light_coefficient.getB());
+		}
+	}
+	delete[] tmp_view_mat;
 }
 
 std::vector<double> antiAliasing::getKernal(int kernal_size, kernalTypes kernal_type)

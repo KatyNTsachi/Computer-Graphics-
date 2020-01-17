@@ -255,6 +255,7 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], COLORREF 
 	{
 		for (int i = 0; i < height*width; i++)
 		{
+			render_view_mat[i] = (GetBValue(background_color)) + (GetRValue(background_color) << 16) + (GetGValue(background_color) << 8);
 			//(GetBValue(background_color)) + (GetRValue(background_color) << 16) + (GetGValue(background_color) << 8)
 			LightCoefficient tmp_color(GetRValue(background_color), GetGValue(background_color), GetBValue(background_color));
 			tmp_color.setAlpha(1);
@@ -374,40 +375,29 @@ void Scene::Draw(CDC* pDC, int camera_number, CRect r, int view_mat[], COLORREF 
 	}
 	if (shouldFilter)
 	{
-		antiAliasing::blur(render_view_mat, width, height, kernal_size, kernal_type, shouldFilter);
+		//antiAliasing::blur(render_view_mat, width, height, kernal_size, kernal_type, shouldFilter);
 
 	}
 
 
 	//copy
-	for (int i = 0; i < height; i++)
+
+	if (!shouldFilter)
 	{
-
-		for (int j = 0; j < width; j++)
+		for (int ii = 0; ii < height; ii++)
 		{
-			if (!shouldFilter)
+
+			for (int j = 0; j < width; j++)
 			{
-				view_mat[i*width + j] = render_view_mat[i*width + j];
+				view_mat[ii*width + j] = render_view_mat[ii*width + j];
 			}
-
-			else if (kernal_size == 3)
-			{
-
-				if ((i - 1) % kernal_size == 0 && (j - 1) % kernal_size == 0)
-					view_mat[(i / kernal_size)*width + (j / kernal_size)] = render_view_mat[i*width + j];
-
-			}
-
-			else if (kernal_size == 5)
-			{
-
-				if ((i - 2) % kernal_size == 0 && (j - 2) % kernal_size == 0)
-					view_mat[(i / kernal_size)*width + (j / kernal_size)] = render_view_mat[i*width + j];
-
-			}
-
 		}
 	}
+	else 
+	{
+		antiAliasing::downSample(view_mat, render_view_mat, width, height, kernal_size, BOX);
+	}
+
 	//pDC->GetCurrentBitmap()->SetBitmapBits(view_width * view_height * 4, viewMatrix);
 	delete[] z_buffer;
 	delete[] tmp_view_mat;
