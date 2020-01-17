@@ -1,7 +1,8 @@
 #include "antiAliasing.h"
 
-void antiAliasing::blur(int* view_mat, int width, int height, int kernal_size, kernalTypes kernal_type)
+void antiAliasing::blur(int * view_mat, int width, int height, int kernal_size, kernalTypes kernal_type, bool should_use_kernal)
 {
+	
 	std::vector<LightCoefficient> * tmp_view_mat = new std::vector<LightCoefficient>[height*width];
 	for (int i = 0; i < height; i++)
 	{
@@ -38,6 +39,8 @@ void antiAliasing::blur(int* view_mat, int width, int height, int kernal_size, k
 	}
 
 	delete[] tmp_view_mat;
+
+
 }
 
 std::vector<double> antiAliasing::getKernal(int kernal_size, kernalTypes kernal_type)
